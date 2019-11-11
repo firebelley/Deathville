@@ -32,6 +32,7 @@ namespace Deathville.GameObject
             Zone.Current.EffectsLayer.AddChild(bullet);
             bullet.ObeyTimeScale = false;
             bullet.Start(_muzzlePosition.GlobalPosition, GetGlobalMousePosition());
+            GameEventDispatcher.DispatchWeaponFired();
         }
 
         private void UpdatePosition()

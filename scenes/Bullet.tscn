@@ -20,6 +20,7 @@ script = ExtResource( 2 )
 [node name="Light2D" type="Light2D" parent="."]
 texture = ExtResource( 3 )
 texture_scale = 2.0
+mode = 2
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 1 )

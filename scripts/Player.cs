@@ -122,10 +122,13 @@ namespace Deathville.GameObject
             if (moveVec.x != 0)
             {
                 _animatedSprite.Play(ANIM_RUN);
-                _animatedSprite.FlipH = moveVec.x < 0;
+                var shouldFlip = (moveVec.x < 0 && GlobalPosition.x > GetGlobalMousePosition().x) || (moveVec.x > 0 && GlobalPosition.x > GetGlobalMousePosition().x);
+                _animatedSprite.FlipH = shouldFlip;
             }
             else
             {
+                var shouldFlip = GlobalPosition.x > GetGlobalMousePosition().x;
+                _animatedSprite.FlipH = shouldFlip;
                 _animatedSprite.Play(ANIM_IDLE);
             }
             _animatedSprite.SpeedScale = 1f / Engine.TimeScale;
