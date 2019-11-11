@@ -18,6 +18,11 @@ _global_script_class_icons={
 config/name="Deathville"
 config/icon="res://icon.png"
 
+[mono]
+
+unhandled_exception_policy=1
+project/auto_update_project=false
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"
