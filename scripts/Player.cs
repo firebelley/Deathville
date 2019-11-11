@@ -16,6 +16,7 @@ namespace Deathville.GameObject
         private const float JUMP_SPEED = -400f;
         private const float GRAVITY_ACCELERATOR = 4f;
         private const float INITIAL_COYOTE_TIME = .2f;
+        private const float TIME_SCALE = .15f;
 
         private AnimatedSprite _animatedSprite;
         private Vector2 _velocity;
@@ -33,7 +34,6 @@ namespace Deathville.GameObject
         {
             _moveStateMachine.AddState(MoveState.GROUNDED, MoveStateGrounded);
             _moveStateMachine.AddState(MoveState.AIRBORNE, MoveStateAirborne);
-            _moveStateMachine.AddLeaveState(MoveState.AIRBORNE, LeaveMoveStateAirborne);
             _moveStateMachine.SetInitialState(MoveState.GROUNDED);
             _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
         }
@@ -42,6 +42,9 @@ namespace Deathville.GameObject
         {
             _moveStateMachine.Update();
             GameEventDispatcher.DispatchPlayerPositionUpdated(GlobalPosition);
+
+            var scaleLerpTo = _moveStateMachine.GetCurrentState() == MoveState.AIRBORNE ? TIME_SCALE : 1f;
+            Engine.TimeScale = Mathf.Lerp(Engine.TimeScale, scaleLerpTo, 15f * delta / Engine.TimeScale);
         }
 
         private void MoveStateGrounded()
@@ -66,7 +69,6 @@ namespace Deathville.GameObject
         private void MoveStateAirborne()
         {
             _coyoteTime = Mathf.Clamp(_coyoteTime - GetProcessDeltaTime() / Engine.TimeScale, 0f, INITIAL_COYOTE_TIME);
-            Engine.TimeScale = .5f;
 
             var moveVec = GetMovementVector();
             _velocity.x = moveVec.x * MAX_SPEED;
@@ -90,11 +92,6 @@ namespace Deathville.GameObject
             }
 
             UpdateAnimations();
-        }
-
-        private void LeaveMoveStateAirborne()
-        {
-            Engine.TimeScale = 1f;
         }
 
         private void UpdateAnimations()

@@ -17,6 +17,8 @@ _global_script_class_icons={
 
 config/name="Deathville"
 run/main_scene="res://scenes/Main.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="Deathville"
 config/icon="res://icon.png"
 
 [autoload]
@@ -77,6 +79,11 @@ jump={
 
 unhandled_exception_policy=1
 project/auto_update_project=false
+
+[physics]
+
+2d/default_linear_damp=0.0
+2d/default_angular_damp=0.0
 
 [rendering]
 
