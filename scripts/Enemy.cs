@@ -23,10 +23,8 @@ namespace Deathville.GameObject
         private void OnTimerTimeout()
         {
             var bullet = _resourcePreloader.InstanceScene<Bullet>();
-            AddChild(bullet);
-            bullet.GlobalPosition = GlobalPosition;
-            bullet.LinearVelocity = 300f * (_playerPos - GlobalPosition).Normalized();
-            bullet.Rotation = (_playerPos - GlobalPosition).Normalized().Angle();
+            Zone.Current.EffectsLayer.AddChild(bullet);
+            bullet.Start(GlobalPosition + Vector2.Up * 10f, _playerPos);
         }
     }
 }

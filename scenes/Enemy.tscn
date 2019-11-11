@@ -15,6 +15,7 @@ animations = [ {
 [sub_resource type="CapsuleShape2D" id=2]
 
 [node name="Enemy" type="KinematicBody2D"]
+collision_layer = 0
 script = ExtResource( 2 )
 
 [node name="ResourcePreloader" type="ResourcePreloader" parent="."]

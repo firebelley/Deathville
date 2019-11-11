@@ -5,11 +5,17 @@ namespace Deathville.GameObject
 {
     public class Player : KinematicBody2D
     {
+        [Signal]
+        public delegate void AttackStart();
+        [Signal]
+        public delegate void AttackEnd();
+
         private const string ANIM_IDLE = "idle";
         private const string ANIM_RUN = "run";
         private const string INPUT_MOVE_LEFT = "move_left";
         private const string INPUT_MOVE_RIGHT = "move_right";
         private const string INPUT_JUMP = "jump";
+        private const string INPUT_ATTACK = "attack";
 
         private const float MAX_SPEED = 200f;
         private const float GRAVITY = 800f;
@@ -45,6 +51,22 @@ namespace Deathville.GameObject
 
             var scaleLerpTo = _moveStateMachine.GetCurrentState() == MoveState.AIRBORNE ? TIME_SCALE : 1f;
             Engine.TimeScale = Mathf.Lerp(Engine.TimeScale, scaleLerpTo, 15f * delta / Engine.TimeScale);
+        }
+
+        public override void _UnhandledInput(InputEvent evt)
+        {
+            if (evt.IsAction(INPUT_ATTACK))
+            {
+                if (evt.IsActionPressed(INPUT_ATTACK))
+                {
+                    EmitSignal(nameof(AttackStart));
+                }
+                else
+                {
+                    EmitSignal(nameof(AttackEnd));
+                }
+                GetTree().SetInputAsHandled();
+            }
         }
 
         private void MoveStateGrounded()
