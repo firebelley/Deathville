@@ -9,7 +9,7 @@ resource_local_to_scene = true
 radius = 2.0
 
 [node name="Bullet" type="RigidBody2D"]
-collision_layer = 0
+collision_layer = 2
 gravity_scale = 0.0
 continuous_cd = 1
 contacts_reported = 1
