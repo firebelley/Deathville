@@ -87,8 +87,6 @@ attack={
 [layer_names]
 
 2d_physics/layer_1="WORLD"
-2d_physics/layer_2="ENEMY_PROJECTILE"
-2d_physics/layer_3="FRIENDLY_PROJECTILE"
 2d_physics/layer_19="ENEMY"
 2d_physics/layer_20="PLAYER"
 

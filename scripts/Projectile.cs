@@ -1,9 +1,11 @@
+using Deathville.Component;
 using Godot;
 using GodotApiTools.Extension;
+using GodotApiTools.Util;
 
 namespace Deathville.GameObject
 {
-    public class Projectile : RigidBody2D
+    public class Projectile : Node2D
     {
         public bool ObeyTimeScale = true;
 
@@ -15,73 +17,63 @@ namespace Deathville.GameObject
         private Vector2 _direction;
         private int _hitCount = 0;
         private Vector2 _contactPosition;
+        private uint _collisionMask = 1;
 
         public override void _Ready()
         {
             _resourcePreloader = GetNode<ResourcePreloader>("ResourcePreloader");
-            Connect("body_entered", this, nameof(OnBodyEntered));
         }
 
-        public override void _IntegrateForces(Physics2DDirectBodyState state)
+        public override void _PhysicsProcess(float delta)
         {
-            if (state.GetContactCount() > 0)
+            var prevPos = GlobalPosition;
+            GlobalPosition += _speed * delta * _direction / (ObeyTimeScale ? 1f : Engine.TimeScale);
+            var raycastResult = GetWorld2d().DirectSpaceState.Raycast(prevPos, GlobalPosition, null, _collisionMask, true, true);
+
+            if (raycastResult != null)
             {
-                _contactPosition = state.GetContactLocalPosition(0);
+                RegisterHit(raycastResult);
             }
         }
 
         public void Start(Vector2 spawnPos, Vector2 toPos)
         {
             GlobalPosition = spawnPos;
-
             _direction = (toPos - GlobalPosition).Normalized();
             Rotation = _direction.Angle();
-            LinearVelocity = CalculateLinearVelocity();
         }
 
         public void SetFriendly()
         {
-            CollisionLayer = 1 << 2;
-            CollisionMask |= (1 << 18);
+            _collisionMask |= (1 << 18);
         }
 
         public void SetEnemy()
         {
-            CollisionLayer = 1 << 1;
-            CollisionMask |= (1 << 19);
+            _collisionMask |= (1 << 19);
         }
 
-        public void RegisterHit()
+        public void RegisterHit(RaycastResult raycastResult)
         {
+            if (raycastResult.Collider is DamageReceiverComponent drc)
+            {
+                drc.RegisterHit(this, raycastResult);
+            }
             _hitCount++;
             if (_hitCount >= 1)
             {
-                Die();
+                GlobalPosition = raycastResult.Position;
+                Die(raycastResult);
             }
         }
 
-        public override void _PhysicsProcess(float delta)
-        {
-            LinearVelocity = CalculateLinearVelocity();
-        }
-
-        private Vector2 CalculateLinearVelocity()
-        {
-            return _speed * _direction / (ObeyTimeScale ? 1f : Engine.TimeScale);
-        }
-
-        private void Die()
+        private void Die(RaycastResult raycastResult = null)
         {
             var death = _resourcePreloader.InstanceScene<Node2D>("BulletDeath");
             Zone.Current.EffectsLayer.AddChild(death);
-            death.Rotation = _direction.Angle() - Mathf.Pi;
+            death.Rotation = (raycastResult == null ? _direction.Angle() - Mathf.Pi : raycastResult.Normal.Angle());
             death.GlobalPosition = _contactPosition != Vector2.Zero ? _contactPosition : GlobalPosition;
             QueueFree();
-        }
-
-        private void OnBodyEntered(PhysicsBody2D body2D)
-        {
-            Die();
         }
     }
 }

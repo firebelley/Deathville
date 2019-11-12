@@ -1,5 +1,6 @@
 using Deathville.GameObject;
 using Godot;
+using GodotApiTools.Util;
 
 namespace Deathville.Component
 {
@@ -10,16 +11,12 @@ namespace Deathville.Component
 
         public override void _Ready()
         {
-            Connect("body_entered", this, nameof(OnBodyEntered));
+
         }
 
-        private void OnBodyEntered(PhysicsBody2D physicsBody2D)
+        public void RegisterHit(Projectile projectile, RaycastResult raycastResult)
         {
-            if (physicsBody2D is Projectile p)
-            {
-                p.RegisterHit();
-                EmitSignal(nameof(DamageReceived), 0f);
-            }
+            EmitSignal(nameof(DamageReceived), 0f);
         }
     }
 }
