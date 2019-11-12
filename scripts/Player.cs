@@ -82,7 +82,7 @@ namespace Deathville.GameObject
 
             if (!IsOnFloor() || moveVec.y < 0)
             {
-                _coyoteTime = INITIAL_COYOTE_TIME;
+                _coyoteTime = moveVec.y < 0 ? 0f : INITIAL_COYOTE_TIME;
                 _moveStateMachine.ChangeState(MoveStateAirborne);
             }
             UpdateAnimations();
