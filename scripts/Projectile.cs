@@ -16,7 +16,6 @@ namespace Deathville.GameObject
 
         private Vector2 _direction;
         private int _hitCount = 0;
-        private Vector2 _contactPosition;
         private uint _collisionMask = 1;
 
         public override void _Ready()
@@ -72,7 +71,7 @@ namespace Deathville.GameObject
             var death = _resourcePreloader.InstanceScene<Node2D>("BulletDeath");
             Zone.Current.EffectsLayer.AddChild(death);
             death.Rotation = (raycastResult == null ? _direction.Angle() - Mathf.Pi : raycastResult.Normal.Angle());
-            death.GlobalPosition = _contactPosition != Vector2.Zero ? _contactPosition : GlobalPosition;
+            death.GlobalPosition = GlobalPosition;
             QueueFree();
         }
     }
