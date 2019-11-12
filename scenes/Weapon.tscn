@@ -2,13 +2,13 @@
 
 [ext_resource path="res://assets/art/player-machine-gun.png" type="Texture" id=1]
 [ext_resource path="res://scripts/Weapon.cs" type="Script" id=2]
-[ext_resource path="res://scenes/Bullet.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/Projectile.tscn" type="PackedScene" id=3]
 
 [node name="Weapon" type="Node2D"]
 script = ExtResource( 2 )
 
 [node name="ResourcePreloader" type="ResourcePreloader" parent="."]
-resources = [ PoolStringArray( "Bullet" ), [ ExtResource( 3 ) ] ]
+resources = [ PoolStringArray( "Projectile" ), [ ExtResource( 3 ) ] ]
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 1 )

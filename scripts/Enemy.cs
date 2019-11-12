@@ -22,9 +22,10 @@ namespace Deathville.GameObject
 
         private void OnTimerTimeout()
         {
-            var bullet = _resourcePreloader.InstanceScene<Bullet>();
+            var bullet = _resourcePreloader.InstanceScene<Projectile>();
             Zone.Current.EffectsLayer.AddChild(bullet);
             bullet.Start(GlobalPosition + Vector2.Up * 10f, _playerPos);
+            bullet.SetEnemy();
         }
     }
 }

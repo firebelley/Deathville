@@ -28,10 +28,11 @@ namespace Deathville.GameObject
 
         private void Fire()
         {
-            var bullet = _resourcePreloader.InstanceScene<Bullet>();
+            var bullet = _resourcePreloader.InstanceScene<Projectile>();
             Zone.Current.EffectsLayer.AddChild(bullet);
             bullet.ObeyTimeScale = false;
             bullet.Start(_muzzlePosition.GlobalPosition, GetGlobalMousePosition());
+            bullet.SetFriendly();
             GameEventDispatcher.DispatchWeaponFired();
         }
 

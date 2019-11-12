@@ -26,4 +26,7 @@ position = Vector2( 72, 112 )
 [node name="Enemy" parent="Entities" instance=ExtResource( 3 )]
 position = Vector2( 256, 192 )
 
+[node name="Enemy2" parent="Entities" instance=ExtResource( 3 )]
+position = Vector2( -8, 208 )
+
 [node name="Effects" type="Node2D" parent="."]

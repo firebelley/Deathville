@@ -1,9 +1,29 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://assets/art/player1.png" type="Texture" id=1]
 [ext_resource path="res://scripts/Enemy.cs" type="Script" id=2]
-[ext_resource path="res://scenes/Bullet.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/Projectile.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/Component/DamageReceiverComponent.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/Component/HitEffectComponent.tscn" type="PackedScene" id=5]
+
+[sub_resource type="Shader" id=4]
+resource_local_to_scene = true
+code = "shader_type canvas_item;
+
+uniform float _hitShadePercent : hint_range(0.0, 1.0);
+
+void fragment() {
+	vec4 texColor = texture(TEXTURE, UV);
+	
+	vec3 diff = vec3(1, 1, 1);
+	COLOR.rgb = mix(texColor.rgb, texColor.rgb + diff * _hitShadePercent * _hitShadePercent, _hitShadePercent);
+	COLOR.a = texColor.a;
+}"
+
+[sub_resource type="ShaderMaterial" id=5]
+resource_local_to_scene = true
+shader = SubResource( 4 )
+shader_param/_hitShadePercent = null
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
@@ -22,8 +42,13 @@ extents = Vector2( 4, 12 )
 collision_layer = 0
 script = ExtResource( 2 )
 
+[node name="HitEffectComponent" parent="." instance=ExtResource( 5 )]
+_shaderMaterial = SubResource( 5 )
+_shadedNodePath = NodePath("../AnimatedSprite")
+_damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
+
 [node name="ResourcePreloader" type="ResourcePreloader" parent="."]
-resources = [ PoolStringArray( "Bullet" ), [ ExtResource( 3 ) ] ]
+resources = [ PoolStringArray( "Projectile" ), [ ExtResource( 3 ) ] ]
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.25
@@ -39,7 +64,7 @@ shape = SubResource( 2 )
 
 [node name="DamageReceiverComponent" parent="." instance=ExtResource( 4 )]
 collision_layer = 262144
-collision_mask = 2
+collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceiverComponent"]
 position = Vector2( 0, -15 )

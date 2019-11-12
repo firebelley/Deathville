@@ -1,10 +1,13 @@
-using System;
+using Deathville.GameObject;
 using Godot;
 
 namespace Deathville.Component
 {
     public class DamageReceiverComponent : Area2D
     {
+        [Signal]
+        public delegate void DamageReceived(float damage);
+
         public override void _Ready()
         {
             Connect("body_entered", this, nameof(OnBodyEntered));
@@ -12,7 +15,11 @@ namespace Deathville.Component
 
         private void OnBodyEntered(PhysicsBody2D physicsBody2D)
         {
-            GD.Print("oof");
+            if (physicsBody2D is Projectile p)
+            {
+                p.RegisterHit();
+                EmitSignal(nameof(DamageReceived), 0f);
+            }
         }
     }
 }
