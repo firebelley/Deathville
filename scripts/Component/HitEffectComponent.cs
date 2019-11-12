@@ -34,7 +34,7 @@ namespace Deathville.Component
                 "shader_param/_hitShadePercent",
                 1.0f,
                 0f,
-                .3f,
+                .4f,
                 Tween.TransitionType.Linear,
                 Tween.EaseType.In
             );

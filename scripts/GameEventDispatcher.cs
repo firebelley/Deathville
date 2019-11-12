@@ -8,6 +8,8 @@ namespace Deathville
         public delegate void PlayerPositionUpdated(Vector2 globalPosition);
         [Signal]
         public delegate void WeaponFired();
+        [Signal]
+        public delegate void EnemyStruck();
 
         public static GameEventDispatcher Instance { get; private set; }
 
@@ -24,6 +26,11 @@ namespace Deathville
         public static void DispatchWeaponFired()
         {
             Instance.EmitSignal(nameof(WeaponFired));
+        }
+
+        public static void DispatchEnemyStruck()
+        {
+            Instance.EmitSignal(nameof(EnemyStruck));
         }
     }
 }

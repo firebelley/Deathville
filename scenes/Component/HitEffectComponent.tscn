@@ -1,24 +1,11 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scripts/Component/HitEffectComponent.cs" type="Script" id=1]
-
-[sub_resource type="Shader" id=4]
-resource_local_to_scene = true
-code = "shader_type canvas_item;
-
-uniform float _hitShadePercent : hint_range(0.0, 1.0);
-
-void fragment() {
-	vec4 texColor = texture(TEXTURE, UV);
-	
-	vec3 diff = vec3(1, 1, 1);
-	COLOR.rgb = mix(texColor.rgb, texColor.rgb + diff * _hitShadePercent * _hitShadePercent, _hitShadePercent);
-	COLOR.a = texColor.a;
-}"
+[ext_resource path="res://resources/HitEffect.shader" type="Shader" id=2]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
-shader = SubResource( 4 )
+shader = ExtResource( 2 )
 shader_param/_hitShadePercent = null
 
 [node name="HitEffectComponent" type="Node"]

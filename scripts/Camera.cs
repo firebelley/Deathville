@@ -4,8 +4,8 @@ namespace Deathville
 {
     public class Camera : Camera2D
     {
-        private const float SHAKE_DECAY = 5f;
-        private const float MAX_OFFSET = 10f;
+        private const float SHAKE_DECAY = 10f;
+        private const float MAX_OFFSET = 5f;
 
         private Vector2 _targetPos;
         private OpenSimplexNoise _noise;
@@ -22,6 +22,7 @@ namespace Deathville
 
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.PlayerPositionUpdated), this, nameof(OnPlayerPositionUpdated));
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.WeaponFired), this, nameof(OnWeaponFired));
+            GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.EnemyStruck), this, nameof(OnEnemyStruck));
         }
 
         public override void _Process(float delta)
@@ -55,7 +56,12 @@ namespace Deathville
 
         private void OnWeaponFired()
         {
-            Shake(.5f);
+            Shake(.75f);
+        }
+
+        private void OnEnemyStruck()
+        {
+            Shake(1f);
         }
     }
 }
