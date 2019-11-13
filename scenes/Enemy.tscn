@@ -21,7 +21,9 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[sub_resource type="CapsuleShape2D" id=3]
+[sub_resource type="RectangleShape2D" id=5]
+resource_local_to_scene = true
+extents = Vector2( 4, 12 )
 
 [sub_resource type="RectangleShape2D" id=4]
 extents = Vector2( 4, 12 )
@@ -49,9 +51,8 @@ frames = SubResource( 2 )
 offset = Vector2( 0, -15 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 0, -24 )
-shape = SubResource( 3 )
-disabled = true
+position = Vector2( 0, -12 )
+shape = SubResource( 5 )
 
 [node name="DamageReceiverComponent" parent="." instance=ExtResource( 4 )]
 collision_layer = 262144

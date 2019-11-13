@@ -1,3 +1,4 @@
+using Deathville.Enum;
 using Godot;
 using GodotApiTools.Logic;
 
@@ -29,12 +30,6 @@ namespace Deathville.GameObject
         private float _coyoteTime;
 
         private StateMachine<MoveState> _moveStateMachine = new StateMachine<MoveState>();
-
-        public enum MoveState
-        {
-            GROUNDED,
-            AIRBORNE
-        }
 
         public override void _Ready()
         {
