@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://assets/art/player1.png" type="Texture" id=1]
 [ext_resource path="res://scripts/Enemy.cs" type="Script" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://scenes/Component/DamageReceiverComponent.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/Component/HitEffectComponent.tscn" type="PackedScene" id=5]
 [ext_resource path="res://resources/HitEffect.shader" type="Shader" id=6]
+[ext_resource path="res://scenes/Component/AIMovementComponent.tscn" type="PackedScene" id=7]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
@@ -29,6 +30,8 @@ extents = Vector2( 4, 12 )
 collision_layer = 0
 script = ExtResource( 2 )
 
+[node name="AIMovementComponent" parent="." instance=ExtResource( 7 )]
+
 [node name="HitEffectComponent" parent="." instance=ExtResource( 5 )]
 _shaderMaterial = SubResource( 1 )
 _shadedNodePath = NodePath("../AnimatedSprite")
@@ -48,6 +51,7 @@ offset = Vector2( 0, -15 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 0, -24 )
 shape = SubResource( 3 )
+disabled = true
 
 [node name="DamageReceiverComponent" parent="." instance=ExtResource( 4 )]
 collision_layer = 262144

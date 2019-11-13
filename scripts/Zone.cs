@@ -31,14 +31,14 @@ namespace Deathville
                 return _entitiesLayer;
             }
         }
-
         private Node2D _entitiesLayer;
-        private Pathfinder _pathfinder;
+
+        public Pathfinder Pathfinder { get; private set; }
 
         public override void _Ready()
         {
             Current = this;
-            _pathfinder = new Pathfinder(GetNode<TileMap>("TileMap"));
+            Pathfinder = new Pathfinder(GetNode<TileMap>("TileMap"));
         }
     }
 }

@@ -6,10 +6,12 @@ namespace Deathville.Util
 {
     public class Pathfinder
     {
-        private const float MAX_CELL_DISTANCE = 6f;
+        private const float MAX_CELL_DISTANCE = 8f;
+        private const float TILE_SIZE = 16f;
 
         private List<AstarCornerCell> _astarCornerCells = new List<AstarCornerCell>();
         private List<AstarCell> _astarCells = new List<AstarCell>();
+        private Dictionary<Vector2, AstarCell> _positionToCell = new Dictionary<Vector2, AstarCell>();
         private AStar2D _astar = new AStar2D();
         private int _astarId;
         private TileMap _tileMap;
@@ -44,6 +46,14 @@ namespace Deathville.Util
             GenerateAstar();
         }
 
+        public IEnumerable<Vector2> GetGlobalPath(Vector2 globalFrom, Vector2 globalTo)
+        {
+            var fromId = _astar.GetClosestPoint(globalFrom / TILE_SIZE);
+            var toId = _astar.GetClosestPoint(globalTo / TILE_SIZE);
+            var offset = new Vector2(0f, TILE_SIZE);
+            return _astar.GetPointPath(fromId, toId).Select(x => x * TILE_SIZE + offset);
+        }
+
         private void GenerateAstar()
         {
             foreach (var tilePos in _tileMap.GetUsedCells())
@@ -53,11 +63,6 @@ namespace Deathville.Util
             }
 
             ConnectCornerCells();
-
-            foreach (var cell in _astarCornerCells)
-            {
-                GD.Print(cell.Position);
-            }
         }
 
         private void ConnectCornerCells()
@@ -88,12 +93,17 @@ namespace Deathville.Util
                 // for each cell that matches the above conditions
                 // create a new astar cell at the corner position with a weight equal to the distance of the cell to connect to
                 // then connect the two cells together
-                // TODO: may need to connect the new corner cells to the OG cell, test to find out
                 foreach (var toConnectCell in cellsToConnect)
                 {
                     var dist = toConnectCell.Position.DistanceTo(cornerCell.Position);
                     _astar.AddPoint(_astarId, cornerCell.Position, dist);
                     _astar.ConnectPoints(toConnectCell.Id, _astarId, true);
+
+                    // connect new corner cell to "real" corner cell to complete the loop
+                    if (_positionToCell.ContainsKey(cornerCell.Position))
+                    {
+                        _astar.ConnectPoints(_positionToCell[cornerCell.Position].Id, _astarId, true);
+                    }
                     _astarId++;
                 }
             }
@@ -112,7 +122,9 @@ namespace Deathville.Util
         {
             var astarPos = tilePos + Vector2.Up;
             _astar.AddPoint(_astarId, astarPos, 1f);
-            _astarCells.Add(new AstarCell(astarPos, _astarId));
+            var astarCell = new AstarCell(astarPos, _astarId);
+            _astarCells.Add(astarCell);
+            _positionToCell[astarCell.Position] = astarCell;
 
             // connect the point to the left
             if (_astarId > 0 && _astar.GetPointPosition(_astarId - 1) == astarPos + Vector2.Left)
