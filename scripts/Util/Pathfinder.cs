@@ -16,6 +16,20 @@ namespace Deathville.Util
         private int _astarId;
         private TileMap _tileMap;
 
+        public struct PathfindCell
+        {
+            public int Id;
+            public float Weight;
+            public Vector2 GlobalPosition;
+
+            public PathfindCell(int id, float weight, Vector2 globalPosition)
+            {
+                Id = id;
+                Weight = weight;
+                GlobalPosition = globalPosition;
+            }
+        }
+
         private struct AstarCornerCell
         {
             public Vector2 Position;
@@ -46,12 +60,14 @@ namespace Deathville.Util
             GenerateAstar();
         }
 
-        public IEnumerable<Vector2> GetGlobalPath(Vector2 globalFrom, Vector2 globalTo)
+        public IEnumerable<PathfindCell> GetGlobalPath(Vector2 globalFrom, Vector2 globalTo)
         {
             var fromId = _astar.GetClosestPoint(globalFrom / TILE_SIZE);
             var toId = _astar.GetClosestPoint(globalTo / TILE_SIZE);
-            var offset = new Vector2(0f, TILE_SIZE);
-            return _astar.GetPointPath(fromId, toId).Select(x => x * TILE_SIZE + offset);
+            var idPath = _astar.GetIdPath(fromId, toId);
+
+            var offset = new Vector2(TILE_SIZE / 2f, TILE_SIZE);
+            return idPath.Select(x => new PathfindCell(x, _astar.GetPointWeightScale(x), _astar.GetPointPosition(x) * TILE_SIZE + offset));
         }
 
         private void GenerateAstar()
@@ -76,7 +92,7 @@ namespace Deathville.Util
                     cellsToConnect = _astarCells
                         .Where(cell =>
                             cell.Position.y > cornerCell.Position.y &&
-                            cell.Position.x < cornerCell.Position.x &&
+                            cell.Position.x < cornerCell.Position.x - 2 &&
                             cell.Position.DistanceSquaredTo(cornerCell.Position) <= MAX_CELL_DISTANCE * MAX_CELL_DISTANCE
                         );
                 }
@@ -85,7 +101,7 @@ namespace Deathville.Util
                     cellsToConnect = _astarCells
                         .Where(cell =>
                             cell.Position.y > cornerCell.Position.y &&
-                            cell.Position.x > cornerCell.Position.x &&
+                            cell.Position.x > cornerCell.Position.x + 2 &&
                             cell.Position.DistanceSquaredTo(cornerCell.Position) <= MAX_CELL_DISTANCE * MAX_CELL_DISTANCE
                         );
                 }

@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using Deathville.Enum;
+using Deathville.Util;
 using Godot;
 using GodotApiTools.Logic;
 
@@ -6,21 +9,22 @@ namespace Deathville.Component
 {
     public class AIMovementComponent : Node
     {
-        private const float MAX_AHEAD = 32f;
+        private const float MAX_AHEAD = 8f;
 
         [Export]
         private float _maxSpeed = 100f;
         [Export]
         private float _jumpSpeed = 400f;
 
-        private Curve2D _pathCurve = new Curve2D();
-        private float _currentT = 0f;
         private Vector2 _playerPos;
         private Vector2 _velocity;
 
         private KinematicBody2D _owner;
 
+        private Line2D _line2d;
         private StateMachine<MoveState> _stateMachine = new StateMachine<MoveState>();
+        private List<Pathfinder.PathfindCell> _pathfindCells = new List<Pathfinder.PathfindCell>();
+        private int _targetCellId;
 
         public override void _Ready()
         {
@@ -40,20 +44,17 @@ namespace Deathville.Component
 
         public override void _PhysicsProcess(float delta)
         {
-            if (_pathCurve.GetPointCount() > 0)
+            if (_targetCellId < _pathfindCells.Count)
             {
-                var curvePos = _pathCurve.InterpolateBaked(_currentT);
-                if (_owner.GlobalPosition.DistanceSquaredTo(curvePos) <= MAX_AHEAD * MAX_AHEAD)
+                var targetPos = GetTargetPosition();
+                if (_owner.IsOnFloor() && _owner.GlobalPosition.DistanceSquaredTo(targetPos) <= MAX_AHEAD * MAX_AHEAD)
                 {
-                    _currentT = Mathf.Clamp(_currentT + MAX_AHEAD, 0f, _pathCurve.GetBakedLength());
+                    _targetCellId++;
                 }
             }
         }
 
-        // TODO: change pathfinding to return information about the weight and the IDS
-        // keep track of the path ids as well as the global positions
-        // use the weight to determine jump strength
-        // use accel/decel for movement instead of instantaneous
+        // TODO: use accel/decel for movement instead of instantaneous
         private void StateGrounded()
         {
             if (_stateMachine.IsStateNew())
@@ -68,9 +69,13 @@ namespace Deathville.Component
             }
             _velocity = _owner.MoveAndSlideWithSnap(_velocity, Vector2.Down, Vector2.Up);
 
-            if (GetTargetPosition() != Vector2.Zero && (GetTargetPosition().y - _owner.GlobalPosition.y) >= 16f)
+            if (GetTargetPosition() != Vector2.Zero && ShouldJump(GetTargetPathCell()))
             {
-                _velocity.y = -_jumpSpeed;
+                _velocity.y = -GetJumpStep(GetTargetPathCell());
+                _stateMachine.ChangeState(StateAirborne);
+            }
+            else if (!_owner.IsOnFloor())
+            {
                 _stateMachine.ChangeState(StateAirborne);
             }
         }
@@ -94,7 +99,7 @@ namespace Deathville.Component
 
         private Vector2 GetTargetDirection()
         {
-            if (_pathCurve.GetPointCount() > 0)
+            if (_targetCellId < _pathfindCells.Count)
             {
                 return (GetTargetPosition() - _owner.GlobalPosition).Normalized();
             }
@@ -103,11 +108,32 @@ namespace Deathville.Component
 
         private Vector2 GetTargetPosition()
         {
-            if (_pathCurve.GetPointCount() > 0)
+            if (_targetCellId < _pathfindCells.Count)
             {
-                return _pathCurve.InterpolateBaked(_currentT);
+                return _pathfindCells[_targetCellId].GlobalPosition;
             }
             return Vector2.Zero;
+        }
+
+        private Pathfinder.PathfindCell GetTargetPathCell()
+        {
+            return _pathfindCells[_targetCellId];
+        }
+
+        private float GetJumpStep(Pathfinder.PathfindCell targetCell)
+        {
+            var heightDiff = Mathf.Abs(_owner.GlobalPosition.y - targetCell.GlobalPosition.y);
+            var speed = Mathf.Clamp(Mathf.Sqrt(2 * 800f * heightDiff) * 1.25f, 0f, _jumpSpeed);
+            return speed;
+        }
+
+        private bool ShouldJump(Pathfinder.PathfindCell targetCell)
+        {
+            var isBelowTarget = _owner.GlobalPosition.y - targetCell.GlobalPosition.y >= 16f;
+            //TODO: this doesn't work because it can pathfind to the middle of a platform
+            // in other words, the pathfinding for jumping is not only corner to corner
+            var isFarHorizontal = Mathf.Abs(targetCell.GlobalPosition.x - _owner.GlobalPosition.x) > 16f * 6f;
+            return (!isBelowTarget && isFarHorizontal) || isBelowTarget;
         }
 
         private void OnPlayerPositionUpdated(Vector2 pos)
@@ -119,13 +145,20 @@ namespace Deathville.Component
         {
             if (!_owner.IsOnFloor()) return;
 
-            _pathCurve.ClearPoints();
-            _currentT = 0f;
-            var path = Zone.Current.Pathfinder.GetGlobalPath((Owner as Node2D).GlobalPosition, _playerPos);
-            foreach (var point in path)
+            _targetCellId = 0;
+            _pathfindCells = Zone.Current.Pathfinder.GetGlobalPath((Owner as Node2D).GlobalPosition, _playerPos).ToList();
+
+            if (IsInstanceValid(_line2d))
             {
-                _pathCurve.AddPoint(point);
+                _line2d.QueueFree();
             }
+            _line2d = new Line2D();
+            _line2d.Width = 2f;
+            foreach (var cell in _pathfindCells)
+            {
+                _line2d.AddPoint(cell.GlobalPosition);
+            }
+            Zone.Current.EffectsLayer.AddChild(_line2d);
         }
     }
 }
