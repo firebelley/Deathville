@@ -1,3 +1,4 @@
+using Deathville.Component;
 using Deathville.Enum;
 using Godot;
 using GodotApiTools.Logic;
@@ -20,14 +21,14 @@ namespace Deathville.GameObject
 
         private const float MAX_SPEED = 200f;
         private const float GRAVITY = 800f;
-        private const float JUMP_SPEED = -400f;
-        private const float GRAVITY_ACCELERATOR = 4f;
+        private const float JUMP_SPEED = 410f;
+        private const float GRAVITY_ACCELERATOR = 6f;
         private const float INITIAL_COYOTE_TIME = .2f;
         private const float TIME_SCALE = .15f;
 
         private AnimatedSprite _animatedSprite;
-        private Vector2 _velocity;
         private float _coyoteTime;
+        private VelocityComponent _velocityComponent;
 
         private StateMachine<MoveState> _moveStateMachine = new StateMachine<MoveState>();
 
@@ -37,6 +38,7 @@ namespace Deathville.GameObject
             _moveStateMachine.AddState(MoveState.AIRBORNE, MoveStateAirborne);
             _moveStateMachine.SetInitialState(MoveState.GROUNDED);
             _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
+            _velocityComponent = GetNode<VelocityComponent>("VelocityComponent");
         }
 
         public override void _Process(float delta)
@@ -67,12 +69,20 @@ namespace Deathville.GameObject
         private void MoveStateGrounded()
         {
             var moveVec = GetMovementVector();
-            _velocity.x = moveVec.x * MAX_SPEED;
-            _velocity = MoveAndSlideWithSnap(_velocity / Engine.TimeScale, Vector2.Down, Vector2.Up) * Engine.TimeScale;
+            if (moveVec.x != 0f)
+            {
+                _velocityComponent.Accelerate(moveVec, MAX_SPEED);
+            }
+            else
+            {
+                _velocityComponent.Decelerate();
+            }
+
+            _velocityComponent.MoveWithSnap();
 
             if (moveVec.y < 0)
             {
-                _velocity.y = JUMP_SPEED;
+                _velocityComponent.Jump(JUMP_SPEED);
             }
 
             if (!IsOnFloor() || moveVec.y < 0)
@@ -88,20 +98,30 @@ namespace Deathville.GameObject
             _coyoteTime = Mathf.Clamp(_coyoteTime - GetProcessDeltaTime() / Engine.TimeScale, 0f, INITIAL_COYOTE_TIME);
 
             var moveVec = GetMovementVector();
-            _velocity.x = moveVec.x * MAX_SPEED;
+            if (moveVec.x != 0f)
+            {
+                _velocityComponent.Accelerate(moveVec, MAX_SPEED);
+            }
+            else
+            {
+                _velocityComponent.Decelerate();
+            }
 
             if (moveVec.y < 0 && _coyoteTime > 0f)
             {
-                _velocity.y = JUMP_SPEED;
+                _velocityComponent.Jump(JUMP_SPEED);
             }
 
-            var deltaGrav = GRAVITY * GetProcessDeltaTime() / Engine.TimeScale;
-            if (!Input.IsActionPressed(INPUT_JUMP) && _velocity.y < 0)
+            if (!Input.IsActionPressed(INPUT_JUMP) && _velocityComponent.Velocity.y < 0)
             {
-                deltaGrav *= GRAVITY_ACCELERATOR;
+                _velocityComponent.ApplyGravity(GRAVITY_ACCELERATOR);
             }
-            _velocity.y += deltaGrav;
-            _velocity = MoveAndSlide(_velocity / Engine.TimeScale, Vector2.Up) * Engine.TimeScale;
+            else
+            {
+                _velocityComponent.ApplyGravity();
+            }
+
+            _velocityComponent.Move();
 
             if (IsOnFloor())
             {
