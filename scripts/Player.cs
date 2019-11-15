@@ -19,9 +19,8 @@ namespace Deathville.GameObject
         private const string INPUT_JUMP = "jump";
         private const string INPUT_ATTACK = "attack";
 
-        private const float MAX_SPEED = 200f;
         private const float GRAVITY = 800f;
-        private const float JUMP_SPEED = 410f;
+        private const float JUMP_SPEED = 420f;
         private const float GRAVITY_ACCELERATOR = 6f;
         private const float INITIAL_COYOTE_TIME = .2f;
         private const float TIME_SCALE = .15f;
@@ -71,7 +70,7 @@ namespace Deathville.GameObject
             var moveVec = GetMovementVector();
             if (moveVec.x != 0f)
             {
-                _velocityComponent.Accelerate(moveVec, MAX_SPEED);
+                _velocityComponent.Accelerate(moveVec);
             }
             else
             {
@@ -100,7 +99,7 @@ namespace Deathville.GameObject
             var moveVec = GetMovementVector();
             if (moveVec.x != 0f)
             {
-                _velocityComponent.Accelerate(moveVec, MAX_SPEED);
+                _velocityComponent.Accelerate(moveVec);
             }
             else
             {

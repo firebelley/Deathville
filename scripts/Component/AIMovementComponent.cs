@@ -12,17 +12,18 @@ namespace Deathville.Component
         private const float MAX_AHEAD = 8f;
 
         [Export]
-        private float _maxSpeed = 100f;
+        private NodePath _velocityComponentPath;
 
         private Vector2 _playerPos;
-        private Vector2 _velocity;
 
         private KinematicBody2D _owner;
+        private VelocityComponent _velocityComponent;
 
         private Line2D _line2d;
         private StateMachine<MoveState> _stateMachine = new StateMachine<MoveState>();
         private List<Pathfinder.PathfindCell> _pathfindCells = new List<Pathfinder.PathfindCell>();
         private int _targetCellId;
+        private bool _shouldGeneratePath;
 
         public override void _Ready()
         {
@@ -31,6 +32,8 @@ namespace Deathville.Component
             _stateMachine.SetInitialState(MoveState.GROUNDED);
 
             _owner = Owner as KinematicBody2D;
+            _velocityComponent = GetNode<VelocityComponent>(_velocityComponentPath);
+
             GetNode<Timer>("Timer").Connect("timeout", this, nameof(OnTimerTimeout));
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.PlayerPositionUpdated), this, nameof(OnPlayerPositionUpdated));
         }
@@ -42,7 +45,11 @@ namespace Deathville.Component
 
         public override void _PhysicsProcess(float delta)
         {
-            if (_targetCellId < _pathfindCells.Count)
+            if (_shouldGeneratePath && _owner.IsOnFloor())
+            {
+                GetNewPath();
+            }
+            else if (_targetCellId < _pathfindCells.Count)
             {
                 var targetPos = GetTargetPosition();
                 if (_owner.IsOnFloor() && _owner.GlobalPosition.DistanceSquaredTo(targetPos) <= MAX_AHEAD * MAX_AHEAD)
@@ -52,24 +59,29 @@ namespace Deathville.Component
             }
         }
 
-        // TODO: use accel/decel for movement instead of instantaneous
         private void StateGrounded()
         {
             if (_stateMachine.IsStateNew())
             {
-                OnTimerTimeout();
+                // GetNewPath();
             }
 
             var dir = GetTargetDirection();
             if (dir.x != 0f)
             {
-                _velocity.x = Mathf.Sign(dir.x) * _maxSpeed;
+                _velocityComponent.Accelerate(dir);
             }
-            _velocity = _owner.MoveAndSlideWithSnap(_velocity, Vector2.Down, Vector2.Up);
+            else
+            {
+                _velocityComponent.Decelerate();
+            }
+
+            _velocityComponent.MoveWithSnap();
 
             if (GetTargetPosition() != Vector2.Zero && ShouldJump(GetTargetPathCell()))
             {
-                _velocity.y = -GetJumpStep(GetTargetPathCell());
+                var jumpSpeed = GetJumpSpeed(GetTargetPathCell());
+                _velocityComponent.Jump(jumpSpeed);
                 _stateMachine.ChangeState(StateAirborne);
             }
             else if (!_owner.IsOnFloor())
@@ -80,14 +92,9 @@ namespace Deathville.Component
 
         private void StateAirborne()
         {
-            var dir = GetTargetDirection();
-            // if (dir.x != 0f)
-            // {
-            //     _velocity.x = Mathf.Sign(dir.x) * _maxSpeed;
-            // }
-
-            _velocity.y += 800f * GetProcessDeltaTime();
-            _velocity = _owner.MoveAndSlide(_velocity, Vector2.Up);
+            _velocityComponent.Accelerate(GetTargetDirection());
+            _velocityComponent.ApplyGravity();
+            _velocityComponent.Move();
 
             if (_owner.IsOnFloor())
             {
@@ -118,7 +125,7 @@ namespace Deathville.Component
             return _pathfindCells[_targetCellId];
         }
 
-        private float GetJumpStep(Pathfinder.PathfindCell targetCell)
+        private float GetJumpSpeed(Pathfinder.PathfindCell targetCell)
         {
             var dir = (targetCell.GlobalPosition - _owner.GlobalPosition);
             var angle = dir.Angle();
@@ -139,10 +146,32 @@ namespace Deathville.Component
         private bool ShouldJump(Pathfinder.PathfindCell targetCell)
         {
             var isBelowTarget = _owner.GlobalPosition.y - targetCell.GlobalPosition.y >= 16f;
-            //TODO: this doesn't work because it can pathfind to the middle of a platform
+            // this doesn't work because it can pathfind to the middle of a platform
             // in other words, the pathfinding for jumping is not only corner to corner
             var isFarHorizontal = Mathf.Abs(targetCell.GlobalPosition.x - _owner.GlobalPosition.x) > 16f * 6f;
             return (!isBelowTarget && isFarHorizontal) || isBelowTarget;
+        }
+
+        private void GetNewPath()
+        {
+            _shouldGeneratePath = false;
+            _targetCellId = 0;
+            var offset = Mathf.Sign(_velocityComponent.Velocity.x) * MAX_AHEAD;
+            var offsetv = new Vector2(offset, 0f);
+            _pathfindCells = Zone.Current.Pathfinder.GetGlobalPath((Owner as Node2D).GlobalPosition + offsetv, _playerPos).ToList();
+
+            // if (IsInstanceValid(_line2d))
+            // {
+            //     _line2d.QueueFree();
+            // }
+            // _line2d = new Line2D();
+            // _line2d.Width = 2f;
+            // foreach (var cell in _pathfindCells)
+            // {
+            //     _line2d.AddPoint(cell.GlobalPosition);
+            // }
+
+            // Zone.Current.EffectsLayer.AddChild(_line2d);
         }
 
         private void OnPlayerPositionUpdated(Vector2 pos)
@@ -152,22 +181,7 @@ namespace Deathville.Component
 
         private void OnTimerTimeout()
         {
-            if (!_owner.IsOnFloor()) return;
-
-            _targetCellId = 0;
-            _pathfindCells = Zone.Current.Pathfinder.GetGlobalPath((Owner as Node2D).GlobalPosition, _playerPos).ToList();
-
-            if (IsInstanceValid(_line2d))
-            {
-                _line2d.QueueFree();
-            }
-            _line2d = new Line2D();
-            _line2d.Width = 2f;
-            foreach (var cell in _pathfindCells)
-            {
-                _line2d.AddPoint(cell.GlobalPosition);
-            }
-            Zone.Current.EffectsLayer.AddChild(_line2d);
+            _shouldGeneratePath = true;
         }
     }
 }

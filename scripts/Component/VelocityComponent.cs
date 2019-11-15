@@ -5,12 +5,16 @@ namespace Deathville.Component
 {
     public class VelocityComponent : Node
     {
-        private const float ACCELERATION = 2000f;
-        private const float DECELERATION = 1500f;
         private const float GRAVITY = 800f;
 
         [Export]
         private bool _obeyTimeScale = true;
+        [Export]
+        private float _maxSpeed = 100f;
+        [Export]
+        private float _acceleration = 1500f;
+        [Export]
+        private float _deceleration = 1500f;
 
         public Vector2 Velocity
         {
@@ -27,23 +31,23 @@ namespace Deathville.Component
             _owner = Owner as KinematicBody2D;
         }
 
-        public void Accelerate(Vector2 dir, float maxSpeed)
+        public void Accelerate(Vector2 dir)
         {
             var mod = dir.x < 0f ? -1f : 1f;
             if (dir.x == 0f)
             {
                 mod = 0f;
             }
-            _velocity.x += ACCELERATION * GetProcessDeltaTime() * mod / GetTimeScale();
+            _velocity.x += _acceleration * GetProcessDeltaTime() * mod / GetTimeScale();
             var abs = Math.Abs(_velocity.x);
-            var x = Mathf.Clamp(abs, 0f, maxSpeed);
+            var x = Mathf.Clamp(abs, 0f, _maxSpeed);
             _velocity.x = x * Mathf.Sign(_velocity.x);
         }
 
         public void Decelerate()
         {
             var abs = Mathf.Abs(_velocity.x);
-            var x = Mathf.Clamp(abs - DECELERATION * GetProcessDeltaTime() / GetTimeScale(), 0f, float.MaxValue);
+            var x = Mathf.Clamp(abs - _deceleration * GetProcessDeltaTime() / GetTimeScale(), 0f, float.MaxValue);
             _velocity.x = x * Mathf.Sign(_velocity.x);
         }
 
