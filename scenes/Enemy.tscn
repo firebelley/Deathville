@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://assets/art/player1.png" type="Texture" id=1]
 [ext_resource path="res://scripts/Enemy.cs" type="Script" id=2]
@@ -8,11 +8,15 @@
 [ext_resource path="res://resources/HitEffect.shader" type="Shader" id=6]
 [ext_resource path="res://scenes/Component/AIMovementComponent.tscn" type="PackedScene" id=7]
 [ext_resource path="res://scenes/Component/VelocityComponent.tscn" type="PackedScene" id=8]
+[ext_resource path="res://scenes/Component/HealthComponent.tscn" type="PackedScene" id=9]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
 shader = ExtResource( 6 )
 shader_param/_hitShadePercent = null
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 4, 12 )
 
 [sub_resource type="SpriteFrames" id=2]
 animations = [ {
@@ -26,12 +30,12 @@ animations = [ {
 resource_local_to_scene = true
 extents = Vector2( 4, 12 )
 
-[sub_resource type="RectangleShape2D" id=4]
-extents = Vector2( 4, 12 )
-
 [node name="Enemy" type="KinematicBody2D"]
 collision_layer = 0
 script = ExtResource( 2 )
+
+[node name="ResourcePreloader" type="ResourcePreloader" parent="."]
+resources = [ PoolStringArray( "Projectile" ), [ ExtResource( 3 ) ] ]
 
 [node name="AIMovementComponent" parent="." instance=ExtResource( 7 )]
 _velocityComponentPath = NodePath("../VelocityComponent")
@@ -43,8 +47,17 @@ _shaderMaterial = SubResource( 1 )
 _shadedNodePath = NodePath("../AnimatedSprite")
 _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
 
-[node name="ResourcePreloader" type="ResourcePreloader" parent="."]
-resources = [ PoolStringArray( "Projectile" ), [ ExtResource( 3 ) ] ]
+[node name="HealthComponent" parent="." instance=ExtResource( 9 )]
+_maxHealth = 1.0
+_damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
+
+[node name="DamageReceiverComponent" parent="." instance=ExtResource( 4 )]
+collision_layer = 262144
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceiverComponent"]
+position = Vector2( 0, -15 )
+shape = SubResource( 4 )
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.25
@@ -57,11 +70,3 @@ offset = Vector2( 0, -15 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 0, -12 )
 shape = SubResource( 3 )
-
-[node name="DamageReceiverComponent" parent="." instance=ExtResource( 4 )]
-collision_layer = 262144
-collision_mask = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceiverComponent"]
-position = Vector2( 0, -15 )
-shape = SubResource( 4 )
