@@ -13,8 +13,6 @@ namespace Deathville.Component
 
         [Export]
         private float _maxSpeed = 100f;
-        [Export]
-        private float _jumpSpeed = 400f;
 
         private Vector2 _playerPos;
         private Vector2 _velocity;
@@ -83,10 +81,10 @@ namespace Deathville.Component
         private void StateAirborne()
         {
             var dir = GetTargetDirection();
-            if (dir.x != 0f)
-            {
-                _velocity.x = Mathf.Sign(dir.x) * _maxSpeed;
-            }
+            // if (dir.x != 0f)
+            // {
+            //     _velocity.x = Mathf.Sign(dir.x) * _maxSpeed;
+            // }
 
             _velocity.y += 800f * GetProcessDeltaTime();
             _velocity = _owner.MoveAndSlide(_velocity, Vector2.Up);
@@ -122,9 +120,20 @@ namespace Deathville.Component
 
         private float GetJumpStep(Pathfinder.PathfindCell targetCell)
         {
-            var heightDiff = Mathf.Abs(_owner.GlobalPosition.y - targetCell.GlobalPosition.y);
-            var speed = Mathf.Clamp(Mathf.Sqrt(2 * 800f * heightDiff) * 1.25f, 0f, _jumpSpeed);
-            return speed;
+            var dir = (targetCell.GlobalPosition - _owner.GlobalPosition);
+            var angle = dir.Angle();
+            var percent = 1f;
+
+            if (angle > 0)
+            {
+                var halfPi = Mathf.Pi * .5f;
+                percent = Mathf.Abs((1f - (angle / halfPi))) * .75f;
+            }
+
+            var length = (targetCell.GlobalPosition - _owner.GlobalPosition).Length();
+            var maxJumpHeight = (length) * percent;
+            var jumpVel = Mathf.Sqrt(2f * 800f * maxJumpHeight);
+            return jumpVel;
         }
 
         private bool ShouldJump(Pathfinder.PathfindCell targetCell)
