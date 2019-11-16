@@ -27,6 +27,7 @@ namespace Deathville.Component
         private void UpdatePosition()
         {
             var weapon = _weaponSocketComponent.Weapon;
+            if (weapon == null) return;
             var facingLeft = GetGlobalMousePosition().x < weapon.GlobalPosition.x;
             weapon.Scale = facingLeft ? Scale.Abs() * new Vector2(-1, 1) : weapon.Scale.Abs() * Vector2.One;
             weapon.Rotation = (weapon.GlobalPosition - GetGlobalMousePosition()).Angle() - (!facingLeft ? Mathf.Pi : 0);
