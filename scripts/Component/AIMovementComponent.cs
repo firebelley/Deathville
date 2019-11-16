@@ -15,12 +15,15 @@ namespace Deathville.Component
         private NodePath _velocityComponentPath;
         [Export]
         private NodePath _entityAnimationComponentPath;
+        [Export]
+        private NodePath _weaponSocketComponentPath;
 
         public Vector2 TargetPosition;
 
         private KinematicBody2D _owner;
         private VelocityComponent _velocityComponent;
         private EntityAnimationComponent _entityAnimationComponent;
+        private WeaponSocketComponent _weaponSocketComponent;
 
         private Line2D _line2d;
         private StateMachine<MoveState> _stateMachine = new StateMachine<MoveState>();
@@ -37,6 +40,7 @@ namespace Deathville.Component
             _owner = Owner as KinematicBody2D;
             _velocityComponent = GetNode<VelocityComponent>(_velocityComponentPath);
             _entityAnimationComponent = GetNode<EntityAnimationComponent>(_entityAnimationComponentPath);
+            _weaponSocketComponent = GetNode<WeaponSocketComponent>(_weaponSocketComponentPath);
 
             GetNode<Timer>("Timer").Connect("timeout", this, nameof(OnTimerTimeout));
         }
@@ -184,7 +188,16 @@ namespace Deathville.Component
             if (dir.x != 0f)
             {
                 _entityAnimationComponent.Play(EntityAnimationComponent.ANIM_RUN);
-                _entityAnimationComponent.Flip(dir.x < 0f);
+                var shouldFlip = false;
+                if (_weaponSocketComponent != null)
+                {
+                    shouldFlip = _weaponSocketComponent.FacingLeft;
+                }
+                else
+                {
+                    shouldFlip = dir.x < 0f;
+                }
+                _entityAnimationComponent.Flip(shouldFlip);
             }
             else
             {

@@ -7,8 +7,6 @@ namespace Deathville.GameObject
 {
     public class Projectile : Node2D
     {
-        public bool ObeyTimeScale = true;
-
         [Export]
         private float _speed = 500f;
 
@@ -17,6 +15,7 @@ namespace Deathville.GameObject
         private Vector2 _direction;
         private int _hitCount = 0;
         private uint _collisionMask = 1;
+        private bool _obeyTimeScale = true;
 
         public override void _Ready()
         {
@@ -26,7 +25,7 @@ namespace Deathville.GameObject
         public override void _PhysicsProcess(float delta)
         {
             var prevPos = GlobalPosition;
-            GlobalPosition += _speed * delta * _direction / (ObeyTimeScale ? 1f : Engine.TimeScale);
+            GlobalPosition += _speed * delta * _direction / (_obeyTimeScale ? 1f : Engine.TimeScale);
             var raycastResult = GetWorld2d().DirectSpaceState.Raycast(prevPos, GlobalPosition, null, _collisionMask, true, true);
 
             if (raycastResult != null)
@@ -53,6 +52,7 @@ namespace Deathville.GameObject
         public void SetFriendly()
         {
             _collisionMask |= (1 << 18);
+            _obeyTimeScale = false;
         }
 
         public void SetEnemy()

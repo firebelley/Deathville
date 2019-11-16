@@ -13,7 +13,7 @@ namespace Deathville.Component
         [Export]
         private float _aggroRange = 100f;
 
-        private bool _aggroed = false;
+        public bool Aggressive { get; private set; } = false;
 
         private Node2D _owner;
         private AIMovementComponent _aiMovementComponent;
@@ -30,16 +30,16 @@ namespace Deathville.Component
         public override void _PhysicsProcess(float delta)
         {
             var player = GetTree().GetFirstNodeInGroup<Player>(Player.GROUP);
-            if (_aggroed || (player != null && _owner.GlobalPosition.DistanceSquaredTo(player.GlobalPosition) < _aggroRange * _aggroRange))
+            if (Aggressive || (player != null && _owner.GlobalPosition.DistanceSquaredTo(player.GlobalPosition) < _aggroRange * _aggroRange))
             {
                 _aiMovementComponent.TargetPosition = player.GlobalPosition;
-                _aggroed = true;
+                Aggressive = true;
             }
         }
 
         private void OnDamageReceived(float damage)
         {
-            _aggroed = true;
+            Aggressive = true;
         }
     }
 }

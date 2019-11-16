@@ -26,7 +26,7 @@ namespace Deathville.Component
 
         private void OnAttackStart()
         {
-            _weaponSocketComponent.Weapon?.Fire();
+            _weaponSocketComponent.Weapon?.Fire(GetGlobalMousePosition());
         }
     }
 }

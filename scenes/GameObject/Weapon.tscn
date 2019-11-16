@@ -13,3 +13,6 @@ position = Vector2( 20, 1 )
 
 [node name="ChamberPosition" type="Position2D" parent="."]
 position = Vector2( 0, 1 )
+
+[node name="FireTimer" type="Timer" parent="."]
+one_shot = true

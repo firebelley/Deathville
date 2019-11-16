@@ -1,7 +1,6 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://assets/art/peasant2.png" type="Texture" id=1]
-[ext_resource path="res://scripts/Enemy.cs" type="Script" id=2]
 [ext_resource path="res://scenes/Component/AIAimComponent.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/Component/DamageReceiverComponent.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/Component/HitEffectComponent.tscn" type="PackedScene" id=5]
@@ -28,7 +27,7 @@ shader_param/_hitShadePercent = null
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 4, 8 )
 
-[sub_resource type="SpriteFrames" id=5]
+[sub_resource type="SpriteFrames" id=3]
 animations = [ {
 "frames": [ ExtResource( 12 ), ExtResource( 1 ), ExtResource( 10 ), ExtResource( 11 ) ],
 "loop": true,
@@ -47,7 +46,6 @@ extents = Vector2( 4, 8 )
 
 [node name="Enemy" type="KinematicBody2D"]
 collision_layer = 0
-script = ExtResource( 2 )
 
 [node name="AIBehaviorComponent" parent="." instance=ExtResource( 19 )]
 _aiMovementComponentPath = NodePath("../AIMovementComponent")
@@ -56,6 +54,7 @@ _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
 [node name="AIMovementComponent" parent="." instance=ExtResource( 7 )]
 _velocityComponentPath = NodePath("../VelocityComponent")
 _entityAnimationComponentPath = NodePath("../EntityAnimationComponent")
+_weaponSocketComponentPath = NodePath("../WeaponSocketComponent")
 
 [node name="VelocityComponent" parent="." instance=ExtResource( 8 )]
 
@@ -70,10 +69,12 @@ _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
 
 [node name="AIAimComponent" parent="." instance=ExtResource( 3 )]
 _weaponSocketComponentPath = NodePath("../WeaponSocketComponent")
+_aiBehaviorComponentPath = NodePath("../AIBehaviorComponent")
 
 [node name="DamageReceiverComponent" parent="." instance=ExtResource( 4 )]
 collision_layer = 262144
 collision_mask = 0
+_sendEnemyStruckEvent = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceiverComponent"]
 position = Vector2( 0, -11 )
@@ -81,7 +82,7 @@ shape = SubResource( 2 )
 
 [node name="EntityAnimationComponent" parent="." instance=ExtResource( 18 )]
 position = Vector2( 0, -15 )
-frames = SubResource( 5 )
+frames = SubResource( 3 )
 animation = "run"
 playing = true
 
@@ -89,10 +90,6 @@ playing = true
 position = Vector2( -1, -10 )
 
 [node name="PeasantWeapon" parent="WeaponSocketComponent" instance=ExtResource( 17 )]
-
-[node name="Timer" type="Timer" parent="."]
-wait_time = 0.25
-autostart = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false

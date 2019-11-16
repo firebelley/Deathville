@@ -9,13 +9,15 @@ namespace Deathville.Component
         [Signal]
         public delegate void DamageReceived(float damage);
 
-        public override void _Ready()
-        {
-
-        }
+        [Export]
+        private bool _sendEnemyStruckEvent;
 
         public void RegisterHit(Projectile projectile, RaycastResult raycastResult)
         {
+            if (_sendEnemyStruckEvent)
+            {
+                GameEventDispatcher.DispatchEnemyStruck();
+            }
             EmitSignal(nameof(DamageReceived), 0f);
         }
     }
