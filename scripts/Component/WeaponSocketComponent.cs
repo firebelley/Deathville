@@ -25,5 +25,13 @@ namespace Deathville.Component
                 _weapon = GetChild(0) as Weapon;
             }
         }
+
+        public void AimWeapon(Vector2 atPos)
+        {
+            if (Weapon == null) return;
+            var facingLeft = atPos.x < _weapon.GlobalPosition.x;
+            _weapon.Scale = facingLeft ? Scale.Abs() * new Vector2(-1, 1) : _weapon.Scale.Abs() * Vector2.One;
+            _weapon.Rotation = (_weapon.GlobalPosition - atPos).Angle() - (!facingLeft ? Mathf.Pi : 0);
+        }
     }
 }

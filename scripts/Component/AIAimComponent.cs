@@ -1,9 +1,10 @@
 using Deathville.GameObject;
 using Godot;
+using GodotApiTools.Extension;
 
 namespace Deathville.Component
 {
-    public class PlayerAimComponent : Node2D
+    public class AIAimComponent : Node2D
     {
         [Export]
         private NodePath _weaponSocketComponentPath;
@@ -13,20 +14,15 @@ namespace Deathville.Component
         public override void _Ready()
         {
             _weaponSocketComponent = GetNode<WeaponSocketComponent>(_weaponSocketComponentPath);
-            if (Owner is Player p)
-            {
-                p.Connect(nameof(Player.AttackStart), this, nameof(OnAttackStart));
-            }
         }
 
         public override void _Process(float delta)
         {
-            _weaponSocketComponent.AimWeapon(GetGlobalMousePosition());
-        }
-
-        private void OnAttackStart()
-        {
-            _weaponSocketComponent.Weapon?.Fire();
+            var player = GetTree().GetFirstNodeInGroup<Player>(Player.GROUP);
+            if (player != null)
+            {
+                _weaponSocketComponent.AimWeapon(player.GlobalPosition);
+            }
         }
     }
 }

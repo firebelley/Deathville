@@ -1,8 +1,8 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://assets/art/peasant2.png" type="Texture" id=1]
 [ext_resource path="res://scripts/Enemy.cs" type="Script" id=2]
-[ext_resource path="res://scenes/Projectile.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/Component/AIAimComponent.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/Component/DamageReceiverComponent.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/Component/HitEffectComponent.tscn" type="PackedScene" id=5]
 [ext_resource path="res://resources/HitEffect.shader" type="Shader" id=6]
@@ -17,6 +17,7 @@
 [ext_resource path="res://assets/art/peasant7.png" type="Texture" id=15]
 [ext_resource path="res://scenes/Component/WeaponSocketComponent.tscn" type="PackedScene" id=16]
 [ext_resource path="res://scenes/GameObject/PeasantWeapon.tscn" type="PackedScene" id=17]
+[ext_resource path="res://scenes/Component/EntityAnimationComponent.tscn" type="PackedScene" id=18]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
@@ -26,11 +27,11 @@ shader_param/_hitShadePercent = null
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 4, 8 )
 
-[sub_resource type="SpriteFrames" id=3]
+[sub_resource type="SpriteFrames" id=5]
 animations = [ {
 "frames": [ ExtResource( 12 ), ExtResource( 1 ), ExtResource( 10 ), ExtResource( 11 ) ],
 "loop": true,
-"name": "default",
+"name": "idle",
 "speed": 8.0
 }, {
 "frames": [ ExtResource( 14 ), ExtResource( 13 ), ExtResource( 15 ) ],
@@ -47,22 +48,23 @@ extents = Vector2( 4, 8 )
 collision_layer = 0
 script = ExtResource( 2 )
 
-[node name="ResourcePreloader" type="ResourcePreloader" parent="."]
-resources = [ PoolStringArray( "Projectile" ), [ ExtResource( 3 ) ] ]
-
 [node name="AIMovementComponent" parent="." instance=ExtResource( 7 )]
 _velocityComponentPath = NodePath("../VelocityComponent")
+_entityAnimationComponentPath = NodePath("../EntityAnimationComponent")
 
 [node name="VelocityComponent" parent="." instance=ExtResource( 8 )]
 
 [node name="HitEffectComponent" parent="." instance=ExtResource( 5 )]
 _shaderMaterial = SubResource( 1 )
-_shadedNodePath = NodePath("../AnimatedSprite")
+_shadedNodePath = NodePath("../EntityAnimationComponent")
 _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
 
 [node name="HealthComponent" parent="." instance=ExtResource( 9 )]
 _maxHealth = 1.0
 _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
+
+[node name="AIAimComponent" parent="." instance=ExtResource( 3 )]
+_weaponSocketComponentPath = NodePath("../WeaponSocketComponent")
 
 [node name="DamageReceiverComponent" parent="." instance=ExtResource( 4 )]
 collision_layer = 262144
@@ -72,12 +74,11 @@ collision_mask = 0
 position = Vector2( 0, -11 )
 shape = SubResource( 2 )
 
-[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
-frames = SubResource( 3 )
+[node name="EntityAnimationComponent" parent="." instance=ExtResource( 18 )]
+position = Vector2( 0, -15 )
+frames = SubResource( 5 )
 animation = "run"
-frame = 1
 playing = true
-offset = Vector2( 0, -15 )
 
 [node name="WeaponSocketComponent" parent="." instance=ExtResource( 16 )]
 position = Vector2( -1, -10 )

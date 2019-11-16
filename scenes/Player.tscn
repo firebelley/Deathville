@@ -16,7 +16,7 @@
 [ext_resource path="res://scenes/Component/WeaponSocketComponent.tscn" type="PackedScene" id=14]
 [ext_resource path="res://scenes/Component/PlayerAimComponent.tscn" type="PackedScene" id=15]
 
-[sub_resource type="RectangleShape2D" id=3]
+[sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 4, 8 )
 
 [sub_resource type="SpriteFrames" id=2]
@@ -32,7 +32,7 @@ animations = [ {
 "speed": 10.0
 } ]
 
-[sub_resource type="RectangleShape2D" id=1]
+[sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 4, 14 )
 
 [node name="Player" type="KinematicBody2D"]
@@ -54,12 +54,12 @@ collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceiverComponent"]
 position = Vector2( 0, -16 )
-shape = SubResource( 3 )
+shape = SubResource( 1 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 2 )
 animation = "idle"
-frame = 1
+frame = 2
 playing = true
 offset = Vector2( 0, -15 )
 
@@ -76,4 +76,4 @@ mode = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 0, -14 )
-shape = SubResource( 1 )
+shape = SubResource( 3 )

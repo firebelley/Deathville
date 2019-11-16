@@ -12,6 +12,7 @@ namespace Deathville.GameObject
         [Signal]
         public delegate void AttackEnd();
 
+        public const string GROUP = "player";
         private const string ANIM_IDLE = "idle";
         private const string ANIM_RUN = "run";
         private const string INPUT_MOVE_LEFT = "move_left";
@@ -33,6 +34,7 @@ namespace Deathville.GameObject
 
         public override void _Ready()
         {
+            AddToGroup(GROUP);
             _moveStateMachine.AddState(MoveState.GROUNDED, MoveStateGrounded);
             _moveStateMachine.AddState(MoveState.AIRBORNE, MoveStateAirborne);
             _moveStateMachine.SetInitialState(MoveState.GROUNDED);

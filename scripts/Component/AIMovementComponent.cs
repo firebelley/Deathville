@@ -13,11 +13,14 @@ namespace Deathville.Component
 
         [Export]
         private NodePath _velocityComponentPath;
+        [Export]
+        private NodePath _entityAnimationComponentPath;
 
         private Vector2 _playerPos;
 
         private KinematicBody2D _owner;
         private VelocityComponent _velocityComponent;
+        private EntityAnimationComponent _entityAnimationComponent;
 
         private Line2D _line2d;
         private StateMachine<MoveState> _stateMachine = new StateMachine<MoveState>();
@@ -33,6 +36,7 @@ namespace Deathville.Component
 
             _owner = Owner as KinematicBody2D;
             _velocityComponent = GetNode<VelocityComponent>(_velocityComponentPath);
+            _entityAnimationComponent = GetNode<EntityAnimationComponent>(_entityAnimationComponentPath);
 
             GetNode<Timer>("Timer").Connect("timeout", this, nameof(OnTimerTimeout));
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.PlayerPositionUpdated), this, nameof(OnPlayerPositionUpdated));
@@ -61,11 +65,6 @@ namespace Deathville.Component
 
         private void StateGrounded()
         {
-            if (_stateMachine.IsStateNew())
-            {
-                // GetNewPath();
-            }
-
             var dir = GetTargetDirection();
             if (dir.x != 0f)
             {
@@ -88,6 +87,8 @@ namespace Deathville.Component
             {
                 _stateMachine.ChangeState(StateAirborne);
             }
+
+            UpdateAnimations();
         }
 
         private void StateAirborne()
@@ -100,6 +101,8 @@ namespace Deathville.Component
             {
                 _stateMachine.ChangeState(StateGrounded);
             }
+
+            UpdateAnimations();
         }
 
         private Vector2 GetTargetDirection()
@@ -172,6 +175,20 @@ namespace Deathville.Component
             // }
 
             // Zone.Current.EffectsLayer.AddChild(_line2d);
+        }
+
+        private void UpdateAnimations()
+        {
+            var dir = GetTargetDirection();
+            if (dir.x != 0f)
+            {
+                _entityAnimationComponent.Play(EntityAnimationComponent.ANIM_RUN);
+                _entityAnimationComponent.Flip(dir.x < 0f);
+            }
+            else
+            {
+                _entityAnimationComponent.Play(EntityAnimationComponent.ANIM_IDLE);
+            }
         }
 
         private void OnPlayerPositionUpdated(Vector2 pos)
