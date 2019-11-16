@@ -13,19 +13,9 @@ namespace Deathville.Component
         public override void _Ready()
         {
             _muzzlePosition = GetNode<Position2D>("MuzzlePosition");
-
-            if (Owner is Player p)
-            {
-                p.Connect(nameof(Player.AttackStart), this, nameof(OnAttackStart));
-            }
         }
 
-        public override void _Process(float delta)
-        {
-            UpdatePosition();
-        }
-
-        private void Fire()
+        public void Fire()
         {
             if (_projectile == null) return;
             var bullet = _projectile.Instance() as Projectile;
@@ -34,18 +24,6 @@ namespace Deathville.Component
             bullet.SetFriendly();
             bullet.Start(GlobalPosition, _muzzlePosition.GlobalPosition, GetGlobalMousePosition());
             GameEventDispatcher.DispatchWeaponFired();
-        }
-
-        private void UpdatePosition()
-        {
-            var facingLeft = GetGlobalMousePosition().x < GlobalPosition.x;
-            Scale = facingLeft ? Scale.Abs() * new Vector2(-1, 1) : Scale.Abs() * Vector2.One;
-            Rotation = (GlobalPosition - GetGlobalMousePosition()).Angle() - (!facingLeft ? Mathf.Pi : 0);
-        }
-
-        private void OnAttackStart()
-        {
-            Fire();
         }
     }
 }

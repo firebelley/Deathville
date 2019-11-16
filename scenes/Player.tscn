@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://assets/art/player1.png" type="Texture" id=1]
 [ext_resource path="res://assets/art/player5.png" type="Texture" id=2]
@@ -14,9 +14,10 @@
 [ext_resource path="res://scenes/Component/DamageReceiverComponent.tscn" type="PackedScene" id=12]
 [ext_resource path="res://scenes/Component/VelocityComponent.tscn" type="PackedScene" id=13]
 [ext_resource path="res://scenes/Component/WeaponSocketComponent.tscn" type="PackedScene" id=14]
+[ext_resource path="res://scenes/Component/PlayerAimComponent.tscn" type="PackedScene" id=15]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 4, 14 )
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 4, 8 )
 
 [sub_resource type="SpriteFrames" id=2]
 animations = [ {
@@ -31,8 +32,8 @@ animations = [ {
 "speed": 10.0
 } ]
 
-[sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 4, 8 )
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 4, 14 )
 
 [node name="Player" type="KinematicBody2D"]
 collision_layer = 0
@@ -44,15 +45,16 @@ _maxSpeed = 200.0
 _acceleration = 2200.0
 _deceleration = 2200.0
 
-[node name="Light2D" type="Light2D" parent="."]
-position = Vector2( 0, -16 )
-texture = ExtResource( 11 )
-texture_scale = 6.0
-mode = 2
+[node name="PlayerAimComponent" parent="." instance=ExtResource( 15 )]
+_weaponSocketComponentPath = NodePath("../WeaponSocketComponent")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 0, -14 )
-shape = SubResource( 1 )
+[node name="DamageReceiverComponent" parent="." instance=ExtResource( 12 )]
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceiverComponent"]
+position = Vector2( 0, -16 )
+shape = SubResource( 3 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 2 )
@@ -66,10 +68,12 @@ position = Vector2( -2, -20 )
 
 [node name="PlayerWeapon" parent="WeaponSocketComponent" instance=ExtResource( 10 )]
 
-[node name="DamageReceiverComponent" parent="." instance=ExtResource( 12 )]
-collision_layer = 0
-collision_mask = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceiverComponent"]
+[node name="Light2D" type="Light2D" parent="."]
 position = Vector2( 0, -16 )
-shape = SubResource( 3 )
+texture = ExtResource( 11 )
+texture_scale = 6.0
+mode = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, -14 )
+shape = SubResource( 1 )
