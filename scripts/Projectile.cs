@@ -35,11 +35,19 @@ namespace Deathville.GameObject
             }
         }
 
-        public void Start(Vector2 spawnPos, Vector2 toPos)
+        public void Start(Vector2 chamberPos, Vector2 spawnPos, Vector2 toPos)
         {
-            GlobalPosition = spawnPos;
-            _direction = (toPos - GlobalPosition).Normalized();
-            Rotation = _direction.Angle();
+            var raycastResult = GetWorld2d().DirectSpaceState.Raycast(chamberPos, spawnPos, null, _collisionMask, true, true);
+            if (raycastResult != null)
+            {
+                RegisterHit(raycastResult);
+            }
+            else
+            {
+                GlobalPosition = spawnPos;
+                _direction = (GlobalPosition - chamberPos).Normalized();
+                Rotation = _direction.Angle();
+            }
         }
 
         public void SetFriendly()

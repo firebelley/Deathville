@@ -26,8 +26,8 @@ namespace Deathville.GameObject
         {
             var bullet = _resourcePreloader.InstanceScene<Projectile>();
             Zone.Current.EffectsLayer.AddChild(bullet);
-            bullet.Start(GlobalPosition + Vector2.Up * 10f, _playerPos);
             bullet.SetEnemy();
+            bullet.Start(GlobalPosition + Vector2.Up * 10f, GlobalPosition + Vector2.Up * 10f, _playerPos);
         }
 
         private void OnDamageReceived(float damage)

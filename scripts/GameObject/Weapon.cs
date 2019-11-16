@@ -1,19 +1,18 @@
+using Deathville.GameObject;
 using Godot;
-using GodotApiTools.Extension;
 
-namespace Deathville.GameObject
+namespace Deathville.Component
 {
-    public class Weapon : Node2D
+    public class Weapon : Sprite
     {
-        private Sprite _sprite;
-        private ResourcePreloader _resourcePreloader;
         private Position2D _muzzlePosition;
+
+        [Export]
+        private PackedScene _projectile;
 
         public override void _Ready()
         {
-            _sprite = GetNode<Sprite>("Sprite");
-            _resourcePreloader = GetNode<ResourcePreloader>("ResourcePreloader");
-            _muzzlePosition = GetNode<Position2D>("Sprite/MuzzlePosition");
+            _muzzlePosition = GetNode<Position2D>("MuzzlePosition");
 
             if (Owner is Player p)
             {
@@ -28,18 +27,19 @@ namespace Deathville.GameObject
 
         private void Fire()
         {
-            var bullet = _resourcePreloader.InstanceScene<Projectile>();
+            if (_projectile == null) return;
+            var bullet = _projectile.Instance() as Projectile;
             Zone.Current.EffectsLayer.AddChild(bullet);
             bullet.ObeyTimeScale = false;
-            bullet.Start(_muzzlePosition.GlobalPosition, GetGlobalMousePosition());
             bullet.SetFriendly();
+            bullet.Start(GlobalPosition, _muzzlePosition.GlobalPosition, GetGlobalMousePosition());
             GameEventDispatcher.DispatchWeaponFired();
         }
 
         private void UpdatePosition()
         {
             var facingLeft = GetGlobalMousePosition().x < GlobalPosition.x;
-            _sprite.Scale = facingLeft ? _sprite.Scale.Abs() * new Vector2(-1, 1) : _sprite.Scale.Abs() * Vector2.One;
+            Scale = facingLeft ? Scale.Abs() * new Vector2(-1, 1) : Scale.Abs() * Vector2.One;
             Rotation = (GlobalPosition - GetGlobalMousePosition()).Angle() - (!facingLeft ? Mathf.Pi : 0);
         }
 
