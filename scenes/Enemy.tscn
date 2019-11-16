@@ -73,6 +73,7 @@ _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
 [node name="DeathComponent" parent="." instance=ExtResource( 20 )]
 _healthComponentPath = NodePath("../HealthComponent")
 _velocityComponentPath = NodePath("../VelocityComponent")
+_entityAnimationComponentPath = NodePath("../EntityAnimationComponent")
 _ragdollScene = ExtResource( 21 )
 
 [node name="AIAimComponent" parent="." instance=ExtResource( 3 )]
@@ -93,7 +94,6 @@ shape = SubResource( 2 )
 position = Vector2( 0, -15 )
 frames = SubResource( 3 )
 animation = "run"
-frame = 2
 playing = true
 
 [node name="WeaponSocketComponent" parent="." instance=ExtResource( 16 )]

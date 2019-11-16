@@ -45,3 +45,4 @@ position = Vector2( 0, -11 )
 node_a = NodePath("../HeadRigidBody")
 node_b = NodePath("../BodyRigidBody")
 disable_collision = false
+softness = 1.0
