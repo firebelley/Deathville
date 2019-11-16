@@ -26,11 +26,10 @@ namespace Deathville.Component
                 var effect = _hitEffect.Instance() as Node2D;
                 Zone.Current.EffectsLayer.AddChild(effect);
                 effect.Rotation = (raycastResult.ToPosition - raycastResult.FromPosition).Angle();
-                GD.Print(effect.RotationDegrees);
                 effect.GlobalPosition = raycastResult.Position;
             }
 
-            EmitSignal(nameof(DamageReceived), 0f);
+            EmitSignal(nameof(DamageReceived), 1f);
         }
     }
 }

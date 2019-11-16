@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://assets/art/peasant2.png" type="Texture" id=1]
 [ext_resource path="res://scenes/Effect/BloodParticles.tscn" type="PackedScene" id=2]
@@ -19,6 +19,8 @@
 [ext_resource path="res://scenes/GameObject/PeasantWeapon.tscn" type="PackedScene" id=17]
 [ext_resource path="res://scenes/Component/EntityAnimationComponent.tscn" type="PackedScene" id=18]
 [ext_resource path="res://scenes/Component/AIBehaviorComponent.tscn" type="PackedScene" id=19]
+[ext_resource path="res://scenes/Component/DeathComponent.tscn" type="PackedScene" id=20]
+[ext_resource path="res://scenes/GameObject/Ragdoll.tscn" type="PackedScene" id=21]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
@@ -65,8 +67,13 @@ _shadedNodePath = NodePath("../EntityAnimationComponent")
 _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
 
 [node name="HealthComponent" parent="." instance=ExtResource( 9 )]
-_maxHealth = 1.0
+_maxHealth = 10.0
 _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
+
+[node name="DeathComponent" parent="." instance=ExtResource( 20 )]
+_healthComponentPath = NodePath("../HealthComponent")
+_velocityComponentPath = NodePath("../VelocityComponent")
+_ragdollScene = ExtResource( 21 )
 
 [node name="AIAimComponent" parent="." instance=ExtResource( 3 )]
 _weaponSocketComponentPath = NodePath("../WeaponSocketComponent")
