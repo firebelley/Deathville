@@ -1,6 +1,7 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://assets/art/peasant2.png" type="Texture" id=1]
+[ext_resource path="res://scenes/Effect/BloodParticles.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/Component/AIAimComponent.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/Component/DamageReceiverComponent.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/Component/HitEffectComponent.tscn" type="PackedScene" id=5]
@@ -75,6 +76,7 @@ _aiBehaviorComponentPath = NodePath("../AIBehaviorComponent")
 collision_layer = 262144
 collision_mask = 0
 _sendEnemyStruckEvent = true
+_hitEffect = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceiverComponent"]
 position = Vector2( 0, -11 )
@@ -84,6 +86,7 @@ shape = SubResource( 2 )
 position = Vector2( 0, -15 )
 frames = SubResource( 3 )
 animation = "run"
+frame = 2
 playing = true
 
 [node name="WeaponSocketComponent" parent="." instance=ExtResource( 16 )]
