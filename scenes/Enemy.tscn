@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://assets/art/peasant2.png" type="Texture" id=1]
 [ext_resource path="res://scripts/Enemy.cs" type="Script" id=2]
@@ -18,6 +18,7 @@
 [ext_resource path="res://scenes/Component/WeaponSocketComponent.tscn" type="PackedScene" id=16]
 [ext_resource path="res://scenes/GameObject/PeasantWeapon.tscn" type="PackedScene" id=17]
 [ext_resource path="res://scenes/Component/EntityAnimationComponent.tscn" type="PackedScene" id=18]
+[ext_resource path="res://scenes/Component/AIBehaviorComponent.tscn" type="PackedScene" id=19]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
@@ -47,6 +48,10 @@ extents = Vector2( 4, 8 )
 [node name="Enemy" type="KinematicBody2D"]
 collision_layer = 0
 script = ExtResource( 2 )
+
+[node name="AIBehaviorComponent" parent="." instance=ExtResource( 19 )]
+_aiMovementComponentPath = NodePath("../AIMovementComponent")
+_damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
 
 [node name="AIMovementComponent" parent="." instance=ExtResource( 7 )]
 _velocityComponentPath = NodePath("../VelocityComponent")

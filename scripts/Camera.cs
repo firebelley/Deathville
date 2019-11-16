@@ -1,4 +1,6 @@
+using Deathville.GameObject;
 using Godot;
+using GodotApiTools.Extension;
 
 namespace Deathville
 {
@@ -20,13 +22,17 @@ namespace Deathville
             _noise.Octaves = 4;
             _noise.Period = .1f;
 
-            GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.PlayerPositionUpdated), this, nameof(OnPlayerPositionUpdated));
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.WeaponFired), this, nameof(OnWeaponFired));
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.EnemyStruck), this, nameof(OnEnemyStruck));
         }
 
         public override void _Process(float delta)
         {
+            var player = GetTree().GetFirstNodeInGroup<Player>(Player.GROUP);
+            if (player != null)
+            {
+                _targetPos = player.GlobalPosition;
+            }
             GlobalPosition = GlobalPosition.LinearInterpolate(_targetPos, 10 * delta / Engine.TimeScale);
             UpdateShake();
         }
@@ -47,11 +53,6 @@ namespace Deathville
             var sampleY = _noise.GetNoise2d(_currentSampleX, _currentSampleY) * MAX_OFFSET * 2f;
             Offset = new Vector2(sampleX, sampleY) * _shakeMagnitude * _shakeMagnitude;
             _shakeMagnitude = Mathf.Clamp(_shakeMagnitude - (GetProcessDeltaTime() / Engine.TimeScale) * SHAKE_DECAY, 0f, 1f);
-        }
-
-        private void OnPlayerPositionUpdated(Vector2 globalPosition)
-        {
-            _targetPos = globalPosition;
         }
 
         private void OnWeaponFired()

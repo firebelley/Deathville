@@ -16,7 +16,7 @@ namespace Deathville.Component
         [Export]
         private NodePath _entityAnimationComponentPath;
 
-        private Vector2 _playerPos;
+        public Vector2 TargetPosition;
 
         private KinematicBody2D _owner;
         private VelocityComponent _velocityComponent;
@@ -39,7 +39,6 @@ namespace Deathville.Component
             _entityAnimationComponent = GetNode<EntityAnimationComponent>(_entityAnimationComponentPath);
 
             GetNode<Timer>("Timer").Connect("timeout", this, nameof(OnTimerTimeout));
-            GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.PlayerPositionUpdated), this, nameof(OnPlayerPositionUpdated));
         }
 
         public override void _Process(float delta)
@@ -157,11 +156,13 @@ namespace Deathville.Component
 
         private void GetNewPath()
         {
+            if (TargetPosition == Vector2.Zero) return;
+
             _shouldGeneratePath = false;
             _targetCellId = 0;
             var offset = Mathf.Sign(_velocityComponent.Velocity.x) * MAX_AHEAD;
             var offsetv = new Vector2(offset, 0f);
-            _pathfindCells = Zone.Current.Pathfinder.GetGlobalPath((Owner as Node2D).GlobalPosition + offsetv, _playerPos).ToList();
+            _pathfindCells = Zone.Current.Pathfinder.GetGlobalPath((Owner as Node2D).GlobalPosition + offsetv, TargetPosition).ToList();
 
             // if (IsInstanceValid(_line2d))
             // {
@@ -189,11 +190,6 @@ namespace Deathville.Component
             {
                 _entityAnimationComponent.Play(EntityAnimationComponent.ANIM_IDLE);
             }
-        }
-
-        private void OnPlayerPositionUpdated(Vector2 pos)
-        {
-            _playerPos = pos;
         }
 
         private void OnTimerTimeout()

@@ -45,7 +45,6 @@ namespace Deathville.GameObject
         public override void _Process(float delta)
         {
             _moveStateMachine.Update();
-            GameEventDispatcher.DispatchPlayerPositionUpdated(GlobalPosition);
 
             var scaleLerpTo = _moveStateMachine.GetCurrentState() == MoveState.AIRBORNE ? TIME_SCALE : 1f;
             Engine.TimeScale = Mathf.Lerp(Engine.TimeScale, scaleLerpTo, 15f * delta / Engine.TimeScale);
