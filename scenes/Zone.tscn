@@ -1,10 +1,9 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://resources/default.tres" type="TileSet" id=1]
 [ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/Enemy.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scripts/Zone.cs" type="Script" id=4]
-[ext_resource path="res://assets/art/parallax1.png" type="Texture" id=5]
 [ext_resource path="res://scripts/Camera.cs" type="Script" id=6]
 [ext_resource path="res://assets/art/parallax2.png" type="Texture" id=7]
 
@@ -39,17 +38,20 @@ z_index = 3
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.05, 0.05 )
+motion_mirroring = Vector2( 640, 320 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
+modulate = Color( 0.647059, 0.647059, 0.647059, 1 )
+texture = ExtResource( 7 )
+centered = false
+offset = Vector2( 320, 160 )
+
 [node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_offset = Vector2( 5, 5 )
-motion_mirroring = Vector2( 960, 0 )
+motion_scale = Vector2( 0.1, 0.1 )
+motion_mirroring = Vector2( 640, 320 )
 
 [node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer2"]
 texture = ExtResource( 7 )
-centered = false
-
-[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_offset = Vector2( 5, 5 )
-
-[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
-texture = ExtResource( 5 )
 centered = false
