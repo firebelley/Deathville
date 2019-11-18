@@ -29,7 +29,7 @@ namespace Deathville.Component
         private StateMachine<MoveState> _stateMachine = new StateMachine<MoveState>();
         private List<Pathfinder.PathfindCell> _pathfindCells = new List<Pathfinder.PathfindCell>();
         private int _targetCellId;
-        private bool _shouldGeneratePath;
+        private bool _shouldGeneratePath = true;
 
         public override void _Ready()
         {

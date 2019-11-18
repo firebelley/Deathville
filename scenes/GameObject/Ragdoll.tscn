@@ -10,10 +10,10 @@ bounce = 0.25
 [sub_resource type="CircleShape2D" id=2]
 radius = 4.0
 
-[sub_resource type="PhysicsMaterial" id=4]
+[sub_resource type="PhysicsMaterial" id=3]
 bounce = 0.25
 
-[sub_resource type="CircleShape2D" id=3]
+[sub_resource type="CircleShape2D" id=4]
 radius = 4.0
 
 [node name="Ragdoll" type="Node2D"]
@@ -39,10 +39,10 @@ texture = ExtResource( 2 )
 position = Vector2( 1, -16 )
 collision_layer = 131072
 collision_mask = 131073
-physics_material_override = SubResource( 4 )
+physics_material_override = SubResource( 3 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HeadRigidBody"]
-shape = SubResource( 3 )
+shape = SubResource( 4 )
 
 [node name="Sprite" type="Sprite" parent="HeadRigidBody"]
 position = Vector2( -1, -1 )
@@ -54,3 +54,7 @@ node_a = NodePath("../HeadRigidBody")
 node_b = NodePath("../BodyRigidBody")
 disable_collision = false
 softness = 1.0
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 3.0
+autostart = true

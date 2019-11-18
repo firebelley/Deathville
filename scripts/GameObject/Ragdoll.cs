@@ -28,6 +28,8 @@ namespace Deathville.GameObject
 
             _headRigidBody.AngularVelocity = Main.RNG.RandfRange(0, 10f);
             _bodyRigidBody.AngularVelocity = Main.RNG.RandfRange(0, 10f);
+
+            GetNode<Timer>("Timer").Connect("timeout", this, nameof(OnTimerTimeout));
         }
 
         public void Flip()
@@ -40,6 +42,11 @@ namespace Deathville.GameObject
         {
             _bodyRigidBody.LinearVelocity = velocity;
             _headRigidBody.LinearVelocity = velocity;
+        }
+
+        private void OnTimerTimeout()
+        {
+            QueueFree();
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Deathville.Component
         [Export]
         private float _aggroRange = 100f;
 
-        public bool Aggressive { get; private set; } = false;
+        public bool Aggressive { get; private set; } = true;
 
         private Node2D _owner;
         private AIMovementComponent _aiMovementComponent;
