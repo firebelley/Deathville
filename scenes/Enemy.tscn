@@ -67,7 +67,7 @@ _shadedNodePath = NodePath("../EntityAnimationComponent")
 _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
 
 [node name="HealthComponent" parent="." instance=ExtResource( 9 )]
-_maxHealth = 10.0
+_maxHealth = 3.0
 _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
 
 [node name="DeathComponent" parent="." instance=ExtResource( 20 )]
@@ -94,6 +94,7 @@ shape = SubResource( 2 )
 position = Vector2( 0, -15 )
 frames = SubResource( 3 )
 animation = "run"
+frame = 2
 playing = true
 
 [node name="WeaponSocketComponent" parent="." instance=ExtResource( 16 )]
