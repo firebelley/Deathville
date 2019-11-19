@@ -51,6 +51,11 @@ namespace Deathville.Component
             _velocity.x = x * Mathf.Sign(_velocity.x);
         }
 
+        public void ApplyForce(Vector2 dir, float force)
+        {
+            _velocity += dir * force;
+        }
+
         public void Jump(float speed)
         {
             _velocity.y = -speed;

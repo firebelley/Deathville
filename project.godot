@@ -87,6 +87,7 @@ attack={
 [layer_names]
 
 2d_physics/layer_1="WORLD"
+2d_physics/layer_17="ENTITY_SEPARATOR"
 2d_physics/layer_18="RAGDOLL"
 2d_physics/layer_19="ENEMY_HITBOX"
 2d_physics/layer_20="PLAYER_HITBOX"
