@@ -99,6 +99,7 @@ shape = SubResource( 2 )
 position = Vector2( 0, -15 )
 frames = SubResource( 3 )
 animation = "run"
+frame = 2
 playing = true
 
 [node name="WeaponSocketComponent" parent="." instance=ExtResource( 16 )]

@@ -3,8 +3,10 @@ using Godot;
 
 namespace Deathville.Component
 {
-    public class Weapon : Sprite
+    public class Weapon : Node2D
     {
+        private const string ANIM_FIRE = "fire";
+
         [Signal]
         public delegate void Fired();
 
@@ -20,12 +22,14 @@ namespace Deathville.Component
         private Position2D _chamberPosition;
 
         private Timer _fireTimer;
+        private AnimationPlayer _animationPlayer;
 
         public override void _Ready()
         {
             _fireTimer = GetNode<Timer>("FireTimer");
             _muzzlePosition = GetNode<Position2D>("MuzzlePosition");
             _chamberPosition = GetNode<Position2D>("ChamberPosition");
+            _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
         }
 
         public void AttemptFire(Vector2 atTarget)
@@ -53,6 +57,12 @@ namespace Deathville.Component
             }
 
             projectile.Start(_chamberPosition.GlobalPosition, _muzzlePosition.GlobalPosition, atTarget);
+
+            if (_animationPlayer.IsPlaying())
+            {
+                _animationPlayer.Seek(2f, true);
+            }
+            _animationPlayer.Play(ANIM_FIRE);
             EmitSignal(nameof(Fired));
         }
     }

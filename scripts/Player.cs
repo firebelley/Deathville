@@ -25,6 +25,7 @@ namespace Deathville.GameObject
         private const float GRAVITY_ACCELERATOR = 6f;
         private const float INITIAL_COYOTE_TIME = .2f;
         private const float TIME_SCALE = .15f;
+        private const float DEFAULT_TIME_SCALE = 1f;
 
         private AnimatedSprite _animatedSprite;
         private float _coyoteTime;
@@ -46,7 +47,7 @@ namespace Deathville.GameObject
         {
             _moveStateMachine.Update();
 
-            var scaleLerpTo = _moveStateMachine.GetCurrentState() == MoveState.AIRBORNE ? TIME_SCALE : 1f;
+            var scaleLerpTo = _moveStateMachine.GetCurrentState() == MoveState.AIRBORNE ? TIME_SCALE : DEFAULT_TIME_SCALE;
             Engine.TimeScale = Mathf.Lerp(Engine.TimeScale, scaleLerpTo, 15f * delta / Engine.TimeScale);
         }
 
