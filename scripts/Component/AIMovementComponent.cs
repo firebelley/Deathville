@@ -188,21 +188,22 @@ namespace Deathville.Component
             if (dir.x != 0f)
             {
                 _entityAnimationComponent.Play(EntityAnimationComponent.ANIM_RUN);
-                var shouldFlip = false;
-                if (_weaponSocketComponent != null)
-                {
-                    shouldFlip = _weaponSocketComponent.FacingLeft;
-                }
-                else
-                {
-                    shouldFlip = dir.x < 0f;
-                }
-                _entityAnimationComponent.Flip(shouldFlip);
             }
             else
             {
                 _entityAnimationComponent.Play(EntityAnimationComponent.ANIM_IDLE);
             }
+
+            var shouldFlip = false;
+            if (_weaponSocketComponent != null)
+            {
+                shouldFlip = _weaponSocketComponent.FacingLeft;
+            }
+            else
+            {
+                shouldFlip = dir.x < 0f;
+            }
+            _entityAnimationComponent.Flip(shouldFlip);
         }
 
         private void OnTimerTimeout()

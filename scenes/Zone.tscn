@@ -46,14 +46,14 @@ __meta__ = {
 
 [node name="Spawner" parent="." instance=ExtResource( 5 )]
 position = Vector2( 136, 240 )
-_scene = ExtResource( 3 )
 _maxSpawned = 3
+_scene = ExtResource( 3 )
 _offset = 40.0
 
 [node name="Spawner2" parent="." instance=ExtResource( 5 )]
 position = Vector2( 336, 224 )
-_scene = ExtResource( 3 )
 _maxSpawned = 3
+_scene = ExtResource( 3 )
 _offset = 48.0
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
