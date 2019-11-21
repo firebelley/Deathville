@@ -23,6 +23,7 @@ namespace Deathville.GameObject
         public override void _Process(float delta)
         {
             _animationPlayer.PlaybackSpeed = 1f / Engine.TimeScale;
+            _tween.PlaybackSpeed = 1f / Engine.TimeScale;
         }
 
         public void Start(Vector2 chamberPos, Vector2 spawnPos, Vector2 toPos)
