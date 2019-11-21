@@ -3,6 +3,7 @@ namespace Deathville.Enum
     public enum MoveState
     {
         GROUNDED,
-        AIRBORNE
+        AIRBORNE,
+        DASH
     }
 }

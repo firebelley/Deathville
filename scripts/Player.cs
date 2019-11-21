@@ -18,10 +18,13 @@ namespace Deathville.GameObject
         private const string ANIM_RUN = "run";
         private const string ANIM_JUMP = "jump";
         private const string ANIM_FLIP = "flip";
+        private const string ANIM_JUMP_IDLE = "jump_idle";
+
         private const string INPUT_MOVE_LEFT = "move_left";
         private const string INPUT_MOVE_RIGHT = "move_right";
         private const string INPUT_JUMP = "jump";
         private const string INPUT_ATTACK = "attack";
+        private const string INPUT_DASH = "dash";
 
         private const float GRAVITY = 800f;
         private const float JUMP_SPEED = 350f;
@@ -29,15 +32,20 @@ namespace Deathville.GameObject
         private const float INITIAL_COYOTE_TIME = .2f;
         private const float TIME_SCALE = .15f;
         private const float DEFAULT_TIME_SCALE = 1f;
+        private const float DASH_TIME = .2f;
         private const int MAX_JUMPS = 2;
+        private const int MAX_DASHES = 1;
 
         private AnimatedSprite _animatedSprite;
         private Sprite _flipSprite;
         private Tween _flipTween;
         private AnimationPlayer _animationPlayer;
-        private float _coyoteTime;
-        private int _jumpCount;
         private VelocityComponent _velocityComponent;
+
+        private float _coyoteTime;
+        private float _dashTime;
+        private int _jumpCount;
+        private int _dashCount;
 
         private StateMachine<MoveState> _moveStateMachine = new StateMachine<MoveState>();
 
@@ -46,6 +54,8 @@ namespace Deathville.GameObject
             AddToGroup(GROUP);
             _moveStateMachine.AddState(MoveState.GROUNDED, MoveStateGrounded);
             _moveStateMachine.AddState(MoveState.AIRBORNE, MoveStateAirborne);
+            _moveStateMachine.AddState(MoveState.DASH, MoveStateDash);
+            _moveStateMachine.AddLeaveState(MoveState.DASH, LeaveMoveStateDash);
             _moveStateMachine.SetInitialState(MoveState.GROUNDED);
             _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
             _velocityComponent = GetNode<VelocityComponent>("VelocityComponent");
@@ -60,8 +70,13 @@ namespace Deathville.GameObject
         {
             _moveStateMachine.Update();
 
-            var scaleLerpTo = _moveStateMachine.GetCurrentState() == MoveState.AIRBORNE ? TIME_SCALE : DEFAULT_TIME_SCALE;
+            var scaleLerpTo = _moveStateMachine.GetCurrentState() != MoveState.GROUNDED ? TIME_SCALE : DEFAULT_TIME_SCALE;
             Engine.TimeScale = Mathf.Lerp(Engine.TimeScale, scaleLerpTo, 15f * delta / Engine.TimeScale);
+
+            if (_moveStateMachine.GetCurrentState() != MoveState.DASH)
+            {
+                _velocityComponent.SpeedPadding = Mathf.Lerp(_velocityComponent.SpeedPadding, 0f, 1f * delta / Engine.TimeScale);
+            }
         }
 
         public override void _UnhandledInput(InputEvent evt)
@@ -85,6 +100,7 @@ namespace Deathville.GameObject
             if (_moveStateMachine.IsStateNew())
             {
                 _jumpCount = 0;
+                _dashCount = 0;
             }
 
             var moveVec = GetMovementVector();
@@ -126,11 +142,16 @@ namespace Deathville.GameObject
                 _velocityComponent.Decelerate();
             }
 
-            if (moveVec.y < 0)
+            if (Input.IsActionJustPressed(INPUT_DASH))
+            {
+                Dash();
+            }
+            else if (moveVec.y < 0)
             {
                 Jump();
             }
 
+            // jump decelerator
             if (!Input.IsActionPressed(INPUT_JUMP) && _velocityComponent.Velocity.y < 0)
             {
                 _velocityComponent.ApplyGravity(GRAVITY_ACCELERATOR);
@@ -150,6 +171,50 @@ namespace Deathville.GameObject
             UpdateAnimations();
         }
 
+        private void MoveStateDash()
+        {
+            if (_moveStateMachine.IsStateNew())
+            {
+                _dashTime = 0f;
+                _velocityComponent.SpeedPadding = 250f;
+                _velocityComponent.YVelocity = 0f;
+
+                var moveVec = GetMovementVector();
+                var left = false;
+                if (moveVec.x != 0)
+                {
+                    left = moveVec.x < 0;
+                }
+                else
+                {
+                    left = GetGlobalMousePosition().x < GlobalPosition.x;
+                }
+
+                _velocityComponent.ApplyForce(left ? Vector2.Left : Vector2.Right, 250f);
+            }
+
+            _dashTime += GetProcessDeltaTime() / Engine.TimeScale;
+
+            _velocityComponent.ApplyGravity(.25f);
+            _velocityComponent.Move();
+
+            if (IsOnFloor())
+            {
+                _moveStateMachine.ChangeState(MoveStateGrounded);
+            }
+            else if (_dashTime > DASH_TIME)
+            {
+                _moveStateMachine.ChangeState(MoveStateAirborne);
+            }
+
+            UpdateAnimations();
+        }
+
+        private void LeaveMoveStateDash()
+        {
+            _velocityComponent.SpeedPadding = 0f;
+        }
+
         private void UpdateAnimations()
         {
             _flipTween.PlaybackSpeed = 1f / Engine.TimeScale;
@@ -162,7 +227,7 @@ namespace Deathville.GameObject
             _flipSprite.RotationDegrees = Mathf.Abs(_flipSprite.RotationDegrees) * (_flipSprite.FlipH ? -1f : 1f);
             if (!IsOnFloor())
             {
-                _animatedSprite.Play("jump_idle");
+                _animatedSprite.Play(ANIM_JUMP_IDLE);
             }
             else if (moveVec.x != 0)
             {
@@ -196,6 +261,15 @@ namespace Deathville.GameObject
                 StartFlip();
                 _velocityComponent.Jump(JUMP_SPEED);
                 _jumpCount++;
+            }
+        }
+
+        private void Dash()
+        {
+            if (_dashCount < MAX_DASHES)
+            {
+                _dashCount++;
+                _moveStateMachine.ChangeState(MoveStateDash);
             }
         }
 

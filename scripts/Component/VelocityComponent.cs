@@ -23,6 +23,17 @@ namespace Deathville.Component
                 return _velocity;
             }
         }
+
+        public float YVelocity
+        {
+            set
+            {
+                _velocity.y = value;
+            }
+        }
+
+        public float SpeedPadding;
+
         private Vector2 _velocity;
         private KinematicBody2D _owner;
 
@@ -40,7 +51,7 @@ namespace Deathville.Component
             }
             _velocity.x += _acceleration * GetProcessDeltaTime() * mod / GetTimeScale();
             var abs = Math.Abs(_velocity.x);
-            var x = Mathf.Clamp(abs, 0f, _maxSpeed);
+            var x = Mathf.Clamp(abs, 0f, _maxSpeed + SpeedPadding);
             _velocity.x = x * Mathf.Sign(_velocity.x);
         }
 
