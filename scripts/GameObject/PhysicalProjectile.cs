@@ -1,26 +1,16 @@
-using Deathville.Component;
 using Godot;
 using GodotApiTools.Extension;
 using GodotApiTools.Util;
 
 namespace Deathville.GameObject
 {
-    public class Projectile : Node2D
+    public class PhysicalProjectile : Projectile
     {
         [Export]
         private float _speed = 500f;
 
-        private ResourcePreloader _resourcePreloader;
-
-        private Vector2 _direction;
-        private int _hitCount = 0;
         private uint _collisionMask = 1;
         private bool _obeyTimeScale = true;
-
-        public override void _Ready()
-        {
-            _resourcePreloader = GetNode<ResourcePreloader>("ResourcePreloader");
-        }
 
         public override void _PhysicsProcess(float delta)
         {
@@ -60,26 +50,9 @@ namespace Deathville.GameObject
             _collisionMask |= (1 << 19);
         }
 
-        public void RegisterHit(RaycastResult raycastResult)
+        public override void Die(RaycastResult raycastResult = null)
         {
-            if (raycastResult.Collider is DamageReceiverComponent drc)
-            {
-                drc.RegisterHit(this, raycastResult);
-            }
-            _hitCount++;
-            if (_hitCount >= 1)
-            {
-                GlobalPosition = raycastResult.Position;
-                Die(raycastResult);
-            }
-        }
-
-        private void Die(RaycastResult raycastResult = null)
-        {
-            var death = _resourcePreloader.InstanceScene<Node2D>("BulletDeath");
-            Zone.Current.EffectsLayer.AddChild(death);
-            death.Rotation = (raycastResult == null ? _direction.Angle() - Mathf.Pi : raycastResult.Normal.Angle());
-            death.GlobalPosition = GlobalPosition;
+            base.Die(raycastResult);
             QueueFree();
         }
     }
