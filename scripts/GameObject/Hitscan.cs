@@ -10,12 +10,14 @@ namespace Deathville.GameObject
         private Line2D _line2d;
         private Light2D _light2d;
         private AnimationPlayer _animationPlayer;
+        private Tween _tween;
 
         public override void _Ready()
         {
             _line2d = GetNode<Line2D>("Line2D");
             _light2d = _line2d.GetNode<Light2D>("Light2D");
             _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
+            _tween = GetNode<Tween>("Tween");
         }
 
         public override void _Process(float delta)
@@ -43,6 +45,17 @@ namespace Deathville.GameObject
 
             _light2d.Scale = new Vector2(len / 16f, 1f);
             _light2d.Position = Vector2.Left * len / 2f;
+
+            _tween.InterpolateProperty(
+                _line2d,
+                "scale",
+                Vector2.One,
+                Vector2.Zero,
+                .25f,
+                Tween.TransitionType.Sine,
+                Tween.EaseType.Out
+            );
+            _tween.Start();
         }
     }
 }
