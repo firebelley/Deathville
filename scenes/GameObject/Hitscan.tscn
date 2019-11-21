@@ -9,7 +9,7 @@ _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.5088 ), 0.0, 0.0, 0, 0 
 
 [sub_resource type="Gradient" id=2]
 offsets = PoolRealArray( 0, 0.421512 )
-colors = PoolColorArray( 1, 1, 1, 1, 1, 0.85098, 0.54902, 0 )
+colors = PoolColorArray( 1, 1, 1, 1, 1, 0.447059, 0, 0 )
 
 [sub_resource type="Animation" id=3]
 resource_name = "default"
