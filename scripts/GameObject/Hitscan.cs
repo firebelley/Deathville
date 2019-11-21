@@ -26,7 +26,7 @@ namespace Deathville.GameObject
         public void Start(Vector2 chamberPos, Vector2 spawnPos, Vector2 toPos)
         {
             _direction = (toPos - chamberPos).Normalized();
-            GlobalPosition = chamberPos + _direction * _range;
+            GlobalPosition = spawnPos + _direction * _range;
             var raycastResult = GetWorld2d().DirectSpaceState.Raycast(chamberPos, GlobalPosition, null, COLLISION_MASK, true, true);
             if (raycastResult != null)
             {

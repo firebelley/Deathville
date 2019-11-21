@@ -4,12 +4,12 @@
 [ext_resource path="res://scenes/Effect/BulletDeath.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/art/light16.png" type="Texture" id=3]
 
-[sub_resource type="Curve" id=2]
-_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+[sub_resource type="Curve" id=1]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.5088 ), 0.0, 0.0, 0, 0 ]
 
-[sub_resource type="Gradient" id=1]
-offsets = PoolRealArray( 0, 0.446281 )
-colors = PoolColorArray( 1, 1, 1, 1, 1, 0.852646, 0.548231, 1 )
+[sub_resource type="Gradient" id=4]
+offsets = PoolRealArray( 0, 0.421512 )
+colors = PoolColorArray( 1, 1, 1, 1, 1, 0.85098, 0.54902, 0 )
 
 [sub_resource type="Animation" id=3]
 resource_name = "default"
@@ -44,13 +44,14 @@ tracks/1/keys = {
 [node name="Hitscan" type="Node2D"]
 script = ExtResource( 1 )
 _deathScene = ExtResource( 2 )
+_range = 200.0
 
 [node name="Line2D" type="Line2D" parent="."]
 points = PoolVector2Array( 0, 0, -32, 0 )
-width = 3.0
-width_curve = SubResource( 2 )
+width = 2.0
+width_curve = SubResource( 1 )
 default_color = Color( 1, 1, 1, 1 )
-gradient = SubResource( 1 )
+gradient = SubResource( 4 )
 joint_mode = 2
 begin_cap_mode = 2
 

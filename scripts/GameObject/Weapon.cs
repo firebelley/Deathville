@@ -30,6 +30,8 @@ namespace Deathville.Component
         private Timer _fireTimer;
         private AnimationPlayer _animationPlayer;
 
+        private float _fireTime = 0f;
+
         public override void _Ready()
         {
             _fireTimer = GetNode<Timer>("FireTimer");
@@ -40,13 +42,17 @@ namespace Deathville.Component
             Connect(nameof(Fired), this, nameof(OnFired));
         }
 
+        public override void _Process(float delta)
+        {
+            _fireTime = Mathf.Clamp(_fireTime - delta / (IsFriendly ? Engine.TimeScale : 1f), 0f, float.MaxValue);
+        }
+
         public void AttemptFire(Vector2 atTarget)
         {
-            if (_fireTimer.IsStopped())
+            if (_fireTime == 0f)
             {
                 Fire(atTarget);
-                _fireTimer.WaitTime = 1f / _projectilesPerSecond;
-                _fireTimer.Start();
+                _fireTime = 1f / _projectilesPerSecond;
             }
         }
 
