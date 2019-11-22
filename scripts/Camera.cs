@@ -8,6 +8,7 @@ namespace Deathville
     {
         private const float SHAKE_DECAY = 10f;
         private const float MAX_OFFSET = 5f;
+        private const float AIM_OFFSET = .1f;
 
         private Vector2 _targetPos;
         private OpenSimplexNoise _noise;
@@ -31,7 +32,8 @@ namespace Deathville
             var player = GetTree().GetFirstNodeInGroup<Player>(Player.GROUP);
             if (player != null)
             {
-                _targetPos = player.GlobalPosition;
+                var mouseVec = GetGlobalMousePosition() - player.GlobalPosition;
+                _targetPos = player.GlobalPosition + mouseVec * AIM_OFFSET;
             }
             GlobalPosition = GlobalPosition.LinearInterpolate(_targetPos, 10 * delta / Engine.TimeScale);
             UpdateShake();
