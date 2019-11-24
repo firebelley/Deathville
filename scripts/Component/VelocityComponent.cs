@@ -32,6 +32,14 @@ namespace Deathville.Component
             }
         }
 
+        public float MaxSpeed
+        {
+            get
+            {
+                return _maxSpeed;
+            }
+        }
+
         public float SpeedPadding;
 
         private Vector2 _velocity;
@@ -50,9 +58,6 @@ namespace Deathville.Component
                 mod = 0f;
             }
             _velocity.x += _acceleration * GetProcessDeltaTime() * mod / GetTimeScale();
-            var abs = Math.Abs(_velocity.x);
-            var x = Mathf.Clamp(abs, 0f, _maxSpeed + SpeedPadding);
-            _velocity.x = x * Mathf.Sign(_velocity.x);
         }
 
         public void Decelerate()
@@ -80,17 +85,26 @@ namespace Deathville.Component
 
         public void MoveWithSnap()
         {
+            ClampVelocity();
             _velocity = _owner.MoveAndSlideWithSnap(_velocity / GetTimeScale(), Vector2.Down, Vector2.Up) * GetTimeScale();
         }
 
         public void Move()
         {
+            ClampVelocity();
             _velocity = _owner.MoveAndSlide(_velocity / GetTimeScale(), Vector2.Up) * GetTimeScale();
         }
 
         private float GetTimeScale()
         {
             return _obeyTimeScale ? 1f : Engine.TimeScale;
+        }
+
+        private void ClampVelocity()
+        {
+            var abs = Math.Abs(_velocity.x);
+            var x = Mathf.Clamp(abs, 0f, _maxSpeed + SpeedPadding);
+            _velocity.x = x * Mathf.Sign(_velocity.x);
         }
     }
 }

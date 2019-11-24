@@ -4,6 +4,7 @@ namespace Deathville.Enum
     {
         GROUNDED,
         AIRBORNE,
-        DASH
+        DASH,
+        SLIDE
     }
 }
