@@ -1,6 +1,6 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://resources/default.tres" type="TileSet" id=1]
+[ext_resource path="res://resources/DefaultTileset.tres" type="TileSet" id=1]
 [ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/Enemy.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scripts/Zone.cs" type="Script" id=4]
@@ -8,6 +8,7 @@
 [ext_resource path="res://scripts/Camera.cs" type="Script" id=6]
 [ext_resource path="res://assets/art/parallax2.png" type="Texture" id=7]
 [ext_resource path="res://scenes/UI/Cursor.tscn" type="PackedScene" id=8]
+[ext_resource path="res://scenes/Environment/LevelGenerator.tscn" type="PackedScene" id=9]
 
 [node name="Zone" type="Node2D"]
 script = ExtResource( 4 )
@@ -49,20 +50,20 @@ __meta__ = {
 
 [node name="Spawner" parent="." instance=ExtResource( 5 )]
 position = Vector2( 1000, 656 )
-_scene = ExtResource( 3 )
 _maxSpawned = 3
+_scene = ExtResource( 3 )
 _offset = 40.0
 
 [node name="Spawner2" parent="." instance=ExtResource( 5 )]
 position = Vector2( 568, 784 )
-_scene = ExtResource( 3 )
 _maxSpawned = 3
+_scene = ExtResource( 3 )
 _offset = 40.0
 
 [node name="Spawner3" parent="." instance=ExtResource( 5 )]
 position = Vector2( 768, 624 )
-_scene = ExtResource( 3 )
 _maxSpawned = 3
+_scene = ExtResource( 3 )
 _offset = 48.0
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
@@ -96,3 +97,5 @@ centered = false
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="LevelGenerator" parent="." instance=ExtResource( 9 )]
