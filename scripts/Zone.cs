@@ -33,6 +33,14 @@ namespace Deathville
         }
         private Node2D _entitiesLayer;
 
+        public TileMap TileMap
+        {
+            get
+            {
+                return GetNode<TileMap>("TileMap");
+            }
+        }
+
         public Pathfinder Pathfinder { get; private set; }
 
         public override void _Ready()
