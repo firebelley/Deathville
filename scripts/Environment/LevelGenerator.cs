@@ -20,13 +20,13 @@ namespace Deathville.Environment
         [Export]
         private float _pathDirectionChangePercent = .25f;
         [Export]
-        private int _minChunkWidth = 3;
+        private int _minChunkWidth = 2;
         [Export]
-        private int _maxChunkWidth = 6;
+        private int _maxChunkWidth = 4;
         [Export]
-        private int _minChunkHeight = 3;
+        private int _minChunkHeight = 2;
         [Export]
-        private int _maxChunkHeight = 6;
+        private int _maxChunkHeight = 4;
         [Export]
         private NodePath _playerPath;
 
