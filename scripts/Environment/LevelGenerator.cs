@@ -12,19 +12,19 @@ namespace Deathville.Environment
         private const int TILE_SIZE = 16;
 
         [Export]
-        private int _minLevelPathLength = 10;
+        private int _minLevelPathLength = 3;
         [Export]
-        private int _maxLevelPathLength = 15;
+        private int _maxLevelPathLength = 5;
         [Export]
         private float _pathDirectionChangePercent = .25f;
         [Export]
-        private int _minChunkWidth = 5;
+        private int _minChunkWidth = 3;
         [Export]
-        private int _maxChunkWidth = 10;
+        private int _maxChunkWidth = 6;
         [Export]
-        private int _minChunkHeight = 5;
+        private int _minChunkHeight = 3;
         [Export]
-        private int _maxChunkHeight = 10;
+        private int _maxChunkHeight = 6;
 
         private RandomNumberGenerator _rng = new RandomNumberGenerator();
         private Vector2[] _directions = new Vector2[] { Vector2.Up, Vector2.Right, Vector2.Down, Vector2.Left };
@@ -91,25 +91,6 @@ namespace Deathville.Environment
                 }
                 chunk.LevelPiece.QueueFree();
             }
-
-            // foreach (var area in areas)
-            // {
-            //     foreach (var chunk in area.PositionToChunk.Values)
-            //     {
-            //         var levelPiece = chunk.LevelPieceScene.Instance() as LevelPiece;
-            //         foreach (var tile in levelPiece.GetUsedCells())
-            //         {
-            //             if (tile is Vector2 position)
-            //             {
-            //                 var tilepos = position + (area.ChunkOffset + chunk.PositionInArea) * CHUNK_TILE_COUNT;
-            //                 Zone.Current.TileMap.SetCellv(tilepos, 0);
-            //                 Zone.Current.TileMap.UpdateBitmaskArea(tilepos);
-            //             }
-            //         }
-            //         levelPiece.QueueFree();
-            //     }
-            // }
-
         }
 
         private List<LevelPathCell> GetLevelPath()
@@ -251,18 +232,10 @@ namespace Deathville.Environment
 
             foreach (var chunk in shuffledChunks)
             {
-                var directionToNeighbor = new Dictionary<Vector2, Chunk>();
-                foreach (var dir in _directions)
-                {
-                    var neighborPos = chunk.GlobalPosition + dir;
-                    if (allChunks.ContainsKey(neighborPos) && allChunks[neighborPos].LevelPiece != null)
-                    {
-                        directionToNeighbor[dir] = allChunks[neighborPos];
-                    }
-                }
 
+                var connectableNeighbors = GetConnectableNeighbors(allChunks, chunk);
                 HashSet<string> validPiecePaths = new HashSet<string>();
-                if (directionToNeighbor.Count == 0)
+                if (connectableNeighbors.Count == 0)
                 {
                     // any are valid
                     validPiecePaths.UnionWith(MetadataLoader.LevelPieceToPath[LevelPiece.N]);
@@ -272,7 +245,7 @@ namespace Deathville.Environment
                 }
                 else
                 {
-                    foreach (var keyValue in directionToNeighbor)
+                    foreach (var keyValue in connectableNeighbors)
                     {
                         // if it is the north neighbor and it can connect to its south
                         if (keyValue.Key == Vector2.Up && (keyValue.Value.LevelPiece.ConnectsVia & LevelPiece.S) > 0)
@@ -295,16 +268,39 @@ namespace Deathville.Environment
                     }
                 }
 
-                if (validPiecePaths.Count == 0)
-                {
-                    Logger.Error("Could not place a level piece");
-                    continue;
-                }
-
                 var piece = validPiecePaths.ElementAt(_rng.RandiRange(0, validPiecePaths.Count - 1));
                 var scene = GD.Load(piece) as PackedScene;
                 chunk.LevelPiece = scene.Instance() as LevelPiece;
             }
+        }
+
+        private Dictionary<Vector2, Chunk> GetConnectableNeighbors(Dictionary<Vector2, Chunk> allChunks, Chunk currentChunk)
+        {
+            // don't want to consider a neighbor at all in this example
+            // north neighbor exists but does not connect via south
+            // in that instance, we don't want to factor in the north neighbor to our calculation
+            // find other neighbors that can be connected
+            // if no other connectable neighbors, then just pick any piece
+            // if surrounded on all sides by non-connectable neihbors, then just fully fill in the piece
+            var directionToNeighbor = new Dictionary<Vector2, Chunk>();
+            foreach (var dir in _directions)
+            {
+                var neighborPos = currentChunk.GlobalPosition + dir;
+                if (allChunks.ContainsKey(neighborPos) && allChunks[neighborPos].LevelPiece != null)
+                {
+                    var neighbor = allChunks[neighborPos];
+                    var connectsSouth = dir == Vector2.Up && (neighbor.LevelPiece.ConnectsVia & LevelPiece.S) > 0;
+                    var connectsNorth = dir == Vector2.Down && (neighbor.LevelPiece.ConnectsVia & LevelPiece.N) > 0;
+                    var connectsEast = dir == Vector2.Left && (neighbor.LevelPiece.ConnectsVia & LevelPiece.E) > 0;
+                    var connectsWest = dir == Vector2.Right && (neighbor.LevelPiece.ConnectsVia & LevelPiece.W) > 0;
+
+                    if (connectsNorth || connectsSouth || connectsWest || connectsEast)
+                    {
+                        directionToNeighbor[dir] = allChunks[neighborPos];
+                    }
+                }
+            }
+            return directionToNeighbor;
         }
     }
 }
