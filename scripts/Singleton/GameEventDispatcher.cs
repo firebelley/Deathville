@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Deathville
+namespace Deathville.Singleton
 {
     public class GameEventDispatcher : Node
     {

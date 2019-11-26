@@ -1,3 +1,4 @@
+using Deathville.Singleton;
 using Godot;
 
 namespace Deathville.Component

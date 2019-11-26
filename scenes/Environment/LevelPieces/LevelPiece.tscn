@@ -3,7 +3,7 @@
 [ext_resource path="res://scripts/Environment/LevelPiece.cs" type="Script" id=1]
 [ext_resource path="res://resources/PlaceholderTileset.tres" type="TileSet" id=2]
 
-[node name="BasePiece" type="TileMap"]
+[node name="LevelPiece" type="TileMap"]
 tile_set = ExtResource( 2 )
 cell_size = Vector2( 16, 16 )
 format = 1

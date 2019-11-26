@@ -1,4 +1,5 @@
 using Deathville.GameObject;
+using Deathville.Singleton;
 using Godot;
 using GodotApiTools.Extension;
 

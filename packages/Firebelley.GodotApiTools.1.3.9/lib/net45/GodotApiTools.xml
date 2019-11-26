@@ -34,16 +34,16 @@
             <typeparam name="T"></typeparam>
             <returns></returns>
         </member>
-        <member name="M:GodotApiTools.Logic.StateExecutorMachine.Update">
-            <summary>
-            Call every frame to update the state machine.
-            </summary>
-        </member>
         <member name="T:GodotApiTools.Logic.ImmediateStateMachine`1">
             <summary>
             A state machine designed for states that don't need to be updated every frame.
             </summary>
             <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:GodotApiTools.Logic.StateExecutorMachine.Update">
+            <summary>
+            Call every frame to update the state machine.
+            </summary>
         </member>
     </members>
 </doc>
