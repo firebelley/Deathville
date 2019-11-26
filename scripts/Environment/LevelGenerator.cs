@@ -337,6 +337,7 @@ namespace Deathville.Environment
                         Zone.Current.TileMap.UpdateBitmaskArea(tilepos);
                     }
                 }
+                FillExtras(chunk);
             }
             else
             {
@@ -349,6 +350,16 @@ namespace Deathville.Environment
                         Zone.Current.TileMap.UpdateBitmaskArea(tilePos);
                     }
                 }
+            }
+        }
+
+        private void FillExtras(Chunk chunk)
+        {
+            foreach (var spawner in chunk.LevelPiece.Spawners)
+            {
+                spawner.GetParent().RemoveChild(spawner);
+                Zone.Current.AddChild(spawner);
+                spawner.GlobalPosition = spawner.Position + chunk.GlobalPosition * CHUNK_TILE_COUNT * TILE_SIZE;
             }
         }
 

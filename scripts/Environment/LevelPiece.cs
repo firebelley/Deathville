@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace Deathville.Environment
@@ -21,6 +23,14 @@ namespace Deathville.Environment
             get
             {
                 return GetNode<Position2D>("PlayerSpawn").Position;
+            }
+        }
+
+        public IEnumerable<Spawner> Spawners
+        {
+            get
+            {
+                return GetNode("Spawners").GetChildren().Cast<Spawner>();
             }
         }
     }
