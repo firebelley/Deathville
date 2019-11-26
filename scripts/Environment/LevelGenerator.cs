@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Deathville.Singleton;
 using Godot;
-using GodotApiTools.Util;
 
 namespace Deathville.Environment
 {
@@ -75,22 +74,10 @@ namespace Deathville.Environment
             }
 
             OffsetAreas(areas);
-            var allChunks = AddChunksToArea(areas);
+            var allChunks = AddChunksToAreas(areas);
             SelectLevelPiecesForChunks(allChunks);
-
-            foreach (var chunk in allChunks.Values)
-            {
-                foreach (var tile in chunk.LevelPiece.GetUsedCells())
-                {
-                    if (tile is Vector2 position)
-                    {
-                        var tilepos = position + (chunk.PathChunkArea.ChunkOffset + chunk.PositionInArea) * CHUNK_TILE_COUNT;
-                        Zone.Current.TileMap.SetCellv(tilepos, 0);
-                        Zone.Current.TileMap.UpdateBitmaskArea(tilepos);
-                    }
-                }
-                chunk.LevelPiece.QueueFree();
-            }
+            var boundingArea = GetBoundingArea(areas);
+            FillBoundingArea(allChunks, boundingArea);
         }
 
         private List<LevelPathCell> GetLevelPath()
@@ -189,7 +176,7 @@ namespace Deathville.Environment
             toAlignChunkArea.ChunkOffset.y += _rng.RandiRange(-(toAlignChunkArea.VerticalChunkCount - 1), rootChunkArea.VerticalChunkCount - 1);
         }
 
-        private Dictionary<Vector2, Chunk> AddChunksToArea(IEnumerable<PathChunkArea> pathChunkAreas)
+        private Dictionary<Vector2, Chunk> AddChunksToAreas(IEnumerable<PathChunkArea> pathChunkAreas)
         {
             var allChunks = new Dictionary<Vector2, Chunk>();
             foreach (var area in pathChunkAreas)
@@ -301,6 +288,60 @@ namespace Deathville.Environment
                 }
             }
             return directionToNeighbor;
+        }
+
+        private Rect2 GetBoundingArea(IEnumerable<PathChunkArea> areas)
+        {
+            var firstArea = areas.ElementAt(0);
+            var boundingRect = new Rect2(firstArea.ChunkOffset, new Vector2(firstArea.HorizontalChunkCount, firstArea.VerticalChunkCount));
+            foreach (var area in areas)
+            {
+                boundingRect = boundingRect.Merge(new Rect2(area.ChunkOffset, new Vector2(area.HorizontalChunkCount, area.VerticalChunkCount)));
+            }
+            boundingRect = boundingRect.Grow(2f);
+            return boundingRect;
+        }
+
+        private void FillBoundingArea(Dictionary<Vector2, Chunk> allChunks, Rect2 boundingArea)
+        {
+            for (int x = (int) boundingArea.Position.x; x < boundingArea.Position.x + boundingArea.Size.x; x++)
+            {
+                for (int y = (int) boundingArea.Position.y; y < boundingArea.Position.y + boundingArea.Size.y; y++)
+                {
+                    var chunkPos = new Vector2(x, y);
+                    FillChunk(allChunks, chunkPos);
+                }
+            }
+        }
+
+        private void FillChunk(Dictionary<Vector2, Chunk> allChunks, Vector2 chunkPosition)
+        {
+            if (allChunks.ContainsKey(chunkPosition))
+            {
+                var chunk = allChunks[chunkPosition];
+                foreach (var tile in chunk.LevelPiece.GetUsedCells())
+                {
+                    if (tile is Vector2 position)
+                    {
+                        var tilepos = position + (chunk.PathChunkArea.ChunkOffset + chunk.PositionInArea) * CHUNK_TILE_COUNT;
+                        Zone.Current.TileMap.SetCellv(tilepos, 0);
+                        Zone.Current.TileMap.UpdateBitmaskArea(tilepos);
+                    }
+                }
+                chunk.LevelPiece.QueueFree();
+            }
+            else
+            {
+                for (int x = 0; x < CHUNK_TILE_COUNT; x++)
+                {
+                    for (int y = 0; y < CHUNK_TILE_COUNT; y++)
+                    {
+                        var tilePos = new Vector2(x, y) + chunkPosition * CHUNK_TILE_COUNT;
+                        Zone.Current.TileMap.SetCellv(tilePos, 0);
+                        Zone.Current.TileMap.UpdateBitmaskArea(tilePos);
+                    }
+                }
+            }
         }
     }
 }
