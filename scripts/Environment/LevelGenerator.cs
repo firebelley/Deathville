@@ -1,14 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
+using Deathville.GameObject;
 using Deathville.Singleton;
 using Godot;
 
 namespace Deathville.Environment
 {
-    public class LevelGenerator : Node2D
+    public class LevelGenerator : Node
     {
         private const int CHUNK_TILE_COUNT = 16;
         private const int TILE_SIZE = 16;
+
+        public Vector2 PlayerSpawnPosition { get; private set; }
 
         [Export]
         private int _minLevelPathLength = 3;
@@ -24,6 +27,8 @@ namespace Deathville.Environment
         private int _minChunkHeight = 3;
         [Export]
         private int _maxChunkHeight = 6;
+        [Export]
+        private NodePath _playerPath;
 
         private RandomNumberGenerator _rng = new RandomNumberGenerator();
         private Vector2[] _directions = new Vector2[] { Vector2.Up, Vector2.Right, Vector2.Down, Vector2.Left };
@@ -60,10 +65,9 @@ namespace Deathville.Environment
         public override void _Ready()
         {
             _rng.Randomize();
-            CallDeferred(nameof(Generate));
         }
 
-        private void Generate()
+        public void Generate()
         {
             var path = GetLevelPath();
 
@@ -78,6 +82,11 @@ namespace Deathville.Environment
             SelectLevelPiecesForChunks(allChunks);
             var boundingArea = GetBoundingArea(areas);
             FillBoundingArea(allChunks, boundingArea);
+
+            // meta data
+            PlayerSpawnPosition = GetPlayerSpawnPosition(areas.First());
+
+            CleanupChunks(allChunks.Values);
         }
 
         private List<LevelPathCell> GetLevelPath()
@@ -328,7 +337,6 @@ namespace Deathville.Environment
                         Zone.Current.TileMap.UpdateBitmaskArea(tilepos);
                     }
                 }
-                chunk.LevelPiece.QueueFree();
             }
             else
             {
@@ -341,6 +349,21 @@ namespace Deathville.Environment
                         Zone.Current.TileMap.UpdateBitmaskArea(tilePos);
                     }
                 }
+            }
+        }
+
+        private Vector2 GetPlayerSpawnPosition(PathChunkArea area)
+        {
+            var chunk = area.PositionToChunk.Values.OrderBy(x => _rng.Randf()).First();
+            var pos = chunk.LevelPiece.PlayerSpawnPosition + chunk.GlobalPosition * CHUNK_TILE_COUNT * TILE_SIZE;
+            return pos;
+        }
+
+        private void CleanupChunks(IEnumerable<Chunk> chunks)
+        {
+            foreach (var chunk in chunks)
+            {
+                chunk.LevelPiece.QueueFree();
             }
         }
     }

@@ -15,5 +15,13 @@ namespace Deathville.Environment
 
         [Export(PropertyHint.Flags, "N,E,S,W")]
         public int ConnectsVia { get; private set; }
+
+        public Vector2 PlayerSpawnPosition
+        {
+            get
+            {
+                return GetNode<Position2D>("PlayerSpawn").Position;
+            }
+        }
     }
 }

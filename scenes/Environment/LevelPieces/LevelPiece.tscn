@@ -8,10 +8,17 @@ tile_set = ExtResource( 2 )
 cell_size = Vector2( 16, 16 )
 format = 1
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="ReferenceRect" type="ReferenceRect" parent="."]
 margin_right = 256.0
 margin_bottom = 256.0
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
+
+[node name="PlayerSpawn" type="Position2D" parent="."]
+position = Vector2( 16, 16 )

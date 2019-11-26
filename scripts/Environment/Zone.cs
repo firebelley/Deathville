@@ -1,7 +1,8 @@
+using Deathville.GameObject;
 using Deathville.Util;
 using Godot;
 
-namespace Deathville
+namespace Deathville.Environment
 {
     public class Zone : Node2D
     {
@@ -37,16 +38,35 @@ namespace Deathville
         {
             get
             {
-                return GetNode<TileMap>("TileMap");
+                if (!IsInstanceValid(_tileMap))
+                {
+                    _tileMap = GetNode<TileMap>("TileMap");
+                }
+                return _tileMap;
+            }
+            set
+            {
+                _tileMap = value;
             }
         }
+        private TileMap _tileMap;
 
         public Pathfinder Pathfinder { get; private set; }
 
         public override void _Ready()
         {
             Current = this;
-            Pathfinder = new Pathfinder(GetNode<TileMap>("TileMap"));
+            CallDeferred(nameof(Init));
+        }
+
+        private void Init()
+        {
+            var generator = GetNode<LevelGenerator>("LevelGenerator");
+            generator.Generate();
+
+            EntitiesLayer.GetNode<Player>("Player").GlobalPosition = generator.PlayerSpawnPosition;
+
+            Pathfinder = new Pathfinder(TileMap);
         }
     }
 }
