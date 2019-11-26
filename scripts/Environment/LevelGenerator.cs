@@ -41,11 +41,13 @@ namespace Deathville.Environment
         private struct Chunk
         {
             public Vector2 PositionInArea;
+            public Vector2 GlobalPosition;
             public PackedScene LevelPieceScene;
 
-            public Chunk(Vector2 position, PackedScene levelPieceScene)
+            public Chunk(Vector2 position, Vector2 globalPos, PackedScene levelPieceScene)
             {
                 PositionInArea = position;
+                GlobalPosition = globalPos;
                 LevelPieceScene = levelPieceScene;
             }
         }
@@ -55,6 +57,7 @@ namespace Deathville.Environment
             public LevelPathCell LevelPathCell;
             public int HorizontalChunkCount;
             public int VerticalChunkCount;
+            public Vector2 ChunkOffset;
             public Dictionary<Vector2, Chunk> PositionToChunk = new Dictionary<Vector2, Chunk>();
         }
 
@@ -62,7 +65,6 @@ namespace Deathville.Environment
         {
             _rng.Randomize();
             CallDeferred(nameof(Generate));
-            // Generate();
         }
 
         private void Generate()
@@ -75,32 +77,27 @@ namespace Deathville.Environment
                 areas.Add(GenerateAreaForLevelPathCell(cell));
             }
 
+            OffsetAreas(areas);
+            AddLevelPiecesToAreas(areas);
+
             foreach (var area in areas)
             {
-                FillArea(area);
-            }
-
-            // foreach (var area in areas)
-            // {
-
-            foreach (var chunk in areas[0].PositionToChunk.Values)
-            {
-                var levelPiece = chunk.LevelPieceScene.Instance() as LevelPiece;
-                foreach (var tile in levelPiece.GetUsedCells())
+                foreach (var chunk in area.PositionToChunk.Values)
                 {
-                    if (tile is Vector2 position)
+                    var levelPiece = chunk.LevelPieceScene.Instance() as LevelPiece;
+                    foreach (var tile in levelPiece.GetUsedCells())
                     {
-                        var tilepos = position + chunk.PositionInArea * CHUNK_TILE_COUNT;
-                        Zone.Current.TileMap.SetCellv(tilepos, 0);
-                        Zone.Current.TileMap.UpdateBitmaskArea(tilepos);
+                        if (tile is Vector2 position)
+                        {
+                            var tilepos = position + (area.ChunkOffset + chunk.PositionInArea) * CHUNK_TILE_COUNT;
+                            Zone.Current.TileMap.SetCellv(tilepos, 0);
+                            Zone.Current.TileMap.UpdateBitmaskArea(tilepos);
+                        }
                     }
+                    levelPiece.QueueFree();
                 }
-                levelPiece.QueueFree();
-
-                // GetParent().AddChild(chunk.LevelPiece);
-                // chunk.LevelPiece.GlobalPosition = chunk.PositionInArea * CHUNK_TILE_COUNT * TILE_SIZE;
             }
-            // }
+
         }
 
         private List<LevelPathCell> GetLevelPath()
@@ -157,23 +154,85 @@ namespace Deathville.Environment
             return area;
         }
 
-        private void FillArea(PathChunkArea pathChunkArea)
+        private void OffsetAreas(List<PathChunkArea> areas)
         {
-            List<Vector2> chunkPositions = new List<Vector2>();
+            for (int i = 0; i < areas.Count; i++)
+            {
+                if (i == 0) continue;
+                var area = areas[i];
+                var rootArea = areas[i - 1];
+
+                if (rootArea.LevelPathCell.Direction == Vector2.Up)
+                {
+                    AlignAreasX(rootArea, area);
+                    area.ChunkOffset.y = rootArea.ChunkOffset.y - area.VerticalChunkCount;
+                }
+                else if (rootArea.LevelPathCell.Direction == Vector2.Down)
+                {
+                    AlignAreasX(rootArea, area);
+                    area.ChunkOffset.y = rootArea.ChunkOffset.y + rootArea.VerticalChunkCount;
+                }
+                else if (rootArea.LevelPathCell.Direction == Vector2.Left)
+                {
+                    AlignAreasY(rootArea, area);
+                    area.ChunkOffset.x = rootArea.ChunkOffset.x - area.HorizontalChunkCount;
+                }
+                else if (rootArea.LevelPathCell.Direction == Vector2.Right)
+                {
+                    AlignAreasY(rootArea, area);
+                    area.ChunkOffset.x = rootArea.ChunkOffset.x + rootArea.HorizontalChunkCount;
+                }
+            }
+        }
+
+        private void AddLevelPiecesToAreas(IEnumerable<PathChunkArea> pathChunkAreas)
+        {
+            var allChunks = new Dictionary<Vector2, Chunk>();
+            foreach (var area in pathChunkAreas)
+            {
+                CreateAreaChunks(area);
+                foreach (var chunk in area.PositionToChunk.Values)
+                {
+                    // don't add duplicates in the case of overlapping areas
+                    if (!allChunks.ContainsKey(chunk.GlobalPosition))
+                    {
+                        allChunks[chunk.GlobalPosition] = chunk;
+                    }
+                }
+            }
+            SelectLevelPieces(allChunks.Values);
+        }
+
+        private void CreateAreaChunks(PathChunkArea pathChunkArea)
+        {
             for (int i = 0; i < pathChunkArea.HorizontalChunkCount; i++)
             {
                 for (int j = 0; j < pathChunkArea.VerticalChunkCount; j++)
                 {
-                    chunkPositions.Add(new Vector2(i, j));
+                    var pos = new Vector2(i, j);
+                    pathChunkArea.PositionToChunk[pos] = new Chunk(pos, pos + pathChunkArea.ChunkOffset, null);
                 }
             }
+        }
 
-            chunkPositions = chunkPositions.OrderBy(x => _rng.Randf()).ToList();
-            foreach (var position in chunkPositions)
-            {
-                var chunk = new Chunk(position, (GD.Load("res://scenes/Environment/LevelPieces/001.tscn") as PackedScene));
-                pathChunkArea.PositionToChunk[position] = chunk;
-            }
+        private void SelectLevelPieces(IEnumerable<Chunk> allChunks)
+        {
+            // TODO: rework this to add all chunks to a global list
+            // shuffle the global list and then add all the level pieces
+            // account for neighbors when determining layout
+            var shuffledChunks = allChunks.OrderBy(x => _rng.Randf());
+        }
+
+        private void AlignAreasX(PathChunkArea rootChunkArea, PathChunkArea toAlignChunkArea)
+        {
+            toAlignChunkArea.ChunkOffset.x = rootChunkArea.ChunkOffset.x;
+            toAlignChunkArea.ChunkOffset.x += _rng.RandiRange(-(toAlignChunkArea.HorizontalChunkCount - 1), rootChunkArea.HorizontalChunkCount - 1);
+        }
+
+        private void AlignAreasY(PathChunkArea rootChunkArea, PathChunkArea toAlignChunkArea)
+        {
+            toAlignChunkArea.ChunkOffset.y = rootChunkArea.ChunkOffset.y;
+            toAlignChunkArea.ChunkOffset.y += _rng.RandiRange(-(toAlignChunkArea.VerticalChunkCount - 1), rootChunkArea.VerticalChunkCount - 1);
         }
     }
 }

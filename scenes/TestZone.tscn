@@ -18,10 +18,9 @@ __meta__ = {
 }
 
 [node name="Camera2D" type="Camera2D" parent="."]
-anchor_mode = 0
 rotating = true
 current = true
-zoom = Vector2( 5, 5 )
+zoom = Vector2( 10, 10 )
 script = ExtResource( 2 )
 
 [node name="TileMap" type="TileMap" parent="."]

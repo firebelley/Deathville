@@ -35,6 +35,10 @@ namespace Deathville
                 var mouseVec = GetGlobalMousePosition() - player.GlobalPosition;
                 _targetPos = player.GlobalPosition + mouseVec * AIM_OFFSET;
             }
+            else
+            {
+                _targetPos = GetGlobalMousePosition();
+            }
             GlobalPosition = GlobalPosition.LinearInterpolate(_targetPos, 10 * delta / Engine.TimeScale);
             UpdateShake();
         }
