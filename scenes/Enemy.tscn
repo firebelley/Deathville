@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://assets/art/peasant2.png" type="Texture" id=1]
 [ext_resource path="res://scenes/Effect/BloodParticles.tscn" type="PackedScene" id=2]
@@ -22,6 +22,7 @@
 [ext_resource path="res://scenes/Component/DeathComponent.tscn" type="PackedScene" id=20]
 [ext_resource path="res://scenes/GameObject/Ragdoll.tscn" type="PackedScene" id=21]
 [ext_resource path="res://scenes/Component/EntitySeparatorComponent.tscn" type="PackedScene" id=22]
+[ext_resource path="res://scenes/Component/EntityDeleterComponent.tscn" type="PackedScene" id=23]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
@@ -85,6 +86,8 @@ _aiBehaviorComponentPath = NodePath("../AIBehaviorComponent")
 position = Vector2( 0, -8 )
 _velocityComponentPath = NodePath("../VelocityComponent")
 
+[node name="EntityDeleterComponent" parent="." instance=ExtResource( 23 )]
+
 [node name="DamageReceiverComponent" parent="." instance=ExtResource( 4 )]
 collision_layer = 262144
 collision_mask = 0
@@ -99,6 +102,7 @@ shape = SubResource( 2 )
 position = Vector2( 0, -15 )
 frames = SubResource( 3 )
 animation = "run"
+frame = 2
 playing = true
 
 [node name="WeaponSocketComponent" parent="." instance=ExtResource( 16 )]

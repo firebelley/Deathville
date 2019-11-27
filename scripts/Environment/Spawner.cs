@@ -1,12 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
+using Deathville.GameObject;
 using Godot;
+using GodotApiTools.Extension;
 
 namespace Deathville.Environment
 {
     [Tool]
     public class Spawner : Node2D
     {
+        private const int MAX_SPAWNED = 25;
+        private static int _totalSpawned;
+
         [Export]
         private float _offset
         {
@@ -32,16 +37,20 @@ namespace Deathville.Environment
 
         private List<Node2D> _spawned = new List<Node2D>();
 
+        private VisibilityNotifier2D _innerNotifier;
+        private VisibilityNotifier2D _outerNotifier;
+
         public override void _Ready()
         {
             if (Engine.EditorHint) return;
+
+            _innerNotifier = GetNode<VisibilityNotifier2D>("InnerNotifier");
+            _outerNotifier = GetNode<VisibilityNotifier2D>("OuterNotifier");
 
             var timer = GetNode<Timer>("Timer");
             timer.WaitTime = _spawnDelay;
             timer.Start();
             timer.Connect("timeout", this, nameof(OnTimerTimeout));
-
-            CallDeferred(nameof(SpawnMax));
         }
 
         public override void _Draw()
@@ -54,15 +63,10 @@ namespace Deathville.Environment
 
         private void RemoveInvalid()
         {
+            var prevSize = _spawned.Count;
             _spawned = _spawned.Where(x => IsInstanceValid(x)).ToList();
-        }
-
-        private void SpawnMax()
-        {
-            while (_spawned.Count < _maxSpawned)
-            {
-                Spawn();
-            }
+            var diff = prevSize - _spawned.Count;
+            _totalSpawned -= diff;
         }
 
         private void Spawn()
@@ -76,6 +80,15 @@ namespace Deathville.Environment
             Zone.Current.EntitiesLayer.AddChild(scene);
             scene.GlobalPosition = spawnPos;
             _spawned.Add(scene);
+            _totalSpawned++;
+        }
+
+        private bool ShouldSpawn()
+        {
+            var lessThan = _spawned.Count < _maxSpawned && _totalSpawned < MAX_SPAWNED;
+            var player = GetTree().GetFirstNodeInGroup<Player>(Player.GROUP);
+            var inDistance = player != null && !_innerNotifier.IsOnScreen() && _outerNotifier.IsOnScreen();
+            return lessThan && inDistance;
         }
 
         private void OnTimerTimeout()
@@ -83,10 +96,11 @@ namespace Deathville.Environment
             if (_scene == null) return;
             RemoveInvalid();
 
-            if (_spawned.Count < _maxSpawned)
+            if (ShouldSpawn())
             {
                 Spawn();
             }
+            GD.Print(_totalSpawned);
         }
     }
 }
