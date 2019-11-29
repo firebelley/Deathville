@@ -13,8 +13,8 @@ __meta__ = {
 }
 
 [node name="ReferenceRect" type="ReferenceRect" parent="."]
-margin_right = 256.0
-margin_bottom = 256.0
+margin_right = 512.0
+margin_bottom = 512.0
 __meta__ = {
 "_edit_lock_": true,
 "_edit_use_anchors_": false

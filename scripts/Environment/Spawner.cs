@@ -100,6 +100,7 @@ namespace Deathville.Environment
             {
                 Spawn();
             }
+            GD.Print(_totalSpawned);
         }
     }
 }

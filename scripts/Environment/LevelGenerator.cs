@@ -8,7 +8,7 @@ namespace Deathville.Environment
 {
     public class LevelGenerator : Node
     {
-        private const int CHUNK_TILE_COUNT = 16;
+        private const int CHUNK_TILE_COUNT = 32;
         private const int TILE_SIZE = 16;
 
         public Vector2 PlayerSpawnPosition { get; private set; }
