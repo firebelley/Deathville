@@ -355,12 +355,12 @@ namespace Deathville.Environment
 
         private void FillExtras(Chunk chunk)
         {
-            foreach (var spawner in chunk.LevelPiece.Spawners)
-            {
-                spawner.GetParent().RemoveChild(spawner);
-                Zone.Current.AddChild(spawner);
-                spawner.GlobalPosition = spawner.Position + chunk.GlobalPosition * CHUNK_TILE_COUNT * TILE_SIZE;
-            }
+            // foreach (var spawner in chunk.LevelPiece.Spawners)
+            // {
+            //     spawner.GetParent().RemoveChild(spawner);
+            //     Zone.Current.AddChild(spawner);
+            //     spawner.GlobalPosition = spawner.Position + chunk.GlobalPosition * CHUNK_TILE_COUNT * TILE_SIZE;
+            // }
         }
 
         private Vector2 GetPlayerSpawnPosition(PathChunkArea area)

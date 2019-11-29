@@ -70,6 +70,13 @@ namespace Deathville.Util
             return idPath.Select(x => new PathfindCell(x, _astar.GetPointWeightScale(x), _astar.GetPointPosition(x) * TILE_SIZE + offset));
         }
 
+        public Vector2 GetClosestGlobalPoint(Vector2 closestToPoint)
+        {
+            var closestPointId = _astar.GetClosestPoint(closestToPoint / TILE_SIZE);
+            var closestPoint = _astar.GetPointPosition(closestPointId);
+            return closestPoint * TILE_SIZE + new Vector2(TILE_SIZE / 2f, TILE_SIZE);
+        }
+
         private void GenerateAstar()
         {
             foreach (var tilePos in _tileMap.GetUsedCells())

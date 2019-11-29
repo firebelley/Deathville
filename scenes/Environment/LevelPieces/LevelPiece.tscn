@@ -56,5 +56,3 @@ __meta__ = {
 
 [node name="PlayerSpawn" type="Position2D" parent="."]
 position = Vector2( 16, 16 )
-
-[node name="Spawners" type="Node" parent="."]
