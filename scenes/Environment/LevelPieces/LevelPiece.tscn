@@ -20,6 +20,40 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="ReferenceRect2" type="ReferenceRect" parent="."]
+margin_top = 224.0
+margin_right = 16.0
+margin_bottom = 288.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect3" type="ReferenceRect" parent="."]
+margin_left = 224.0
+margin_right = 288.0
+margin_bottom = 16.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect4" type="ReferenceRect" parent="."]
+margin_left = 496.0
+margin_top = 224.0
+margin_right = 512.0
+margin_bottom = 288.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ReferenceRect5" type="ReferenceRect" parent="."]
+margin_left = 224.0
+margin_top = 496.0
+margin_right = 288.0
+margin_bottom = 512.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="PlayerSpawn" type="Position2D" parent="."]
 position = Vector2( 16, 16 )
 
