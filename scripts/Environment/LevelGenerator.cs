@@ -32,6 +32,7 @@ namespace Deathville.Environment
 
         private RandomNumberGenerator _rng = new RandomNumberGenerator();
         private Vector2[] _directions = new Vector2[] { Vector2.Up, Vector2.Right, Vector2.Down, Vector2.Left };
+        private OpenSimplexNoise _noise = new OpenSimplexNoise();
 
         private struct LevelPathCell
         {
@@ -62,9 +63,19 @@ namespace Deathville.Environment
             public Dictionary<Vector2, Chunk> PositionToChunk = new Dictionary<Vector2, Chunk>();
         }
 
+        private class NoiseArea
+        {
+            public Rect2 Rect;
+            public float AverageValue;
+        }
+
         public override void _Ready()
         {
             _rng.Randomize();
+            _noise.Period = 8f;
+            _noise.Persistence = .33f;
+            _noise.Lacunarity = 1.5f;
+            _noise.Seed = _rng.RandiRange(0, int.MaxValue);
         }
 
         public void Generate()
@@ -79,7 +90,7 @@ namespace Deathville.Environment
 
             OffsetAreas(areas);
             var allChunks = AddChunksToAreas(areas);
-            SelectLevelPiecesForChunks(allChunks);
+            // SelectLevelPiecesForChunks(allChunks);
             var boundingArea = GetBoundingArea(areas);
             FillBoundingArea(allChunks, boundingArea);
 
@@ -307,7 +318,7 @@ namespace Deathville.Environment
             {
                 boundingRect = boundingRect.Merge(new Rect2(area.ChunkOffset, new Vector2(area.HorizontalChunkCount, area.VerticalChunkCount)));
             }
-            boundingRect = boundingRect.Grow(2f);
+            boundingRect = boundingRect.Grow(1f);
             return boundingRect;
         }
 
@@ -325,19 +336,36 @@ namespace Deathville.Environment
 
         private void FillChunk(Dictionary<Vector2, Chunk> allChunks, Vector2 chunkPosition)
         {
+            var offset = chunkPosition * CHUNK_TILE_COUNT;
             if (allChunks.ContainsKey(chunkPosition))
             {
-                var chunk = allChunks[chunkPosition];
-                foreach (var tile in chunk.LevelPiece.GetUsedCells())
+                for (int x = 0; x < CHUNK_TILE_COUNT; x++)
                 {
-                    if (tile is Vector2 position)
+                    for (int y = 0; y < CHUNK_TILE_COUNT; y++)
                     {
-                        var tilepos = position + (chunk.PathChunkArea.ChunkOffset + chunk.PositionInArea) * CHUNK_TILE_COUNT;
-                        Zone.Current.TileMap.SetCellv(tilepos, 0);
-                        Zone.Current.TileMap.UpdateBitmaskArea(tilepos);
+                        var tilePos = new Vector2(x, y) + offset;
+                        var noiseArea = GetNoiseArea(tilePos);
+
+                        if (noiseArea.AverageValue > 0.15f)
+                        {
+                            FillNoiseArea(tilePos, noiseArea);
+                            x += _rng.RandiRange((int) noiseArea.Rect.Size.x, (int) noiseArea.Rect.Size.x + 4);
+                            y += _rng.RandiRange((int) noiseArea.Rect.Size.y, (int) noiseArea.Rect.Size.y + 4);
+                        }
                     }
                 }
-                FillExtras(chunk);
+
+                // var chunk = allChunks[chunkPosition];
+                // foreach (var tile in chunk.LevelPiece.GetUsedCells())
+                // {
+                //     if (tile is Vector2 position)
+                //     {
+                //         var tilepos = position + (chunk.PathChunkArea.ChunkOffset + chunk.PositionInArea) * CHUNK_TILE_COUNT;
+                //         Zone.Current.TileMap.SetCellv(tilepos, 0);
+                //         Zone.Current.TileMap.UpdateBitmaskArea(tilepos);
+                //     }
+                // }
+                // FillExtras(chunk);
             }
             else
             {
@@ -345,10 +373,44 @@ namespace Deathville.Environment
                 {
                     for (int y = 0; y < CHUNK_TILE_COUNT; y++)
                     {
-                        var tilePos = new Vector2(x, y) + chunkPosition * CHUNK_TILE_COUNT;
+                        var tilePos = new Vector2(x, y) + offset;
                         Zone.Current.TileMap.SetCellv(tilePos, 0);
                         Zone.Current.TileMap.UpdateBitmaskArea(tilePos);
                     }
+                }
+            }
+        }
+
+        private NoiseArea GetNoiseArea(Vector2 tilePos)
+        {
+            var rect = new Rect2();
+            var w = _rng.RandiRange(4, 16);
+            var h = _rng.RandiRange(4, 16);
+            rect.Size = new Vector2(w, h);
+            var area = 0f;
+
+            for (int x = 0; x < w; x++)
+            {
+                for (int y = 0; y < h; y++)
+                {
+                    area += _noise.GetNoise2dv(new Vector2(x, y) + tilePos);
+                }
+            }
+            var noiseArea = new NoiseArea();
+            noiseArea.Rect = rect;
+            noiseArea.AverageValue = area / (float) (w * h);
+            return noiseArea;
+        }
+
+        private void FillNoiseArea(Vector2 tilePos, NoiseArea area)
+        {
+            for (int x = 0; x < area.Rect.Size.x; x++)
+            {
+                for (int y = 0; y < area.Rect.Size.y; y++)
+                {
+                    var pos = new Vector2(x, y) + tilePos;
+                    Zone.Current.TileMap.SetCellv(pos, 0);
+                    Zone.Current.TileMap.UpdateBitmaskArea(pos);
                 }
             }
         }
@@ -365,6 +427,7 @@ namespace Deathville.Environment
 
         private Vector2 GetPlayerSpawnPosition(PathChunkArea area)
         {
+            return Vector2.Zero;
             var chunk = area.PositionToChunk.Values.OrderBy(x => _rng.Randf()).First();
             var pos = chunk.LevelPiece.PlayerSpawnPosition + chunk.GlobalPosition * CHUNK_TILE_COUNT * TILE_SIZE;
             return pos;
@@ -374,7 +437,7 @@ namespace Deathville.Environment
         {
             foreach (var chunk in chunks)
             {
-                chunk.LevelPiece.QueueFree();
+                // chunk.LevelPiece.QueueFree();
             }
         }
     }

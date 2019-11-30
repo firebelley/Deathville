@@ -74,6 +74,10 @@ namespace Deathville.Environment
             {
                 GlobalPosition = player.GlobalPosition;
             }
+            else
+            {
+                return;
+            }
 
             RemoveInvalid();
 
