@@ -63,20 +63,17 @@ namespace Deathville.Environment
             public Dictionary<Vector2, Chunk> PositionToChunk = new Dictionary<Vector2, Chunk>();
         }
 
-        private class NoiseArea
-        {
-            public Rect2 Rect;
-            public float AverageValue;
-        }
-
         public override void _Ready()
         {
             _rng.Randomize();
-            _noise.Period = 16f;
-            _noise.Persistence = .5f;
-            _noise.Lacunarity = 4f;
-            _noise.Octaves = 1;
+            var noiseTex = GetNode<Sprite>("Sprite").Texture as NoiseTexture;
+            _noise = noiseTex.Noise;
             _noise.Seed = _rng.RandiRange(0, int.MaxValue);
+            // _noise.Period = 64f;
+            // _noise.Persistence = .5f;
+            // _noise.Lacunarity = 4f;
+            // _noise.Octaves = 1;
+            // _noise.Seed = _rng.RandiRange(0, int.MaxValue);
         }
 
         public void Generate()
@@ -342,14 +339,11 @@ namespace Deathville.Environment
                     for (int y = 0; y < CHUNK_TILE_COUNT; y++)
                     {
                         var tilePos = new Vector2(x, y) + offset;
-                        var samplePos = new Vector2(tilePos.x * 2f, tilePos.y * 3f);
-                        var noiseArea = GetNoiseArea(samplePos);
 
-                        if (noiseArea.AverageValue > 0.3f)
+                        if (GetAverageValue(tilePos, 7f, 15f) > 0.06f)
                         {
-                            FillNoiseArea(tilePos, noiseArea);
-                            // x += _rng.RandiRange((int) noiseArea.Rect.Size.x, (int) noiseArea.Rect.Size.x + 4);
-                            // y += _rng.RandiRange((int) noiseArea.Rect.Size.y, (int) noiseArea.Rect.Size.y + 4);
+                            Zone.Current.TileMap.SetCellv(tilePos, 0);
+                            Zone.Current.TileMap.UpdateBitmaskArea(tilePos);
                         }
                         else if (PlayerSpawnPosition == Vector2.Zero)
                         {
@@ -361,18 +355,6 @@ namespace Deathville.Environment
                         }
                     }
                 }
-
-                // var chunk = allChunks[chunkPosition];
-                // foreach (var tile in chunk.LevelPiece.GetUsedCells())
-                // {
-                //     if (tile is Vector2 position)
-                //     {
-                //         var tilepos = position + (chunk.PathChunkArea.ChunkOffset + chunk.PositionInArea) * CHUNK_TILE_COUNT;
-                //         Zone.Current.TileMap.SetCellv(tilepos, 0);
-                //         Zone.Current.TileMap.UpdateBitmaskArea(tilepos);
-                //     }
-                // }
-                // FillExtras(chunk);
             }
             else
             {
@@ -388,38 +370,17 @@ namespace Deathville.Environment
             }
         }
 
-        private NoiseArea GetNoiseArea(Vector2 tilePos)
+        private float GetAverageValue(Vector2 tilePos, float xScale, float yScale)
         {
-            var rect = new Rect2();
-            var w = _rng.RandiRange(1, 1);
-            var h = _rng.RandiRange(1, 1);
-            rect.Size = new Vector2(w, h);
-            var area = 0f;
-
-            for (int x = 0; x < w; x++)
+            var sum = 0f;
+            var scale = new Vector2(xScale, yScale);
+            tilePos *= scale;
+            foreach (var dir in _directions)
             {
-                for (int y = 0; y < h; y++)
-                {
-                    area += _noise.GetNoise2dv(new Vector2(x, y) + tilePos);
-                }
+                sum += _noise.GetNoise2dv(tilePos + dir * scale) * .1f;
             }
-            var noiseArea = new NoiseArea();
-            noiseArea.Rect = rect;
-            noiseArea.AverageValue = area / (float) (w * h);
-            return noiseArea;
-        }
-
-        private void FillNoiseArea(Vector2 tilePos, NoiseArea area)
-        {
-            for (int x = 0; x < area.Rect.Size.x; x++)
-            {
-                for (int y = 0; y < area.Rect.Size.y; y++)
-                {
-                    var pos = new Vector2(x, y) + tilePos;
-                    Zone.Current.TileMap.SetCellv(pos, 0);
-                    Zone.Current.TileMap.UpdateBitmaskArea(pos);
-                }
-            }
+            sum += _noise.GetNoise2dv(tilePos);
+            return sum / (_directions.Length + 1);
         }
 
         private void FillExtras(Chunk chunk)
