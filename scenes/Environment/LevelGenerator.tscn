@@ -4,6 +4,7 @@
 
 [sub_resource type="OpenSimplexNoise" id=1]
 seed = 1889
+period = 256.0
 lacunarity = 1.0
 
 [sub_resource type="NoiseTexture" id=2]
@@ -14,6 +15,5 @@ noise = SubResource( 1 )
 script = ExtResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
-visible = false
 position = Vector2( 0, -172 )
 texture = SubResource( 2 )

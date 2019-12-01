@@ -340,7 +340,7 @@ namespace Deathville.Environment
                     {
                         var tilePos = new Vector2(x, y) + offset;
 
-                        if (GetAverageValue(tilePos, 7f, 15f) > 0.06f)
+                        if (GetAverageValue(tilePos, 28f, 60f) > 0.06f)
                         {
                             Zone.Current.TileMap.SetCellv(tilePos, 0);
                             Zone.Current.TileMap.UpdateBitmaskArea(tilePos);
