@@ -3,9 +3,9 @@
 [ext_resource path="res://scripts/Environment/LevelGenerator.cs" type="Script" id=1]
 
 [sub_resource type="OpenSimplexNoise" id=1]
-seed = 1889
-period = 256.0
-lacunarity = 1.0
+seed = 2379
+octaves = 1
+period = 128.0
 
 [sub_resource type="NoiseTexture" id=2]
 flags = 3

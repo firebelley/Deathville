@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Deathville.GameObject;
-using Deathville.Singleton;
 using Godot;
 
 namespace Deathville.Environment
@@ -10,6 +8,8 @@ namespace Deathville.Environment
     {
         private const int CHUNK_TILE_COUNT = 32;
         private const int TILE_SIZE = 16;
+        private const float NOISE_XSCALE = 25f;
+        private const float NOISE_YSCALE = 60f;
 
         public Vector2 PlayerSpawnPosition { get; private set; }
 
@@ -84,6 +84,7 @@ namespace Deathville.Environment
             var allChunks = AddChunksToAreas(areas);
             var boundingArea = GetBoundingArea(areas);
             FillBoundingArea(allChunks, boundingArea);
+            SecondPass();
         }
 
         private List<LevelPathCell> GetLevelPath()
@@ -251,7 +252,7 @@ namespace Deathville.Environment
                     {
                         var tilePos = new Vector2(x, y) + offset;
 
-                        if (GetAverageValue(tilePos, 28f, 60f) > 0.06f)
+                        if (GetAverageValue(tilePos, NOISE_XSCALE, NOISE_YSCALE) > 0.06f)
                         {
                             Zone.Current.TileMap.SetCellv(tilePos, 0);
                             Zone.Current.TileMap.UpdateBitmaskArea(tilePos);
@@ -292,6 +293,24 @@ namespace Deathville.Environment
             }
             sum += _noise.GetNoise2dv(tilePos);
             return sum / (_fourDirections.Length + 1);
+        }
+
+        private void SecondPass()
+        {
+            var usedCells = Zone.Current.TileMap.GetUsedCells();
+            Zone.Current.TileMap.Clear();
+            foreach (var tile in usedCells)
+            {
+                if (tile is Vector2 tilePos)
+                {
+                    tilePos *= 2f;
+                    Zone.Current.TileMap.SetCellv(tilePos, 0);
+                    Zone.Current.TileMap.SetCellv(tilePos + Vector2.Right, 0);
+                    Zone.Current.TileMap.SetCellv(tilePos + Vector2.Down, 0);
+                    Zone.Current.TileMap.SetCellv(tilePos + Vector2.Down + Vector2.Right, 0);
+                    Zone.Current.TileMap.UpdateBitmaskArea(tilePos);
+                }
+            }
         }
     }
 }

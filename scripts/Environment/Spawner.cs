@@ -19,15 +19,9 @@ namespace Deathville.Environment
 
         private List<Node2D> _spawned = new List<Node2D>();
 
-        private VisibilityNotifier2D _innerNotifier;
-        private VisibilityNotifier2D _outerNotifier;
-
         public override void _Ready()
         {
             if (Engine.EditorHint) return;
-
-            _innerNotifier = GetNode<VisibilityNotifier2D>("InnerNotifier");
-            _outerNotifier = GetNode<VisibilityNotifier2D>("OuterNotifier");
 
             var timer = GetNode<Timer>("Timer");
             timer.WaitTime = _spawnDelay;
