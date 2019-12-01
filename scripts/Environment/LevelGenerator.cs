@@ -72,9 +72,10 @@ namespace Deathville.Environment
         public override void _Ready()
         {
             _rng.Randomize();
-            _noise.Period = 8f;
-            _noise.Persistence = .33f;
-            _noise.Lacunarity = 1.5f;
+            _noise.Period = 16f;
+            _noise.Persistence = .5f;
+            _noise.Lacunarity = 4f;
+            _noise.Octaves = 1;
             _noise.Seed = _rng.RandiRange(0, int.MaxValue);
         }
 
@@ -93,9 +94,6 @@ namespace Deathville.Environment
             // SelectLevelPiecesForChunks(allChunks);
             var boundingArea = GetBoundingArea(areas);
             FillBoundingArea(allChunks, boundingArea);
-
-            // meta data
-            PlayerSpawnPosition = GetPlayerSpawnPosition(areas.First());
 
             CleanupChunks(allChunks.Values);
         }
@@ -344,13 +342,22 @@ namespace Deathville.Environment
                     for (int y = 0; y < CHUNK_TILE_COUNT; y++)
                     {
                         var tilePos = new Vector2(x, y) + offset;
-                        var noiseArea = GetNoiseArea(tilePos);
+                        var samplePos = new Vector2(tilePos.x * 2f, tilePos.y * 3f);
+                        var noiseArea = GetNoiseArea(samplePos);
 
-                        if (noiseArea.AverageValue > 0.15f)
+                        if (noiseArea.AverageValue > 0.3f)
                         {
                             FillNoiseArea(tilePos, noiseArea);
-                            x += _rng.RandiRange((int) noiseArea.Rect.Size.x, (int) noiseArea.Rect.Size.x + 4);
-                            y += _rng.RandiRange((int) noiseArea.Rect.Size.y, (int) noiseArea.Rect.Size.y + 4);
+                            // x += _rng.RandiRange((int) noiseArea.Rect.Size.x, (int) noiseArea.Rect.Size.x + 4);
+                            // y += _rng.RandiRange((int) noiseArea.Rect.Size.y, (int) noiseArea.Rect.Size.y + 4);
+                        }
+                        else if (PlayerSpawnPosition == Vector2.Zero)
+                        {
+                            PlayerSpawnPosition = tilePos * TILE_SIZE;
+                            if (PlayerSpawnPosition != Vector2.Zero)
+                            {
+                                PlayerSpawnPosition += Vector2.Down * 16f;
+                            }
                         }
                     }
                 }
@@ -384,8 +391,8 @@ namespace Deathville.Environment
         private NoiseArea GetNoiseArea(Vector2 tilePos)
         {
             var rect = new Rect2();
-            var w = _rng.RandiRange(4, 16);
-            var h = _rng.RandiRange(4, 16);
+            var w = _rng.RandiRange(1, 1);
+            var h = _rng.RandiRange(1, 1);
             rect.Size = new Vector2(w, h);
             var area = 0f;
 

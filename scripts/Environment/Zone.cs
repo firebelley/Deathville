@@ -63,9 +63,10 @@ namespace Deathville.Environment
         {
             var generator = GetNode<LevelGenerator>("LevelGenerator");
             generator.Generate();
-
-            // EntitiesLayer.GetNode<Player>("Player").GlobalPosition = generator.PlayerSpawnPosition;
-
+            if (EntitiesLayer.GetChildCount() > 0)
+            {
+                EntitiesLayer.GetNode<Player>("Player").GlobalPosition = generator.PlayerSpawnPosition;
+            }
             Pathfinder = new Pathfinder(TileMap);
         }
     }
