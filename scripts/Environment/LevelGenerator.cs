@@ -30,8 +30,8 @@ namespace Deathville.Environment
         [Export]
         private NodePath _playerPath;
 
+        private readonly Vector2[] _fourDirections = new Vector2[] { Vector2.Up, Vector2.Right, Vector2.Down, Vector2.Left };
         private RandomNumberGenerator _rng = new RandomNumberGenerator();
-        private Vector2[] _directions = new Vector2[] { Vector2.Up, Vector2.Right, Vector2.Down, Vector2.Left };
         private OpenSimplexNoise _noise = new OpenSimplexNoise();
 
         private struct LevelPathCell
@@ -51,7 +51,6 @@ namespace Deathville.Environment
             public PathChunkArea PathChunkArea;
             public Vector2 PositionInArea;
             public Vector2 GlobalPosition;
-            public LevelPiece LevelPiece;
         }
 
         private class PathChunkArea
@@ -69,11 +68,6 @@ namespace Deathville.Environment
             var noiseTex = GetNode<Sprite>("Sprite").Texture as NoiseTexture;
             _noise = noiseTex.Noise;
             _noise.Seed = _rng.RandiRange(0, int.MaxValue);
-            // _noise.Period = 64f;
-            // _noise.Persistence = .5f;
-            // _noise.Lacunarity = 4f;
-            // _noise.Octaves = 1;
-            // _noise.Seed = _rng.RandiRange(0, int.MaxValue);
         }
 
         public void Generate()
@@ -88,11 +82,8 @@ namespace Deathville.Environment
 
             OffsetAreas(areas);
             var allChunks = AddChunksToAreas(areas);
-            // SelectLevelPiecesForChunks(allChunks);
             var boundingArea = GetBoundingArea(areas);
             FillBoundingArea(allChunks, boundingArea);
-
-            CleanupChunks(allChunks.Values);
         }
 
         private List<LevelPathCell> GetLevelPath()
@@ -132,11 +123,11 @@ namespace Deathville.Environment
         private Vector2 ChooseDirection(Vector2 excludeDirection)
         {
             var i = _rng.RandiRange(0, 3);
-            if (_directions[i] == excludeDirection)
+            if (_fourDirections[i] == excludeDirection)
             {
                 i = Mathf.Wrap(i + 1, 0, 3);
             }
-            return _directions[i];
+            return _fourDirections[i];
         }
 
         private PathChunkArea GenerateAreaForLevelPathCell(LevelPathCell levelPathCell)
@@ -225,86 +216,6 @@ namespace Deathville.Environment
             }
         }
 
-        private void SelectLevelPiecesForChunks(Dictionary<Vector2, Chunk> allChunks)
-        {
-            // TODO: rework this to add all chunks to a global list
-            // shuffle the global list and then add all the level pieces
-            // account for neighbors when determining layout
-            var shuffledChunks = allChunks.Values.OrderBy(x => _rng.Randf());
-
-            foreach (var chunk in shuffledChunks)
-            {
-
-                var connectableNeighbors = GetConnectableNeighbors(allChunks, chunk);
-                HashSet<string> validPiecePaths = new HashSet<string>();
-                if (connectableNeighbors.Count == 0)
-                {
-                    // any are valid
-                    validPiecePaths.UnionWith(MetadataLoader.LevelPieceToPath[LevelPiece.N]);
-                    validPiecePaths.UnionWith(MetadataLoader.LevelPieceToPath[LevelPiece.E]);
-                    validPiecePaths.UnionWith(MetadataLoader.LevelPieceToPath[LevelPiece.S]);
-                    validPiecePaths.UnionWith(MetadataLoader.LevelPieceToPath[LevelPiece.W]);
-                }
-                else
-                {
-                    foreach (var keyValue in connectableNeighbors)
-                    {
-                        // if it is the north neighbor and it can connect to its south
-                        if (keyValue.Key == Vector2.Up && (keyValue.Value.LevelPiece.ConnectsVia & LevelPiece.S) > 0)
-                        {
-                            // then mark all pieces that connect via north as valid
-                            validPiecePaths.UnionWith(MetadataLoader.LevelPieceToPath[LevelPiece.N]);
-                        }
-                        else if (keyValue.Key == Vector2.Right && (keyValue.Value.LevelPiece.ConnectsVia & LevelPiece.W) > 0)
-                        {
-                            validPiecePaths.UnionWith(MetadataLoader.LevelPieceToPath[LevelPiece.E]);
-                        }
-                        else if (keyValue.Key == Vector2.Down && (keyValue.Value.LevelPiece.ConnectsVia & LevelPiece.N) > 0)
-                        {
-                            validPiecePaths.UnionWith(MetadataLoader.LevelPieceToPath[LevelPiece.S]);
-                        }
-                        else if (keyValue.Key == Vector2.Left && (keyValue.Value.LevelPiece.ConnectsVia & LevelPiece.E) > 0)
-                        {
-                            validPiecePaths.UnionWith(MetadataLoader.LevelPieceToPath[LevelPiece.W]);
-                        }
-                    }
-                }
-
-                var piece = validPiecePaths.ElementAt(_rng.RandiRange(0, validPiecePaths.Count - 1));
-                var scene = GD.Load(piece) as PackedScene;
-                chunk.LevelPiece = scene.Instance() as LevelPiece;
-            }
-        }
-
-        private Dictionary<Vector2, Chunk> GetConnectableNeighbors(Dictionary<Vector2, Chunk> allChunks, Chunk currentChunk)
-        {
-            // don't want to consider a neighbor at all in this example
-            // north neighbor exists but does not connect via south
-            // in that instance, we don't want to factor in the north neighbor to our calculation
-            // find other neighbors that can be connected
-            // if no other connectable neighbors, then just pick any piece
-            // if surrounded on all sides by non-connectable neihbors, then just fully fill in the piece
-            var directionToNeighbor = new Dictionary<Vector2, Chunk>();
-            foreach (var dir in _directions)
-            {
-                var neighborPos = currentChunk.GlobalPosition + dir;
-                if (allChunks.ContainsKey(neighborPos) && allChunks[neighborPos].LevelPiece != null)
-                {
-                    var neighbor = allChunks[neighborPos];
-                    var connectsSouth = dir == Vector2.Up && (neighbor.LevelPiece.ConnectsVia & LevelPiece.S) > 0;
-                    var connectsNorth = dir == Vector2.Down && (neighbor.LevelPiece.ConnectsVia & LevelPiece.N) > 0;
-                    var connectsEast = dir == Vector2.Left && (neighbor.LevelPiece.ConnectsVia & LevelPiece.E) > 0;
-                    var connectsWest = dir == Vector2.Right && (neighbor.LevelPiece.ConnectsVia & LevelPiece.W) > 0;
-
-                    if (connectsNorth || connectsSouth || connectsWest || connectsEast)
-                    {
-                        directionToNeighbor[dir] = allChunks[neighborPos];
-                    }
-                }
-            }
-            return directionToNeighbor;
-        }
-
         private Rect2 GetBoundingArea(IEnumerable<PathChunkArea> areas)
         {
             var firstArea = areas.ElementAt(0);
@@ -375,38 +286,12 @@ namespace Deathville.Environment
             var sum = 0f;
             var scale = new Vector2(xScale, yScale);
             tilePos *= scale;
-            foreach (var dir in _directions)
+            foreach (var dir in _fourDirections)
             {
                 sum += _noise.GetNoise2dv(tilePos + dir * scale) * .1f;
             }
             sum += _noise.GetNoise2dv(tilePos);
-            return sum / (_directions.Length + 1);
-        }
-
-        private void FillExtras(Chunk chunk)
-        {
-            // foreach (var spawner in chunk.LevelPiece.Spawners)
-            // {
-            //     spawner.GetParent().RemoveChild(spawner);
-            //     Zone.Current.AddChild(spawner);
-            //     spawner.GlobalPosition = spawner.Position + chunk.GlobalPosition * CHUNK_TILE_COUNT * TILE_SIZE;
-            // }
-        }
-
-        private Vector2 GetPlayerSpawnPosition(PathChunkArea area)
-        {
-            return Vector2.Zero;
-            var chunk = area.PositionToChunk.Values.OrderBy(x => _rng.Randf()).First();
-            var pos = chunk.LevelPiece.PlayerSpawnPosition + chunk.GlobalPosition * CHUNK_TILE_COUNT * TILE_SIZE;
-            return pos;
-        }
-
-        private void CleanupChunks(IEnumerable<Chunk> chunks)
-        {
-            foreach (var chunk in chunks)
-            {
-                // chunk.LevelPiece.QueueFree();
-            }
+            return sum / (_fourDirections.Length + 1);
         }
     }
 }
