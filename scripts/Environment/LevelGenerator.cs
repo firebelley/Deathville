@@ -6,9 +6,11 @@ namespace Deathville.Environment
 {
     public class LevelGenerator : Node
     {
-        private const int CHUNK_TILE_COUNT = 32;
+        private const int CHUNK_TILE_COUNT = 24;
         private const int TILE_SIZE = 16;
-        private const float NOISE_XSCALE = 25f;
+        private const int VOXEL_SIZE = 2;
+
+        private const float NOISE_XSCALE = 20f;
         private const float NOISE_YSCALE = 60f;
 
         public Vector2 PlayerSpawnPosition { get; private set; }
@@ -84,7 +86,6 @@ namespace Deathville.Environment
             var allChunks = AddChunksToAreas(areas);
             var boundingArea = GetBoundingArea(areas);
             FillBoundingArea(allChunks, boundingArea);
-            SecondPass();
         }
 
         private List<LevelPathCell> GetLevelPath()
@@ -254,8 +255,7 @@ namespace Deathville.Environment
 
                         if (GetAverageValue(tilePos, NOISE_XSCALE, NOISE_YSCALE) > 0.06f)
                         {
-                            Zone.Current.TileMap.SetCellv(tilePos, 0);
-                            Zone.Current.TileMap.UpdateBitmaskArea(tilePos);
+                            FillVoxel(tilePos);
                         }
                         else if (PlayerSpawnPosition == Vector2.Zero)
                         {
@@ -275,8 +275,7 @@ namespace Deathville.Environment
                     for (int y = 0; y < CHUNK_TILE_COUNT; y++)
                     {
                         var tilePos = new Vector2(x, y) + offset;
-                        Zone.Current.TileMap.SetCellv(tilePos, 0);
-                        Zone.Current.TileMap.UpdateBitmaskArea(tilePos);
+                        FillVoxel(tilePos);
                     }
                 }
             }
@@ -295,22 +294,14 @@ namespace Deathville.Environment
             return sum / (_fourDirections.Length + 1);
         }
 
-        private void SecondPass()
+        private void FillVoxel(Vector2 tilePos)
         {
-            var usedCells = Zone.Current.TileMap.GetUsedCells();
-            Zone.Current.TileMap.Clear();
-            foreach (var tile in usedCells)
-            {
-                if (tile is Vector2 tilePos)
-                {
-                    tilePos *= 2f;
-                    Zone.Current.TileMap.SetCellv(tilePos, 0);
-                    Zone.Current.TileMap.SetCellv(tilePos + Vector2.Right, 0);
-                    Zone.Current.TileMap.SetCellv(tilePos + Vector2.Down, 0);
-                    Zone.Current.TileMap.SetCellv(tilePos + Vector2.Down + Vector2.Right, 0);
-                    Zone.Current.TileMap.UpdateBitmaskArea(tilePos);
-                }
-            }
+            var scaled = tilePos * VOXEL_SIZE;
+            Zone.Current.TileMap.SetCellv(scaled, 0);
+            Zone.Current.TileMap.SetCellv(scaled + Vector2.Right, 0);
+            Zone.Current.TileMap.SetCellv(scaled + Vector2.Down, 0);
+            Zone.Current.TileMap.SetCellv(scaled + Vector2.Down + Vector2.Right, 0);
+            Zone.Current.TileMap.UpdateBitmaskArea(scaled);
         }
     }
 }
