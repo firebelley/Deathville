@@ -86,6 +86,9 @@ namespace Deathville.Environment
             var allChunks = AddChunksToAreas(areas);
             var boundingArea = GetBoundingArea(areas);
             FillBoundingArea(allChunks, boundingArea);
+
+            // TODO: change algorithm to not use Chunks, iterate over areas only
+            // TODO: remove border generation
         }
 
         private List<LevelPathCell> GetLevelPath()
