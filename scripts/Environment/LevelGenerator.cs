@@ -262,7 +262,7 @@ namespace Deathville.Environment
                         }
                         else if (PlayerSpawnPosition == Vector2.Zero)
                         {
-                            PlayerSpawnPosition = tilePos * TILE_SIZE;
+                            PlayerSpawnPosition = tilePos * VOXEL_SIZE * TILE_SIZE;
                             if (PlayerSpawnPosition != Vector2.Zero)
                             {
                                 PlayerSpawnPosition += Vector2.Down * 16f;
