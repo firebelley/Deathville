@@ -13,6 +13,8 @@ namespace Deathville.Component
         private float _maxHealth;
         [Export]
         private NodePath _damageReceiverComponentPath;
+        [Export]
+        private float _damageOverride = 0f;
 
         public float CurrentHealth
         {
@@ -40,7 +42,7 @@ namespace Deathville.Component
 
         private void OnDamageReceived(float damage)
         {
-            CurrentHealth -= damage;
+            CurrentHealth -= _damageOverride > 0f ? _damageOverride : damage;
         }
     }
 }

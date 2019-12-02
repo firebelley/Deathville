@@ -8,6 +8,8 @@ namespace Deathville.Singleton
         public delegate void WeaponFired();
         [Signal]
         public delegate void EnemyStruck();
+        [Signal]
+        public delegate void PlayerHealthChanged(float currentHealth);
 
         public static GameEventDispatcher Instance { get; private set; }
 
@@ -24,6 +26,11 @@ namespace Deathville.Singleton
         public static void DispatchEnemyStruck()
         {
             Instance.EmitSignal(nameof(EnemyStruck));
+        }
+
+        public static void DispatchPlayerHealthChanged(float currentHealth)
+        {
+            Instance.EmitSignal(nameof(PlayerHealthChanged), currentHealth);
         }
     }
 }

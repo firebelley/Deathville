@@ -1,6 +1,8 @@
 using Deathville.Component;
 using Deathville.Enum;
+using Deathville.Singleton;
 using Godot;
+using GodotApiTools.Extension;
 using GodotApiTools.Logic;
 
 namespace Deathville.GameObject
@@ -42,6 +44,7 @@ namespace Deathville.GameObject
         private Tween _flipTween;
         private AnimationPlayer _animationPlayer;
         private VelocityComponent _velocityComponent;
+        private HealthComponent _healthComponent;
 
         private float _coyoteTime;
         private float _dashTime;
@@ -60,12 +63,14 @@ namespace Deathville.GameObject
             _moveStateMachine.AddState(MoveState.SLIDE, MoveStateSlide);
             _moveStateMachine.SetInitialState(MoveState.GROUNDED);
             _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
-            _velocityComponent = GetNode<VelocityComponent>("VelocityComponent");
+            _velocityComponent = this.GetFirstNodeOfType<VelocityComponent>();
+            _healthComponent = this.GetFirstNodeOfType<HealthComponent>();
             _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
             _flipSprite = GetNode<Sprite>("FlipSprite");
             _flipTween = GetNode<Tween>("FlipTween");
 
             _flipTween.Connect("tween_all_completed", this, nameof(OnFlipTweenCompleted));
+            _healthComponent?.Connect(nameof(HealthComponent.HealthChanged), this, nameof(OnHealthChanged));
         }
 
         public override void _Process(float delta)
@@ -325,6 +330,11 @@ namespace Deathville.GameObject
         {
             _animatedSprite.Visible = true;
             _flipSprite.Visible = false;
+        }
+
+        private void OnHealthChanged()
+        {
+            GameEventDispatcher.DispatchPlayerHealthChanged(_healthComponent.CurrentHealth);
         }
     }
 }
