@@ -6,15 +6,3 @@
 script = ExtResource( 1 )
 
 [node name="Timer" type="Timer" parent="."]
-
-[node name="InnerNotifier" type="VisibilityNotifier2D" parent="."]
-rect = Rect2( -32, -32, 64, 64 )
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="OuterNotifier" type="VisibilityNotifier2D" parent="."]
-rect = Rect2( -256, -256, 512, 512 )
-__meta__ = {
-"_edit_lock_": true
-}
