@@ -6,7 +6,7 @@ namespace Deathville.Environment
 {
     public class LevelGenerator : Node
     {
-        private const int CHUNK_TILE_COUNT = 24;
+        private const int CHUNK_TILE_COUNT = 16;
         private const int TILE_SIZE = 16;
         private const int VOXEL_SIZE = 2;
 
@@ -48,20 +48,12 @@ namespace Deathville.Environment
             }
         }
 
-        private class Chunk
-        {
-            public PathChunkArea PathChunkArea;
-            public Vector2 PositionInArea;
-            public Vector2 GlobalPosition;
-        }
-
         private class PathChunkArea
         {
             public LevelPathCell LevelPathCell;
             public int HorizontalChunkCount;
             public int VerticalChunkCount;
             public Vector2 ChunkOffset;
-            public Dictionary<Vector2, Chunk> PositionToChunk = new Dictionary<Vector2, Chunk>();
         }
 
         public override void _Ready()
@@ -83,28 +75,34 @@ namespace Deathville.Environment
             }
 
             OffsetAreas(areas);
-            var allChunks = AddChunksToAreas(areas);
-            var boundingArea = GetBoundingArea(areas);
-            FillBoundingArea(allChunks, boundingArea);
+            foreach (var area in areas)
+            {
+                GD.Print(area.ChunkOffset, new Vector2(area.HorizontalChunkCount, area.VerticalChunkCount));
+            }
+            FillAreas(areas);
 
-            // TODO: change algorithm to not use Chunks, iterate over areas only
-            // TODO: remove border generation
+            // var boundingArea = GetBoundingArea(areas);
+            // FillBoundingArea(boundingArea);
         }
 
         private List<LevelPathCell> GetLevelPath()
         {
             var path = new List<LevelPathCell>();
+            var occupiedCells = new HashSet<Vector2>();
             var numPathCells = _rng.RandiRange(_minLevelPathLength, _maxLevelPathLength);
             for (int i = 0; i < numPathCells; i++)
             {
+                LevelPathCell cell;
                 if (i == 0)
                 {
-                    path.Add(GetFirstPathPoint());
+                    cell = GetFirstPathPoint();
                 }
                 else
                 {
-                    path.Add(GetNextPathPoint(path[i - 1]));
+                    cell = GetNextPathPoint(occupiedCells, path[i - 1]);
                 }
+                occupiedCells.Add(cell.Position);
+                path.Add(cell);
             }
             return path;
         }
@@ -114,15 +112,24 @@ namespace Deathville.Environment
             return new LevelPathCell(Vector2.Zero, ChooseDirection(Vector2.Zero));
         }
 
-        private LevelPathCell GetNextPathPoint(LevelPathCell prevCell)
+        private LevelPathCell GetNextPathPoint(HashSet<Vector2> occupied, LevelPathCell prevCell)
         {
             var directionChange = _rng.Randf();
-            var direction = prevCell.Direction;
-            if (directionChange <= _pathDirectionChangePercent)
+            var prevDirection = prevCell.Direction;
+            var newDirection = prevDirection;
+            if (directionChange < _pathDirectionChangePercent)
             {
-                direction = ChooseDirection(direction);
+                var directions = _fourDirections.OrderBy(x => _rng.Randf());
+                foreach (var dir in directions)
+                {
+                    if (!occupied.Contains(prevCell.Position + dir))
+                    {
+                        newDirection = dir;
+                        break;
+                    }
+                }
             }
-            return new LevelPathCell(prevCell.Position + direction, direction);
+            return new LevelPathCell(prevCell.Position + prevDirection, newDirection);
         }
 
         private Vector2 ChooseDirection(Vector2 excludeDirection)
@@ -187,40 +194,6 @@ namespace Deathville.Environment
             toAlignChunkArea.ChunkOffset.y += _rng.RandiRange(-(toAlignChunkArea.VerticalChunkCount - 1), rootChunkArea.VerticalChunkCount - 1);
         }
 
-        private Dictionary<Vector2, Chunk> AddChunksToAreas(IEnumerable<PathChunkArea> pathChunkAreas)
-        {
-            var allChunks = new Dictionary<Vector2, Chunk>();
-            foreach (var area in pathChunkAreas)
-            {
-                CreateAreaChunks(area);
-                foreach (var chunk in area.PositionToChunk.Values)
-                {
-                    // don't add duplicates in the case of overlapping areas
-                    if (!allChunks.ContainsKey(chunk.GlobalPosition))
-                    {
-                        allChunks[chunk.GlobalPosition] = chunk;
-                    }
-                }
-            }
-            return allChunks;
-        }
-
-        private void CreateAreaChunks(PathChunkArea pathChunkArea)
-        {
-            for (int i = 0; i < pathChunkArea.HorizontalChunkCount; i++)
-            {
-                for (int j = 0; j < pathChunkArea.VerticalChunkCount; j++)
-                {
-                    var pos = new Vector2(i, j);
-                    var chunk = new Chunk();
-                    chunk.PathChunkArea = pathChunkArea;
-                    chunk.PositionInArea = pos;
-                    chunk.GlobalPosition = pos + pathChunkArea.ChunkOffset;
-                    pathChunkArea.PositionToChunk[pos] = chunk;
-                }
-            }
-        }
-
         private Rect2 GetBoundingArea(IEnumerable<PathChunkArea> areas)
         {
             var firstArea = areas.ElementAt(0);
@@ -229,56 +202,61 @@ namespace Deathville.Environment
             {
                 boundingRect = boundingRect.Merge(new Rect2(area.ChunkOffset, new Vector2(area.HorizontalChunkCount, area.VerticalChunkCount)));
             }
-            boundingRect = boundingRect.Grow(1f);
+            // boundingRect = boundingRect.Grow(1f);
             return boundingRect;
         }
 
-        private void FillBoundingArea(Dictionary<Vector2, Chunk> allChunks, Rect2 boundingArea)
+        private void FillAreas(IEnumerable<PathChunkArea> areas)
+        {
+            foreach (var area in areas)
+            {
+                FillArea(area);
+            }
+        }
+
+        private void FillArea(PathChunkArea area)
+        {
+            for (int x = (int) area.ChunkOffset.x; x < area.ChunkOffset.x + area.HorizontalChunkCount; x++)
+            {
+                for (int y = (int) area.ChunkOffset.y; y < area.ChunkOffset.y + area.VerticalChunkCount; y++)
+                {
+                    var chunkPos = new Vector2(x, y);
+                    FillChunk(chunkPos);
+                }
+            }
+        }
+
+        private void FillBoundingArea(Rect2 boundingArea)
         {
             for (int x = (int) boundingArea.Position.x; x < boundingArea.Position.x + boundingArea.Size.x; x++)
             {
                 for (int y = (int) boundingArea.Position.y; y < boundingArea.Position.y + boundingArea.Size.y; y++)
                 {
                     var chunkPos = new Vector2(x, y);
-                    FillChunk(allChunks, chunkPos);
+                    FillChunk(chunkPos);
                 }
             }
         }
 
-        private void FillChunk(Dictionary<Vector2, Chunk> allChunks, Vector2 chunkPosition)
+        private void FillChunk(Vector2 chunkPosition)
         {
             var offset = chunkPosition * CHUNK_TILE_COUNT;
-            if (allChunks.ContainsKey(chunkPosition))
+            for (int x = 0; x < CHUNK_TILE_COUNT; x++)
             {
-                for (int x = 0; x < CHUNK_TILE_COUNT; x++)
+                for (int y = 0; y < CHUNK_TILE_COUNT; y++)
                 {
-                    for (int y = 0; y < CHUNK_TILE_COUNT; y++)
+                    var tilePos = new Vector2(x, y) + offset;
+                    if (GetAverageValue(tilePos, NOISE_XSCALE, NOISE_YSCALE) > 0.06f)
                     {
-                        var tilePos = new Vector2(x, y) + offset;
-
-                        if (GetAverageValue(tilePos, NOISE_XSCALE, NOISE_YSCALE) > 0.06f)
-                        {
-                            FillVoxel(tilePos);
-                        }
-                        else if (PlayerSpawnPosition == Vector2.Zero)
-                        {
-                            PlayerSpawnPosition = tilePos * VOXEL_SIZE * TILE_SIZE;
-                            if (PlayerSpawnPosition != Vector2.Zero)
-                            {
-                                PlayerSpawnPosition += Vector2.Down * 16f;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                for (int x = 0; x < CHUNK_TILE_COUNT; x++)
-                {
-                    for (int y = 0; y < CHUNK_TILE_COUNT; y++)
-                    {
-                        var tilePos = new Vector2(x, y) + offset;
                         FillVoxel(tilePos);
+                    }
+                    else if (PlayerSpawnPosition == Vector2.Zero)
+                    {
+                        PlayerSpawnPosition = tilePos * VOXEL_SIZE * TILE_SIZE;
+                        if (PlayerSpawnPosition != Vector2.Zero)
+                        {
+                            PlayerSpawnPosition += Vector2.Down * 16f;
+                        }
                     }
                 }
             }

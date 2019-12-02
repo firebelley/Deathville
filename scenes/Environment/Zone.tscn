@@ -16,12 +16,6 @@ script = ExtResource( 3 )
 [node name="Cursor" parent="." instance=ExtResource( 8 )]
 
 [node name="LevelGenerator" parent="." instance=ExtResource( 9 )]
-_minLevelPathLength = 2
-_maxLevelPathLength = 4
-_minChunkWidth = 1
-_maxChunkWidth = 3
-_minChunkHeight = 1
-_maxChunkHeight = 3
 _playerPath = NodePath("")
 
 [node name="Spawner" parent="." instance=ExtResource( 4 )]

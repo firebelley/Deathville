@@ -15,5 +15,6 @@ noise = SubResource( 1 )
 script = ExtResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
+visible = false
 position = Vector2( 0, -172 )
 texture = SubResource( 2 )
