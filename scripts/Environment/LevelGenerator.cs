@@ -75,14 +75,7 @@ namespace Deathville.Environment
             }
 
             OffsetAreas(areas);
-            foreach (var area in areas)
-            {
-                GD.Print(area.ChunkOffset, new Vector2(area.HorizontalChunkCount, area.VerticalChunkCount));
-            }
             FillAreas(areas);
-
-            // var boundingArea = GetBoundingArea(areas);
-            // FillBoundingArea(boundingArea);
         }
 
         private List<LevelPathCell> GetLevelPath()
