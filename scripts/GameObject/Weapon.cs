@@ -47,21 +47,30 @@ namespace Deathville.GameObject
             }
         }
 
+        public Sprite Sprite
+        {
+            get
+            {
+                return _sprite;
+            }
+        }
+
         private float _currentHeat;
         private float _decayTracker = 0f;
         private bool _canDecay = true;
 
-        private Position2D _muzzlePosition;
-        private Position2D _chamberPosition;
+        private float _fireTime = 0f;
 
         private AnimationPlayer _animationPlayer;
-
-        private float _fireTime = 0f;
+        private Sprite _sprite;
+        private Position2D _muzzlePosition;
+        private Position2D _chamberPosition;
 
         public override void _Ready()
         {
             _muzzlePosition = GetNode<Position2D>("MuzzlePosition");
             _chamberPosition = GetNode<Position2D>("ChamberPosition");
+            _sprite = GetNode<Sprite>("Sprite");
             _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 
             Connect(nameof(Fired), this, nameof(OnFired));
@@ -77,7 +86,6 @@ namespace Deathville.GameObject
         {
             if (_fireTime == 0f && CurrentHeat < 1f)
             {
-                GD.Print("yooo");
                 Fire(atTarget);
                 _fireTime = 1f / _projectilesPerSecond;
             }

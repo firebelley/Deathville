@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://assets/art/player1.png" type="Texture" id=1]
 [ext_resource path="res://assets/art/player5.png" type="Texture" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://assets/art/player7.png" type="Texture" id=7]
 [ext_resource path="res://assets/art/player3.png" type="Texture" id=8]
 [ext_resource path="res://scripts/Player.cs" type="Script" id=9]
+[ext_resource path="res://scenes/GameObject/PlayerHands.tscn" type="PackedScene" id=10]
 [ext_resource path="res://assets/art/light64.png" type="Texture" id=11]
 [ext_resource path="res://scenes/Component/DamageReceiverComponent.tscn" type="PackedScene" id=12]
 [ext_resource path="res://scenes/Component/VelocityComponent.tscn" type="PackedScene" id=13]
@@ -34,14 +35,14 @@ animations = [ {
 "name": "run",
 "speed": 10.0
 }, {
-"frames": [ ExtResource( 18 ) ],
-"loop": true,
-"name": "jump_idle",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 16 ), ExtResource( 18 ) ],
 "loop": false,
 "name": "jump",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 18 ) ],
+"loop": true,
+"name": "jump_idle",
 "speed": 5.0
 } ]
 
@@ -105,6 +106,7 @@ _damageOverride = 1.0
 
 [node name="PlayerAimComponent" parent="." instance=ExtResource( 15 )]
 _weaponSocketComponentPath = NodePath("../WeaponSocketComponent")
+_playerHandsPath = NodePath("../PlayerHands")
 
 [node name="DamageReceiverComponent" parent="." instance=ExtResource( 12 )]
 collision_layer = 524288
@@ -117,7 +119,6 @@ shape = SubResource( 1 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 2 )
 animation = "idle"
-frame = 3
 playing = true
 offset = Vector2( 0, -15 )
 
@@ -130,6 +131,9 @@ offset = Vector2( 1, 5 )
 [node name="WeaponSocketComponent" parent="." instance=ExtResource( 14 )]
 position = Vector2( -2, -20 )
 _isPlayer = true
+
+[node name="PlayerHands" parent="." instance=ExtResource( 10 )]
+position = Vector2( 0, -20 )
 
 [node name="Light2D" type="Light2D" parent="."]
 position = Vector2( 0, -16 )

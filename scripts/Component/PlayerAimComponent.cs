@@ -7,14 +7,18 @@ namespace Deathville.Component
     {
         [Export]
         private NodePath _weaponSocketComponentPath;
+        [Export]
+        private NodePath _playerHandsPath;
 
         private bool _isAttacking;
 
         private WeaponSocketComponent _weaponSocketComponent;
+        private PlayerHands _playerHands;
 
         public override void _Ready()
         {
             _weaponSocketComponent = GetNode<WeaponSocketComponent>(_weaponSocketComponentPath);
+            _playerHands = GetNode<PlayerHands>(_playerHandsPath);
             if (Owner is Player p)
             {
                 p.Connect(nameof(Player.AttackStart), this, nameof(OnAttackStart));
@@ -28,6 +32,15 @@ namespace Deathville.Component
             if (_isAttacking)
             {
                 _weaponSocketComponent.Weapon?.AttemptFire(GetGlobalMousePosition());
+            }
+
+            if (_weaponSocketComponent.Weapon != null)
+            {
+                _playerHands.AlignWithWeapon(_weaponSocketComponent.Weapon);
+            }
+            else
+            {
+                _playerHands.ResetTransforms();
             }
         }
 

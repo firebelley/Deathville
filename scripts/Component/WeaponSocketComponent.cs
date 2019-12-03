@@ -69,11 +69,11 @@ namespace Deathville.Component
 
         private void RemoveCurrentWeapon()
         {
-            if (GetChildren().Count > 0)
+            if (IsInstanceValid(_weapon))
             {
-                var child = GetChild(0);
-                RemoveChild(child);
-                child.QueueFree();
+                RemoveChild(_weapon);
+                _weapon.QueueFree();
+                _weapon = null;
             }
         }
 
