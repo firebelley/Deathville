@@ -54,14 +54,12 @@ namespace Deathville.GameObject
         private Position2D _muzzlePosition;
         private Position2D _chamberPosition;
 
-        private Timer _fireTimer;
         private AnimationPlayer _animationPlayer;
 
         private float _fireTime = 0f;
 
         public override void _Ready()
         {
-            _fireTimer = GetNode<Timer>("FireTimer");
             _muzzlePosition = GetNode<Position2D>("MuzzlePosition");
             _chamberPosition = GetNode<Position2D>("ChamberPosition");
             _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
@@ -79,6 +77,7 @@ namespace Deathville.GameObject
         {
             if (_fireTime == 0f && CurrentHeat < 1f)
             {
+                GD.Print("yooo");
                 Fire(atTarget);
                 _fireTime = 1f / _projectilesPerSecond;
             }

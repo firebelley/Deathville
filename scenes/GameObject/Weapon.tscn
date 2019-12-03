@@ -59,6 +59,3 @@ position = Vector2( 0, 1 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/fire = SubResource( 1 )
-
-[node name="FireTimer" type="Timer" parent="."]
-one_shot = true
