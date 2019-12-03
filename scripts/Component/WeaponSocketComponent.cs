@@ -1,3 +1,4 @@
+using Deathville.GameObject;
 using Deathville.Singleton;
 using Godot;
 
@@ -39,6 +40,20 @@ namespace Deathville.Component
             }
         }
 
+        public void EquipWeapon(Weapon weapon)
+        {
+            RemoveCurrentWeapon();
+            _weapon = weapon;
+            AddChild(_weapon);
+            _weapon.IsFriendly = _isPlayer;
+            _weapon.Connect(nameof(Weapon.Fired), this, nameof(OnWeaponFired));
+
+            if (_isPlayer)
+            {
+                GameEventDispatcher.DispatchPlayerWeaponEquipped(_weapon);
+            }
+        }
+
         public void AimWeapon(Vector2 atPos)
         {
             if (Weapon == null) return;
@@ -50,6 +65,16 @@ namespace Deathville.Component
         public void ResetWeaponAim()
         {
             Rotation = 0f;
+        }
+
+        private void RemoveCurrentWeapon()
+        {
+            if (GetChildren().Count > 0)
+            {
+                var child = GetChild(0);
+                RemoveChild(child);
+                child.QueueFree();
+            }
         }
 
         private void OnWeaponFired()

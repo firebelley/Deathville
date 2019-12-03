@@ -69,6 +69,9 @@ namespace Deathville.GameObject
             _flipSprite = GetNode<Sprite>("FlipSprite");
             _flipTween = GetNode<Tween>("FlipTween");
 
+            var weaponSocket = this.GetFirstNodeOfType<WeaponSocketComponent>();
+            weaponSocket.EquipWeapon((GD.Load("res://scenes/GameObject/PlayerWeapon.tscn") as PackedScene).Instance() as Weapon);
+
             _flipTween.Connect("tween_all_completed", this, nameof(OnFlipTweenCompleted));
             _healthComponent?.Connect(nameof(HealthComponent.HealthChanged), this, nameof(OnHealthChanged));
         }

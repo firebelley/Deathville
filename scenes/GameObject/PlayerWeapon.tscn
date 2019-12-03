@@ -7,3 +7,6 @@
 _isHitscan = true
 _hitscanScene = ExtResource( 2 )
 _projectilesPerSecond = 8.0
+_heatPerShot = 0.05
+_heatDecayPerSecond = 1.0
+_heatDecayDelay = 0.25

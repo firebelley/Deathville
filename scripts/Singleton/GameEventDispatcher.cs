@@ -1,3 +1,4 @@
+using Deathville.GameObject;
 using Godot;
 
 namespace Deathville.Singleton
@@ -10,6 +11,8 @@ namespace Deathville.Singleton
         public delegate void EnemyStruck();
         [Signal]
         public delegate void PlayerHealthChanged(float currentHealth);
+        [Signal]
+        public delegate void PlayerWeaponEquipped(Weapon weapon);
 
         public static GameEventDispatcher Instance { get; private set; }
 
@@ -31,6 +34,11 @@ namespace Deathville.Singleton
         public static void DispatchPlayerHealthChanged(float currentHealth)
         {
             Instance.EmitSignal(nameof(PlayerHealthChanged), currentHealth);
+        }
+
+        public static void DispatchPlayerWeaponEquipped(Weapon weapon)
+        {
+            Instance.EmitSignal(nameof(PlayerWeaponEquipped), weapon);
         }
     }
 }

@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://resources/DefaultTheme.tres" type="Theme" id=1]
 [ext_resource path="res://scenes/UI/PlayerHealth.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/UI/OverheatBar.tscn" type="PackedScene" id=3]
 
 [node name="PlayerUI" type="CanvasLayer"]
 
@@ -23,9 +24,17 @@ __meta__ = {
 }
 
 [node name="PlayerHealth" parent="Control/MarginContainer" instance=ExtResource( 2 )]
-margin_left = 16.0
-margin_top = 312.0
-margin_right = 88.0
-margin_bottom = 344.0
+margin_left = 8.0
+margin_top = 320.0
+margin_right = 80.0
+margin_bottom = 352.0
 size_flags_horizontal = 0
+size_flags_vertical = 8
+
+[node name="OverheatBar" parent="Control/MarginContainer" instance=ExtResource( 3 )]
+margin_left = 308.0
+margin_top = 347.0
+margin_right = 332.0
+margin_bottom = 352.0
+size_flags_horizontal = 4
 size_flags_vertical = 8
