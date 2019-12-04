@@ -80,6 +80,10 @@ namespace Deathville.GameObject
         {
             _fireTime = Mathf.Clamp(_fireTime - delta / (IsFriendly ? Engine.TimeScale : 1f), 0f, float.MaxValue);
             UpdateCooldown();
+            if (IsFriendly)
+            {
+                _animationPlayer.PlaybackSpeed = 1f / Engine.TimeScale;
+            }
         }
 
         public void AttemptFire(Vector2 atTarget)
