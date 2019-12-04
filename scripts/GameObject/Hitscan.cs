@@ -26,10 +26,10 @@ namespace Deathville.GameObject
             _tween.PlaybackSpeed = 1f / Engine.TimeScale;
         }
 
-        public void Start(Vector2 chamberPos, Vector2 spawnPos, Vector2 toPos)
+        public override void Start(Vector2 chamberPos, Vector2 spawnPos, Vector2 toPos)
         {
             _direction = (toPos - chamberPos).Normalized();
-            GlobalPosition = spawnPos + _direction * _range;
+            GlobalPosition = spawnPos + _direction * Range;
             var raycastResult = GetWorld2d().DirectSpaceState.Raycast(chamberPos, GlobalPosition, null, COLLISION_MASK, true, true);
             if (raycastResult != null)
             {
@@ -58,5 +58,8 @@ namespace Deathville.GameObject
             );
             _tween.Start();
         }
+
+        public override void SetEnemy() { }
+        public override void SetPlayer() { }
     }
 }

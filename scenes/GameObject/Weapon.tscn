@@ -1,8 +1,8 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scripts/GameObject/Weapon.cs" type="Script" id=1]
 [ext_resource path="res://assets/art/weapons/player-machine-gun.png" type="Texture" id=2]
-
+[ext_resource path="res://scenes/Component/ProjectileSpawnerComponent.tscn" type="PackedScene" id=3]
 
 [sub_resource type="Animation" id=1]
 resource_name = "fire"
@@ -47,13 +47,16 @@ tracks/2/keys = {
 
 [node name="Weapon" type="Node2D"]
 script = ExtResource( 1 )
+_projectileSpawnerComponentPath = NodePath("ProjectileSpawnerComponent")
+
+[node name="ProjectileSpawnerComponent" parent="." instance=ExtResource( 3 )]
+position = Vector2( 20, 1 )
+_chamberPositionPath = NodePath("../ChamberPosition")
+_range = 1000.0
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )
 centered = false
-
-[node name="MuzzlePosition" type="Position2D" parent="."]
-position = Vector2( 20, 1 )
 
 [node name="ChamberPosition" type="Position2D" parent="."]
 position = Vector2( 0, 1 )

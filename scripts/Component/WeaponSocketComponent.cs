@@ -35,7 +35,7 @@ namespace Deathville.Component
             if (GetChildren().Count > 0)
             {
                 _weapon = GetChild(0) as Weapon;
-                _weapon.IsFriendly = _isPlayer;
+                _weapon.IsPlayer = _isPlayer;
                 _weapon.Connect(nameof(Weapon.Fired), this, nameof(OnWeaponFired));
             }
         }
@@ -45,7 +45,7 @@ namespace Deathville.Component
             RemoveCurrentWeapon();
             _weapon = weapon;
             AddChild(_weapon);
-            _weapon.IsFriendly = _isPlayer;
+            _weapon.IsPlayer = _isPlayer;
             _weapon.Connect(nameof(Weapon.Fired), this, nameof(OnWeaponFired));
 
             if (_isPlayer)

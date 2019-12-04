@@ -3,10 +3,11 @@
 [ext_resource path="res://scenes/GameObject/Weapon.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/GameObject/Hitscan.tscn" type="PackedScene" id=2]
 
-[node name="PlayerWeapon" index="0" instance=ExtResource( 1 )]
-_isHitscan = true
-_hitscanScene = ExtResource( 2 )
+[node name="PlayerWeapon" instance=ExtResource( 1 )]
 _projectilesPerSecond = 8.0
 _heatPerShot = 0.05
 _heatDecayPerSecond = 1.0
-_heatDecayDelay = 0.25
+
+[node name="ProjectileSpawnerComponent" parent="." index="0"]
+_scene = ExtResource( 2 )
+_range = 200.0

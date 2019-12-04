@@ -1,4 +1,4 @@
-using Deathville.Environment;
+using Deathville.Component;
 using Godot;
 
 namespace Deathville.GameObject
@@ -13,14 +13,7 @@ namespace Deathville.GameObject
         public delegate void HeatChanged(Weapon weapon);
 
         [Export]
-        private PackedScene _projectileScene;
-
-        [Export]
-        private bool _isHitscan;
-
-        [Export]
-        private PackedScene _hitscanScene;
-
+        private NodePath _projectileSpawnerComponentPath;
         [Export]
         private float _projectilesPerSecond = 10f;
 
@@ -33,7 +26,7 @@ namespace Deathville.GameObject
         [Export]
         private float _heatDecayMultiplier = 1.5f;
 
-        public bool IsFriendly;
+        public bool IsPlayer;
         public float CurrentHeat
         {
             get
@@ -63,24 +56,26 @@ namespace Deathville.GameObject
 
         private AnimationPlayer _animationPlayer;
         private Sprite _sprite;
-        private Position2D _muzzlePosition;
         private Position2D _chamberPosition;
+
+        private ProjectileSpawnerComponent _projectileSpawnerComponent;
 
         public override void _Ready()
         {
-            _muzzlePosition = GetNode<Position2D>("MuzzlePosition");
+            _projectileSpawnerComponent = GetNodeOrNull<ProjectileSpawnerComponent>(_projectileSpawnerComponentPath ?? string.Empty);
             _chamberPosition = GetNode<Position2D>("ChamberPosition");
             _sprite = GetNode<Sprite>("Sprite");
             _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 
             Connect(nameof(Fired), this, nameof(OnFired));
+            _projectileSpawnerComponent.Connect(nameof(ProjectileSpawnerComponent.ProjectileSpawned), this, nameof(OnProjectileSpawned));
         }
 
         public override void _Process(float delta)
         {
-            _fireTime = Mathf.Clamp(_fireTime - delta / (IsFriendly ? Engine.TimeScale : 1f), 0f, float.MaxValue);
+            _fireTime = Mathf.Clamp(_fireTime - delta / (IsPlayer ? Engine.TimeScale : 1f), 0f, float.MaxValue);
             UpdateCooldown();
-            if (IsFriendly)
+            if (IsPlayer)
             {
                 _animationPlayer.PlaybackSpeed = 1f / Engine.TimeScale;
             }
@@ -90,60 +85,21 @@ namespace Deathville.GameObject
         {
             if (_fireTime == 0f && CurrentHeat < 1f)
             {
-                Fire(atTarget);
-                _fireTime = 1f / _projectilesPerSecond;
+                var projectile = _projectileSpawnerComponent?.Spawn(atTarget);
+                if (IsPlayer)
+                {
+                    projectile?.SetPlayer();
+                }
+                else
+                {
+                    projectile?.SetEnemy();
+                }
             }
-        }
-
-        public void Fire(Vector2 atTarget)
-        {
-            if (!_isHitscan)
-            {
-                CreatePhysicalProjectile(atTarget);
-            }
-            else
-            {
-                CreateHitscanProjectile(atTarget);
-            }
-
-            if (IsFriendly)
-            {
-                CurrentHeat = Mathf.Clamp(CurrentHeat + _heatPerShot, 0f, 1f);
-                _decayTracker = _heatDecayDelay;
-            }
-        }
-
-        private void CreatePhysicalProjectile(Vector2 atTarget)
-        {
-            if (_projectileScene == null) return;
-
-            var projectile = _projectileScene.Instance() as PhysicalProjectile;
-            Zone.Current.EffectsLayer.AddChild(projectile);
-            if (IsFriendly)
-            {
-                projectile.SetFriendly();
-            }
-            else
-            {
-                projectile.SetEnemy();
-            }
-
-            projectile.Start(_chamberPosition.GlobalPosition, _muzzlePosition.GlobalPosition, atTarget);
-            EmitSignal(nameof(Fired));
-        }
-
-        private void CreateHitscanProjectile(Vector2 atTarget)
-        {
-            if (_hitscanScene == null) return;
-            var projectile = _hitscanScene.Instance() as Hitscan;
-            Zone.Current.EffectsLayer.AddChild(projectile);
-            projectile.Start(_chamberPosition.GlobalPosition, _muzzlePosition.GlobalPosition, atTarget);
-            EmitSignal(nameof(Fired));
         }
 
         private void UpdateCooldown()
         {
-            if (IsFriendly)
+            if (IsPlayer)
             {
                 var delta = GetProcessDeltaTime();
                 _decayTracker = Mathf.Clamp(_decayTracker - delta / Engine.TimeScale, 0f, _heatDecayDelay);
@@ -165,6 +121,17 @@ namespace Deathville.GameObject
                 _animationPlayer.Seek(2f, true);
             }
             _animationPlayer.Play(ANIM_FIRE);
+        }
+
+        private void OnProjectileSpawned()
+        {
+            _fireTime = 1f / _projectilesPerSecond;
+            if (IsPlayer)
+            {
+                CurrentHeat = Mathf.Clamp(CurrentHeat + _heatPerShot, 0f, 1f);
+                _decayTracker = _heatDecayDelay;
+            }
+            EmitSignal(nameof(Fired));
         }
     }
 }

@@ -4,16 +4,12 @@
 [ext_resource path="res://assets/art/weapons/peasant-shotgun.png" type="Texture" id=2]
 [ext_resource path="res://scenes/GameObject/PhysicalProjectile.tscn" type="PackedScene" id=3]
 
-
-
-
-
 [node name="PeasantWeapon" index="0" instance=ExtResource( 1 )]
-_projectileScene = ExtResource( 3 )
 _projectilesPerSecond = 2.0
 
-[node name="Sprite" parent="." index="0"]
-texture = ExtResource( 2 )
+[node name="ProjectileSpawnerComponent" parent="." index="0"]
+_scene = ExtResource( 3 )
+_speed = 500.0
 
-[node name="MuzzlePosition" parent="." index="1"]
-position = Vector2( 13, 1 )
+[node name="Sprite" parent="." index="1"]
+texture = ExtResource( 2 )

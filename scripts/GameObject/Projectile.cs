@@ -9,12 +9,14 @@ namespace Deathville.GameObject
     {
         [Export]
         protected PackedScene _deathScene;
-        [Export]
-        protected float _range = 250f;
 
-        private int _hitCount = 0;
+        public float Speed;
+        public float Range;
 
         protected Vector2 _direction;
+        protected float _distanceTravelled;
+
+        private int _hitCount = 0;
 
         public void RegisterHit(RaycastResult raycastResult)
         {
@@ -26,16 +28,25 @@ namespace Deathville.GameObject
             if (_hitCount >= 1)
             {
                 GlobalPosition = raycastResult.Position;
-                Die(raycastResult);
+                DieWithEffect(raycastResult);
             }
         }
 
-        public virtual void Die(RaycastResult raycastResult = null)
+        public virtual void DieWithEffect(RaycastResult raycastResult = null)
         {
             var death = _deathScene.Instance() as Node2D;
             Zone.Current.EffectsLayer.AddChild(death);
             death.Rotation = (raycastResult == null ? _direction.Angle() - Mathf.Pi : raycastResult.Normal.Angle());
             death.GlobalPosition = GlobalPosition;
         }
+
+        public virtual void Die()
+        {
+            QueueFree();
+        }
+
+        public abstract void Start(Vector2 chamberPos, Vector2 spawnPos, Vector2 toPos);
+        public abstract void SetPlayer();
+        public abstract void SetEnemy();
     }
 }

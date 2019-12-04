@@ -6,25 +6,28 @@ namespace Deathville.GameObject
 {
     public class PhysicalProjectile : Projectile
     {
-        [Export]
-        private float _speed = 500f;
-
         private uint _collisionMask = 1;
         private bool _obeyTimeScale = true;
 
         public override void _PhysicsProcess(float delta)
         {
             var prevPos = GlobalPosition;
-            GlobalPosition += _speed * delta * _direction / (_obeyTimeScale ? 1f : Engine.TimeScale);
+            var deltaDist = Speed * delta / (_obeyTimeScale ? 1f : Engine.TimeScale);
+            GlobalPosition += deltaDist * _direction;
+            _distanceTravelled += deltaDist;
             var raycastResult = GetWorld2d().DirectSpaceState.Raycast(prevPos, GlobalPosition, null, _collisionMask, true, true);
 
             if (raycastResult != null)
             {
                 RegisterHit(raycastResult);
             }
+            else if (_distanceTravelled >= Range)
+            {
+                Die();
+            }
         }
 
-        public void Start(Vector2 chamberPos, Vector2 spawnPos, Vector2 toPos)
+        public override void Start(Vector2 chamberPos, Vector2 spawnPos, Vector2 toPos)
         {
             var raycastResult = GetWorld2d().DirectSpaceState.Raycast(chamberPos, spawnPos, null, _collisionMask, true, true);
             if (raycastResult != null)
@@ -39,21 +42,21 @@ namespace Deathville.GameObject
             }
         }
 
-        public void SetFriendly()
+        public override void SetPlayer()
         {
             _collisionMask |= (1 << 18);
             _obeyTimeScale = false;
         }
 
-        public void SetEnemy()
+        public override void SetEnemy()
         {
             _collisionMask |= (1 << 19);
         }
 
-        public override void Die(RaycastResult raycastResult = null)
+        public override void DieWithEffect(RaycastResult raycastResult = null)
         {
-            base.Die(raycastResult);
-            QueueFree();
+            base.DieWithEffect(raycastResult);
+            Die();
         }
     }
 }
