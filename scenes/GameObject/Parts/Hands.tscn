@@ -1,8 +1,9 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://assets/art/player-hand-small.png" type="Texture" id=1]
-[ext_resource path="res://assets/art/player-hand-large.png" type="Texture" id=2]
+[ext_resource path="res://assets/art/parts/player-hand-small.png" type="Texture" id=1]
+[ext_resource path="res://assets/art/parts/player-hand-large.png" type="Texture" id=2]
 [ext_resource path="res://scripts/GameObject/Parts/Hands.cs" type="Script" id=3]
+
 
 [node name="Hands" type="Node2D"]
 script = ExtResource( 3 )

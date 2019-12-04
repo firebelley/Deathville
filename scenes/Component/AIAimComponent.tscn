@@ -2,5 +2,5 @@
 
 [ext_resource path="res://scripts/Component/AIAimComponent.cs" type="Script" id=1]
 
-[node name="AIAimComponent" type="Node2D"]
+[node name="AIAimComponent" type="Node"]
 script = ExtResource( 1 )

@@ -1,7 +1,8 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scripts/GameObject/Weapon.cs" type="Script" id=1]
-[ext_resource path="res://assets/art/player-machine-gun.png" type="Texture" id=2]
+[ext_resource path="res://assets/art/weapons/player-machine-gun.png" type="Texture" id=2]
+
 
 [sub_resource type="Animation" id=1]
 resource_name = "fire"

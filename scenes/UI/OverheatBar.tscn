@@ -2,7 +2,8 @@
 
 [ext_resource path="res://assets/art/ui/overheat-bar.png" type="Texture" id=1]
 [ext_resource path="res://scripts/UI/OverheatBar.cs" type="Script" id=2]
-[ext_resource path="res://assets/art/crosshair-overheat.png" type="Texture" id=3]
+[ext_resource path="res://assets/art/ui/crosshair-overheat.png" type="Texture" id=3]
+
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 1, 1, 1, 1 )

@@ -8,6 +8,8 @@ namespace Deathville.GameObject
         private NodePath _headSpritePath;
         [Export]
         private NodePath _bodySpritePath;
+        [Export]
+        private NodePath _armSpritePath;
 
         [Export]
         private NodePath _headRigidBodyPath;
@@ -16,6 +18,7 @@ namespace Deathville.GameObject
 
         private Sprite _headSprite;
         private Sprite _bodySprite;
+        private Sprite _armSprite;
         private RigidBody2D _headRigidBody;
         private RigidBody2D _bodyRigidBody;
 
@@ -23,6 +26,7 @@ namespace Deathville.GameObject
         {
             _headSprite = GetNodeOrNull<Sprite>(_headSpritePath ?? string.Empty);
             _bodySprite = GetNodeOrNull<Sprite>(_bodySpritePath ?? string.Empty);
+            _armSprite = GetNodeOrNull<Sprite>(_armSpritePath ?? string.Empty);
             _bodyRigidBody = GetNodeOrNull<RigidBody2D>(_bodyRigidBodyPath ?? string.Empty);
             _headRigidBody = GetNodeOrNull<RigidBody2D>(_headRigidBodyPath ?? string.Empty);
 
@@ -36,6 +40,7 @@ namespace Deathville.GameObject
         {
             _headSprite.FlipH = true;
             _bodySprite.FlipH = true;
+            _armSprite.FlipH = true;
         }
 
         public void ApplyVelocity(Vector2 velocity)

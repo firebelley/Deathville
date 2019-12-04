@@ -5,7 +5,7 @@ using GodotApiTools.Extension;
 
 namespace Deathville.Component
 {
-    public class AIAimComponent : Node2D
+    public class AIAimComponent : Node
     {
         [Export]
         private NodePath _weaponSocketComponentPath;
