@@ -9,7 +9,7 @@
 [ext_resource path="res://assets/art/player7.png" type="Texture" id=7]
 [ext_resource path="res://assets/art/player3.png" type="Texture" id=8]
 [ext_resource path="res://scripts/Player.cs" type="Script" id=9]
-[ext_resource path="res://scenes/GameObject/PlayerHands.tscn" type="PackedScene" id=10]
+[ext_resource path="res://scenes/GameObject/Parts/Hands.tscn" type="PackedScene" id=10]
 [ext_resource path="res://assets/art/light64.png" type="Texture" id=11]
 [ext_resource path="res://scenes/Component/DamageReceiverComponent.tscn" type="PackedScene" id=12]
 [ext_resource path="res://scenes/Component/VelocityComponent.tscn" type="PackedScene" id=13]
@@ -106,7 +106,7 @@ _damageOverride = 1.0
 
 [node name="PlayerAimComponent" parent="." instance=ExtResource( 15 )]
 _weaponSocketComponentPath = NodePath("../WeaponSocketComponent")
-_playerHandsPath = NodePath("../PlayerHands")
+_playerHandsPath = NodePath("../Hands")
 
 [node name="DamageReceiverComponent" parent="." instance=ExtResource( 12 )]
 collision_layer = 524288
@@ -119,6 +119,7 @@ shape = SubResource( 1 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 2 )
 animation = "idle"
+frame = 1
 playing = true
 offset = Vector2( 0, -15 )
 
@@ -132,7 +133,7 @@ offset = Vector2( 1, 5 )
 position = Vector2( -2, -20 )
 _isPlayer = true
 
-[node name="PlayerHands" parent="." instance=ExtResource( 10 )]
+[node name="Hands" parent="." instance=ExtResource( 10 )]
 position = Vector2( 0, -20 )
 
 [node name="Light2D" type="Light2D" parent="."]

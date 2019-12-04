@@ -1,4 +1,5 @@
 using Deathville.GameObject;
+using Deathville.GameObject.Parts;
 using Godot;
 
 namespace Deathville.Component
@@ -13,12 +14,12 @@ namespace Deathville.Component
         private bool _isAttacking;
 
         private WeaponSocketComponent _weaponSocketComponent;
-        private PlayerHands _playerHands;
+        private Hands _playerHands;
 
         public override void _Ready()
         {
             _weaponSocketComponent = GetNode<WeaponSocketComponent>(_weaponSocketComponentPath);
-            _playerHands = GetNode<PlayerHands>(_playerHandsPath);
+            _playerHands = GetNode<Hands>(_playerHandsPath);
             if (Owner is Player p)
             {
                 p.Connect(nameof(Player.AttackStart), this, nameof(OnAttackStart));

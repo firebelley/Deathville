@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://assets/art/peasant2.png" type="Texture" id=1]
 [ext_resource path="res://scenes/Effect/BloodParticles.tscn" type="PackedScene" id=2]
@@ -23,6 +23,7 @@
 [ext_resource path="res://scenes/GameObject/Ragdoll.tscn" type="PackedScene" id=21]
 [ext_resource path="res://scenes/Component/EntitySeparatorComponent.tscn" type="PackedScene" id=22]
 [ext_resource path="res://scenes/Component/EntityDeleterComponent.tscn" type="PackedScene" id=23]
+[ext_resource path="res://scenes/GameObject/Parts/PeasantHands.tscn" type="PackedScene" id=24]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
@@ -80,6 +81,7 @@ _ragdollScene = ExtResource( 21 )
 
 [node name="AIAimComponent" parent="." instance=ExtResource( 3 )]
 _weaponSocketComponentPath = NodePath("../WeaponSocketComponent")
+_handsPath = NodePath("../PeasantHands")
 _aiBehaviorComponentPath = NodePath("../AIBehaviorComponent")
 
 [node name="EntitySeparatorComponent" parent="." instance=ExtResource( 22 )]
@@ -102,13 +104,16 @@ shape = SubResource( 2 )
 position = Vector2( 0, -15 )
 frames = SubResource( 3 )
 animation = "run"
-frame = 2
 playing = true
 
 [node name="WeaponSocketComponent" parent="." instance=ExtResource( 16 )]
 position = Vector2( -1, -10 )
 
 [node name="PeasantWeapon" parent="WeaponSocketComponent" instance=ExtResource( 17 )]
+position = Vector2( 2, 1 )
+
+[node name="PeasantHands" parent="." instance=ExtResource( 24 )]
+position = Vector2( 0, -10 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false

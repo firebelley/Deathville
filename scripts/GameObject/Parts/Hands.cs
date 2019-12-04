@@ -1,8 +1,8 @@
 using Godot;
 
-namespace Deathville.GameObject
+namespace Deathville.GameObject.Parts
 {
-    public class PlayerHands : Node2D
+    public class Hands : Node2D
     {
         private Node2D _scale;
 

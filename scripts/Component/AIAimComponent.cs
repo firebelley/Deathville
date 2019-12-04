@@ -1,4 +1,5 @@
 using Deathville.GameObject;
+using Deathville.GameObject.Parts;
 using Godot;
 using GodotApiTools.Extension;
 
@@ -9,15 +10,19 @@ namespace Deathville.Component
         [Export]
         private NodePath _weaponSocketComponentPath;
         [Export]
+        private NodePath _handsPath;
+        [Export]
         private NodePath _aiBehaviorComponentPath;
 
         private WeaponSocketComponent _weaponSocketComponent;
         private AIBehaviorComponent _aiBehaviorComponent;
+        private Hands _hands;
 
         public override void _Ready()
         {
             _weaponSocketComponent = GetNode<WeaponSocketComponent>(_weaponSocketComponentPath);
             _aiBehaviorComponent = GetNode<AIBehaviorComponent>(_aiBehaviorComponentPath);
+            _hands = GetNodeOrNull<Hands>(_handsPath ?? string.Empty);
         }
 
         public override void _Process(float delta)
@@ -34,6 +39,11 @@ namespace Deathville.Component
             else
             {
                 _weaponSocketComponent.ResetWeaponAim();
+            }
+
+            if (_hands != null && _weaponSocketComponent.Weapon != null)
+            {
+                _hands.AlignWithWeapon(_weaponSocketComponent.Weapon);
             }
         }
     }
