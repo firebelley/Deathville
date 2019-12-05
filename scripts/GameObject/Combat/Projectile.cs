@@ -28,16 +28,18 @@ namespace Deathville.GameObject.Combat
             if (_hitCount >= 1)
             {
                 GlobalPosition = raycastResult.Position;
-                DieWithEffect(raycastResult);
+                SpawnEffect(raycastResult);
             }
         }
 
-        public virtual void DieWithEffect(RaycastResult raycastResult = null)
+        public virtual Node2D SpawnEffect(RaycastResult raycastResult = null)
         {
+            if (_deathScene == null) return null;
             var death = _deathScene.Instance() as Node2D;
             Zone.Current.EffectsLayer.AddChild(death);
             death.Rotation = (raycastResult == null ? _direction.Angle() - Mathf.Pi : raycastResult.Normal.Angle());
             death.GlobalPosition = GlobalPosition;
+            return death;
         }
 
         public virtual void Die()

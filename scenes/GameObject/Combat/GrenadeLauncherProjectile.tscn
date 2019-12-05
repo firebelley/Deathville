@@ -1,5 +1,35 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/GameObject/Combat/PhysicsProjectile.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/art/effect/light16.png" type="Texture" id=2]
+[ext_resource path="res://scenes/Effect/GrenadeLauncherDeath.tscn" type="PackedScene" id=3]
+
+[sub_resource type="Animation" id=1]
+resource_name = "blink"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Light2D:energy")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 2.0, 0.0, 2.0 ]
+}
 
 [node name="GrenadeLauncherProjectile" instance=ExtResource( 1 )]
+_deathScene = ExtResource( 3 )
+
+[node name="Light2D" type="Light2D" parent="RigidBody2D" index="2"]
+texture = ExtResource( 2 )
+texture_scale = 3.0
+color = Color( 1, 0, 0, 1 )
+energy = 1.38182
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="RigidBody2D" index="3"]
+autoplay = "blink"
+playback_speed = 1.5
+anims/blink = SubResource( 1 )

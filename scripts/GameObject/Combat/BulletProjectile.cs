@@ -53,10 +53,11 @@ namespace Deathville.GameObject.Combat
             _collisionMask |= (1 << 19);
         }
 
-        public override void DieWithEffect(RaycastResult raycastResult = null)
+        public override Node2D SpawnEffect(RaycastResult raycastResult = null)
         {
-            base.DieWithEffect(raycastResult);
+            var death = base.SpawnEffect(raycastResult);
             Die();
+            return death;
         }
     }
 }

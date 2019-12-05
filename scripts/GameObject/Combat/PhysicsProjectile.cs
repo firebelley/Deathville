@@ -1,5 +1,6 @@
 using Godot;
 using GodotApiTools.Extension;
+using GodotApiTools.Util;
 
 namespace Deathville.GameObject.Combat
 {
@@ -7,6 +8,7 @@ namespace Deathville.GameObject.Combat
     {
         private RigidBody2D _rigidBody;
         private bool _isPlayer;
+        private Vector2 _prevPosition;
 
         public override void _Ready()
         {
@@ -15,14 +17,15 @@ namespace Deathville.GameObject.Combat
 
         public override void _PhysicsProcess(float delta)
         {
-            _distanceTravelled += _rigidBody.LinearVelocity.LengthSquared() * delta;
-            if (_distanceTravelled >= Range * Range)
+            if (_prevPosition != Vector2.Zero)
             {
-                Die();
+                _distanceTravelled += (_prevPosition - _rigidBody.GlobalPosition).ApproximateLength();
+                if (_distanceTravelled >= Range)
+                {
+                    SpawnEffect();
+                }
             }
-
-            var dir = _rigidBody.LinearVelocity.Normalized();
-            _rigidBody.SetAxisVelocity(_rigidBody.LinearVelocity / Engine.TimeScale);
+            _prevPosition = _rigidBody.GlobalPosition;
         }
 
         public override void SetEnemy()
@@ -42,6 +45,15 @@ namespace Deathville.GameObject.Combat
             GlobalPosition = raycastResult != null ? raycastResult.Position : spawnPos;
             _direction = (toPos - chamberPos).Normalized();
             _rigidBody.LinearVelocity = _direction * Speed;
+            _rigidBody.AngularVelocity = Main.RNG.RandfRange(-60f, 60f);
+        }
+
+        public override Node2D SpawnEffect(RaycastResult raycastResult = null)
+        {
+            var death = base.SpawnEffect(raycastResult);
+            death.GlobalPosition = _rigidBody.GlobalPosition;
+            Die();
+            return death;
         }
     }
 }

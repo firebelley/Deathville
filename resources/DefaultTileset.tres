@@ -2,7 +2,6 @@
 
 [ext_resource path="res://assets/art/environment/graveyard.png" type="Texture" id=1]
 
-
 [sub_resource type="ConvexPolygonShape2D" id=1]
 points = PoolVector2Array( 0, 0, 16, 0, 16, 16, 0, 16 )
 
