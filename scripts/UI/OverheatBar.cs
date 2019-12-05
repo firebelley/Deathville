@@ -42,7 +42,7 @@ namespace Deathville.UI
             {
                 range = _textureProgressBar;
             }
-            range.Value = Mathf.Lerp((float) range.Value, _targetValue * 100f, 10f * delta / Engine.TimeScale);
+            range.Value = Mathf.Lerp((float) range.Value, _targetValue * 100f, 15f * delta / Engine.TimeScale);
             UpdateTint();
         }
 

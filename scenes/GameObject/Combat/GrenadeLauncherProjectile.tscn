@@ -1,13 +1,5 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://scenes/GameObject/Combat/BulletProjectile.tscn" type="PackedScene" id=1]
-[ext_resource path="res://assets/art/weapons/grenade-launcher-projectile.png" type="Texture" id=2]
+[ext_resource path="res://scenes/GameObject/Combat/PhysicsProjectile.tscn" type="PackedScene" id=1]
 
-
-
-
-[node name="PhysicalProjectile" instance=ExtResource( 1 )]
-_speed = 100.0
-
-[node name="Sprite" parent="." index="1"]
-texture = ExtResource( 2 )
+[node name="GrenadeLauncherProjectile" instance=ExtResource( 1 )]

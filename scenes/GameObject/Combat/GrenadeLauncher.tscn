@@ -4,18 +4,15 @@
 [ext_resource path="res://assets/art/weapons/grenade-launcher.png" type="Texture" id=2]
 [ext_resource path="res://scenes/GameObject/Combat/GrenadeLauncherProjectile.tscn" type="PackedScene" id=3]
 
-
-
-
 [node name="GrenadeLauncher" instance=ExtResource( 1 )]
-_projectileScene = ExtResource( 3 )
 _projectilesPerSecond = 2.0
 _heatPerShot = 0.3
 _heatDecayDelay = 1.0
 
-[node name="Sprite" parent="." index="0"]
+[node name="ProjectileSpawnerComponent" parent="." index="0"]
+_scene = ExtResource( 3 )
+_range = 250.0
+
+[node name="Sprite" parent="." index="1"]
 texture = ExtResource( 2 )
 offset = Vector2( 3, -1 )
-
-[node name="ChamberPosition" parent="." index="2"]
-position = Vector2( 11, 1 )
