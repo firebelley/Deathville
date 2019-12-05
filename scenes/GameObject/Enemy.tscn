@@ -14,7 +14,7 @@
 [ext_resource path="res://scenes/Component/DamageReceiverComponent.tscn" type="PackedScene" id=12]
 [ext_resource path="res://scenes/Component/WeaponSocketComponent.tscn" type="PackedScene" id=13]
 [ext_resource path="res://scenes/GameObject/Parts/PeasantHands.tscn" type="PackedScene" id=14]
-[ext_resource path="res://scenes/GameObject/PeasantWeapon.tscn" type="PackedScene" id=15]
+[ext_resource path="res://scenes/GameObject/Combat/PeasantWeapon.tscn" type="PackedScene" id=15]
 [ext_resource path="res://scenes/Component/EntityAnimationComponent.tscn" type="PackedScene" id=16]
 [ext_resource path="res://scenes/GameObject/Ragdoll.tscn" type="PackedScene" id=17]
 [ext_resource path="res://scenes/Component/HitEffectComponent.tscn" type="PackedScene" id=18]
@@ -24,6 +24,7 @@
 [ext_resource path="res://scenes/Component/DeathComponent.tscn" type="PackedScene" id=22]
 [ext_resource path="res://scenes/Component/EntitySeparatorComponent.tscn" type="PackedScene" id=23]
 [ext_resource path="res://scenes/Component/EntityDeleterComponent.tscn" type="PackedScene" id=24]
+
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true

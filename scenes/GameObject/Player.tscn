@@ -20,7 +20,6 @@
 [ext_resource path="res://scenes/Component/WeaponSocketComponent.tscn" type="PackedScene" id=18]
 [ext_resource path="res://scripts/Player.cs" type="Script" id=19]
 
-
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 4, 8 )
 
@@ -31,11 +30,6 @@ animations = [ {
 "name": "idle",
 "speed": 8.0
 }, {
-"frames": [ ExtResource( 6 ), ExtResource( 8 ), ExtResource( 11 ), ExtResource( 9 ) ],
-"loop": true,
-"name": "run",
-"speed": 10.0
-}, {
 "frames": [ ExtResource( 2 ), ExtResource( 3 ) ],
 "loop": false,
 "name": "jump",
@@ -45,6 +39,11 @@ animations = [ {
 "loop": true,
 "name": "jump_idle",
 "speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ), ExtResource( 8 ), ExtResource( 11 ), ExtResource( 9 ) ],
+"loop": true,
+"name": "run",
+"speed": 10.0
 } ]
 
 [sub_resource type="RectangleShape2D" id=3]
@@ -120,7 +119,7 @@ shape = SubResource( 1 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 2 )
 animation = "idle"
-frame = 2
+frame = 1
 playing = true
 offset = Vector2( 0, -15 )
 

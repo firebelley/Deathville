@@ -2,9 +2,9 @@ using Godot;
 using GodotApiTools.Extension;
 using GodotApiTools.Util;
 
-namespace Deathville.GameObject
+namespace Deathville.GameObject.Combat
 {
-    public class PhysicalProjectile : Projectile
+    public class BulletProjectile : Projectile
     {
         private uint _collisionMask = 1;
         private bool _obeyTimeScale = true;

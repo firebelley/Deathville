@@ -1,5 +1,6 @@
 using Deathville.Component;
 using Deathville.Enum;
+using Deathville.GameObject.Combat;
 using Deathville.Singleton;
 using Godot;
 using GodotApiTools.Extension;
@@ -70,7 +71,7 @@ namespace Deathville.GameObject
             _flipTween = GetNode<Tween>("FlipTween");
 
             var weaponSocket = this.GetFirstNodeOfType<WeaponSocketComponent>();
-            weaponSocket.EquipWeapon((GD.Load("res://scenes/GameObject/PlayerWeapon.tscn") as PackedScene).Instance() as Weapon);
+            weaponSocket.EquipWeapon((GD.Load("res://scenes/GameObject/Combat/PlayerWeapon.tscn") as PackedScene).Instance() as Weapon);
 
             _flipTween.Connect("tween_all_completed", this, nameof(OnFlipTweenCompleted));
             _healthComponent?.Connect(nameof(HealthComponent.HealthChanged), this, nameof(OnHealthChanged));

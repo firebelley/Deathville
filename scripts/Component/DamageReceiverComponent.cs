@@ -1,5 +1,5 @@
 using Deathville.Environment;
-using Deathville.GameObject;
+using Deathville.GameObject.Combat;
 using Deathville.Singleton;
 using Godot;
 using GodotApiTools.Util;

@@ -1,13 +1,11 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://scripts/GameObject/PhysicalProjectile.cs" type="Script" id=1]
+[ext_resource path="res://scripts/GameObject/Combat/BulletProjectile.cs" type="Script" id=1]
 [ext_resource path="res://assets/art/weapons/bullet.png" type="Texture" id=2]
 [ext_resource path="res://assets/art/effect/light16.png" type="Texture" id=3]
 [ext_resource path="res://scenes/Effect/BulletDeath.tscn" type="PackedScene" id=4]
 
-
-
-[node name="PhysicalProjectile" type="Node2D"]
+[node name="BulletProjectile" type="Node2D"]
 script = ExtResource( 1 )
 _deathScene = ExtResource( 4 )
 

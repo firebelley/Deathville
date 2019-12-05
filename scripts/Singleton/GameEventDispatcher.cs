@@ -1,4 +1,4 @@
-using Deathville.GameObject;
+using Deathville.GameObject.Combat;
 using Godot;
 
 namespace Deathville.Singleton

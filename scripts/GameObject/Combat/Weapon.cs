@@ -1,7 +1,7 @@
 using Deathville.Component;
 using Godot;
 
-namespace Deathville.GameObject
+namespace Deathville.GameObject.Combat
 {
     public class Weapon : Node2D
     {

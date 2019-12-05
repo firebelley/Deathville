@@ -1,8 +1,10 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scenes/GameObject/Weapon.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/GameObject/Combat/Weapon.tscn" type="PackedScene" id=1]
 [ext_resource path="res://assets/art/weapons/grenade-launcher.png" type="Texture" id=2]
-[ext_resource path="res://scenes/GameObject/GrenadeLauncherProjectile.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/GameObject/Combat/GrenadeLauncherProjectile.tscn" type="PackedScene" id=3]
+
+
 
 
 [node name="GrenadeLauncher" instance=ExtResource( 1 )]
@@ -14,9 +16,6 @@ _heatDecayDelay = 1.0
 [node name="Sprite" parent="." index="0"]
 texture = ExtResource( 2 )
 offset = Vector2( 3, -1 )
-
-[node name="MuzzlePosition" parent="." index="1"]
-position = Vector2( 21, 1 )
 
 [node name="ChamberPosition" parent="." index="2"]
 position = Vector2( 11, 1 )

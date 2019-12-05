@@ -1,3 +1,4 @@
+using Deathville.GameObject.Combat;
 using Godot;
 
 namespace Deathville.GameObject.Parts

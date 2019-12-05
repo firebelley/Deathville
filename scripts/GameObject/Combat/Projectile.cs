@@ -3,7 +3,7 @@ using Deathville.Environment;
 using Godot;
 using GodotApiTools.Util;
 
-namespace Deathville.GameObject
+namespace Deathville.GameObject.Combat
 {
     public abstract class Projectile : Node2D
     {

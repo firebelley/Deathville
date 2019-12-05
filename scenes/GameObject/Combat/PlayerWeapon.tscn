@@ -1,7 +1,9 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://scenes/GameObject/Weapon.tscn" type="PackedScene" id=1]
-[ext_resource path="res://scenes/GameObject/Hitscan.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/GameObject/Combat/Weapon.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/GameObject/Combat/HitscanProjectile.tscn" type="PackedScene" id=2]
+
+
 
 [node name="PlayerWeapon" instance=ExtResource( 1 )]
 _projectilesPerSecond = 8.0

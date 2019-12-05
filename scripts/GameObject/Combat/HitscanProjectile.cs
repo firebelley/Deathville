@@ -1,9 +1,9 @@
 using Godot;
 using GodotApiTools.Extension;
 
-namespace Deathville.GameObject
+namespace Deathville.GameObject.Combat
 {
-    public class Hitscan : Projectile
+    public class HitscanProjectile : Projectile
     {
         private const int COLLISION_MASK = (1 << 18) | 1;
 
