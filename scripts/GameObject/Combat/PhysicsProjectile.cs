@@ -1,3 +1,4 @@
+using Deathville.Component;
 using Godot;
 using GodotApiTools.Extension;
 using GodotApiTools.Util;
@@ -7,7 +8,6 @@ namespace Deathville.GameObject.Combat
     public class PhysicsProjectile : Projectile
     {
         private RigidBody2D _rigidBody;
-        private bool _isPlayer;
         private Vector2 _prevPosition;
 
         public override void _Ready()
@@ -24,18 +24,27 @@ namespace Deathville.GameObject.Combat
                 {
                     SpawnEffect();
                 }
+                else
+                {
+                    var raycastResult = GetWorld2d().DirectSpaceState.Raycast(_prevPosition, GlobalPosition, null, _rigidBody.CollisionMask, true, true);
+                    if (raycastResult?.Collider is DamageReceiverComponent)
+                    {
+                        SpawnEffect();
+                    }
+                }
             }
             _prevPosition = _rigidBody.GlobalPosition;
         }
 
         public override void SetEnemy()
         {
+            base.SetEnemy();
             _rigidBody.CollisionMask |= (1 << 19);
         }
 
         public override void SetPlayer()
         {
-            _isPlayer = true;
+            base.SetPlayer();
             _rigidBody.CollisionMask |= (1 << 18);
         }
 

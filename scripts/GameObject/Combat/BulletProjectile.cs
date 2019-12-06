@@ -44,12 +44,14 @@ namespace Deathville.GameObject.Combat
 
         public override void SetPlayer()
         {
+            base.SetPlayer();
             _collisionMask |= (1 << 18);
             _obeyTimeScale = false;
         }
 
         public override void SetEnemy()
         {
+            base.SetEnemy();
             _collisionMask |= (1 << 19);
         }
 

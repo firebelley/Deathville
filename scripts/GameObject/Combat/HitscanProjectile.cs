@@ -58,8 +58,5 @@ namespace Deathville.GameObject.Combat
             );
             _tween.Start();
         }
-
-        public override void SetEnemy() { }
-        public override void SetPlayer() { }
     }
 }

@@ -7,11 +7,17 @@ namespace Deathville.GameObject.Combat
 {
     public abstract class Projectile : Node2D
     {
+        [Signal]
+        public delegate void Died();
+        [Signal]
+        public delegate void FactionChanged();
+
         [Export]
         protected PackedScene _deathScene;
 
         public float Speed;
         public float Range;
+        public bool IsPlayer { get; private set; }
 
         protected Vector2 _direction;
         protected float _distanceTravelled;
@@ -22,7 +28,7 @@ namespace Deathville.GameObject.Combat
         {
             if (raycastResult.Collider is DamageReceiverComponent drc)
             {
-                drc.RegisterHit(this, raycastResult);
+                drc.RegisterRaycastHit(this, raycastResult);
             }
             _hitCount++;
             if (_hitCount >= 1)
@@ -44,11 +50,22 @@ namespace Deathville.GameObject.Combat
 
         public virtual void Die()
         {
+            EmitSignal(nameof(Died));
             QueueFree();
         }
 
         public abstract void Start(Vector2 chamberPos, Vector2 spawnPos, Vector2 toPos);
-        public abstract void SetPlayer();
-        public abstract void SetEnemy();
+
+        public virtual void SetPlayer()
+        {
+            IsPlayer = true;
+            EmitSignal(nameof(FactionChanged));
+        }
+
+        public virtual void SetEnemy()
+        {
+            IsPlayer = false;
+            EmitSignal(nameof(FactionChanged));
+        }
     }
 }

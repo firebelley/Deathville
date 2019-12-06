@@ -85,15 +85,7 @@ namespace Deathville.GameObject.Combat
         {
             if (_fireTime == 0f && CurrentHeat < 1f)
             {
-                var projectile = _projectileSpawnerComponent?.Spawn(atTarget);
-                if (IsPlayer)
-                {
-                    projectile?.SetPlayer();
-                }
-                else
-                {
-                    projectile?.SetEnemy();
-                }
+                _projectileSpawnerComponent?.Spawn(IsPlayer, atTarget);
             }
         }
 

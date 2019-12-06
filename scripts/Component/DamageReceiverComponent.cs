@@ -16,13 +16,9 @@ namespace Deathville.Component
         [Export]
         private PackedScene _hitEffect;
 
-        public void RegisterHit(Projectile projectile, RaycastResult raycastResult)
+        public void RegisterRaycastHit(Projectile projectile, RaycastResult raycastResult)
         {
-            if (_sendEnemyStruckEvent)
-            {
-                GameEventDispatcher.DispatchEnemyStruck();
-            }
-
+            RegisterHit(projectile);
             if (_hitEffect != null)
             {
                 var effect = _hitEffect.Instance() as Node2D;
@@ -30,7 +26,19 @@ namespace Deathville.Component
                 effect.Rotation = (raycastResult.ToPosition - raycastResult.FromPosition).Angle();
                 effect.GlobalPosition = raycastResult.Position;
             }
+        }
 
+        public void RegisterAreaOfEffect(Projectile projectile, Vector2 sourcePosition)
+        {
+            RegisterHit(projectile);
+        }
+
+        private void RegisterHit(Projectile projectile)
+        {
+            if (_sendEnemyStruckEvent)
+            {
+                GameEventDispatcher.DispatchEnemyStruck();
+            }
             EmitSignal(nameof(DamageReceived), 1f);
         }
     }

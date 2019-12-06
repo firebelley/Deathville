@@ -25,7 +25,7 @@ namespace Deathville.Component
             _chamberPosition = GetNodeOrNull<Node2D>(_chamberPositionPath ?? string.Empty);
         }
 
-        public Projectile Spawn(Vector2 toPos)
+        public Projectile Spawn(bool isPlayer, Vector2 toPos)
         {
             if (_scene == null) return null;
 
@@ -34,6 +34,14 @@ namespace Deathville.Component
 
             projectile.Range = _range;
             projectile.Speed = _speed;
+            if (isPlayer)
+            {
+                projectile.SetPlayer();
+            }
+            else
+            {
+                projectile.SetEnemy();
+            }
             projectile.Start(_chamberPosition.GlobalPosition, GlobalPosition, toPos);
             EmitSignal(nameof(ProjectileSpawned));
             return projectile;
