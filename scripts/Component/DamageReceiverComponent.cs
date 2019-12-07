@@ -13,18 +13,11 @@ namespace Deathville.Component
         public delegate void DamageReceived(ImpactData impactData);
 
         [Export]
-        private NodePath _velocityComponentPath;
-        [Export]
         private bool _sendEnemyStruckEvent;
         [Export]
         private PackedScene _hitEffect;
 
         private VelocityComponent _velocityComponent;
-
-        public override void _Ready()
-        {
-            _velocityComponent = _velocityComponentPath != null ? GetNode<VelocityComponent>(_velocityComponentPath) : null;
-        }
 
         public void RegisterRaycastHit(Projectile projectile, RaycastResult raycastResult)
         {
@@ -45,16 +38,6 @@ namespace Deathville.Component
 
         private void RegisterHit(ImpactData impactData)
         {
-            if (_velocityComponent != null)
-            {
-                var dir = impactData.Direction;
-                if (dir == Vector2.Zero)
-                {
-                    dir = (GlobalPosition - impactData.SourcePosition).Normalized();
-                }
-                _velocityComponent.ApplyForce(dir, impactData.Force);
-            }
-
             if (_sendEnemyStruckEvent)
             {
                 GameEventDispatcher.DispatchEnemyStruck();

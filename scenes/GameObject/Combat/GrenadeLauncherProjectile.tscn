@@ -21,7 +21,7 @@ tracks/0/keys = {
 "values": [ 2.0, 0.0, 2.0 ]
 }
 
-[node name="GrenadeLauncherProjectile" index="0" instance=ExtResource( 1 )]
+[node name="GrenadeLauncherProjectile" instance=ExtResource( 1 )]
 _deathScene = ExtResource( 3 )
 _deathIsExplosion = true
 _explosionCameraShake = 1.5

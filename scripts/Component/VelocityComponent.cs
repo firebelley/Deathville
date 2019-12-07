@@ -45,9 +45,19 @@ namespace Deathville.Component
         private Vector2 _velocity;
         private KinematicBody2D _owner;
 
+        private float _realAcceleration;
+        private float _realDeceleration;
+
         public override void _Ready()
         {
             _owner = Owner as KinematicBody2D;
+            _realAcceleration = _acceleration;
+        }
+
+        public override void _Process(float delta)
+        {
+            _realAcceleration = Mathf.Lerp(_realAcceleration, _acceleration, 1f * delta);
+            _realDeceleration = Mathf.Lerp(_realDeceleration, _deceleration, 1f * delta);
         }
 
         public void Accelerate(Vector2 dir)
@@ -57,19 +67,28 @@ namespace Deathville.Component
             {
                 mod = 0f;
             }
-            _velocity.x += _acceleration * GetProcessDeltaTime() * mod / GetTimeScale();
+            _velocity.x += _realAcceleration * GetProcessDeltaTime() * mod / GetTimeScale();
         }
 
         public void Decelerate()
         {
             var abs = Mathf.Abs(_velocity.x);
-            var x = Mathf.Clamp(abs - _deceleration * GetProcessDeltaTime() / GetTimeScale(), 0f, float.MaxValue);
+            var x = Mathf.Clamp(abs - _realDeceleration * GetProcessDeltaTime() / GetTimeScale(), 0f, float.MaxValue);
             _velocity.x = x * Mathf.Sign(_velocity.x);
         }
 
         public void ApplyForce(Vector2 dir, float force)
         {
             _velocity += dir * force;
+        }
+
+        public void ApplyKnockback(Vector2 dir, float knockBackForce)
+        {
+            var vel = dir * knockBackForce;
+            _velocity.x = vel.x;
+            _velocity.y += vel.y;
+            _realAcceleration = 0f;
+            _realDeceleration = 0f;
         }
 
         public void Jump(float speed)
