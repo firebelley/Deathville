@@ -17,6 +17,8 @@ namespace Deathville.Component
         private float _range = 250f;
         [Export]
         private float _speed = 250f;
+        [Export]
+        private float _force = 10f;
 
         private Node2D _chamberPosition;
 
@@ -34,6 +36,7 @@ namespace Deathville.Component
 
             projectile.Range = _range;
             projectile.Speed = _speed;
+            projectile.Force = _force;
             if (isPlayer)
             {
                 projectile.SetPlayer();

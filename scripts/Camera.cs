@@ -22,10 +22,11 @@ namespace Deathville
             _noise = new OpenSimplexNoise();
             _noise.Seed = (int) Main.RNG.Randi();
             _noise.Octaves = 4;
-            _noise.Period = .1f;
+            _noise.Period = .2f;
 
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.WeaponFired), this, nameof(OnWeaponFired));
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.EnemyStruck), this, nameof(OnEnemyStruck));
+            GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.CameraShaken), this, nameof(OnCameraShaken));
         }
 
         public override void _Process(float delta)
@@ -70,6 +71,11 @@ namespace Deathville
         private void OnEnemyStruck()
         {
             Shake(1f);
+        }
+
+        private void OnCameraShaken(float magnitude)
+        {
+            Shake(magnitude);
         }
     }
 }

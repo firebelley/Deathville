@@ -1,5 +1,6 @@
 using Deathville.Component;
 using Deathville.Environment;
+using Deathville.Singleton;
 using Godot;
 using GodotApiTools.Util;
 
@@ -14,9 +15,15 @@ namespace Deathville.GameObject.Combat
 
         [Export]
         protected PackedScene _deathScene;
+        [Export]
+        protected bool _deathIsExplosion;
+        [Export]
+        private float _explosionCameraShake = 1f;
 
         public float Speed;
         public float Range;
+        public float Force;
+        public float Damage = 1f;
         public bool IsPlayer { get; private set; }
 
         protected Vector2 _direction;
@@ -45,6 +52,11 @@ namespace Deathville.GameObject.Combat
             Zone.Current.EffectsLayer.AddChild(death);
             death.Rotation = (raycastResult == null ? _direction.Angle() - Mathf.Pi : raycastResult.Normal.Angle());
             death.GlobalPosition = GlobalPosition;
+
+            if (_deathIsExplosion)
+            {
+                GameEventDispatcher.DispatchCameraShaken(_explosionCameraShake);
+            }
             return death;
         }
 

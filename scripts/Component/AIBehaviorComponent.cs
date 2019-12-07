@@ -1,4 +1,5 @@
 using Deathville.GameObject;
+using Deathville.Util;
 using Godot;
 using GodotApiTools.Extension;
 
@@ -37,7 +38,7 @@ namespace Deathville.Component
             }
         }
 
-        private void OnDamageReceived(float damage)
+        private void OnDamageReceived(ImpactData impactData)
         {
             Aggressive = true;
         }

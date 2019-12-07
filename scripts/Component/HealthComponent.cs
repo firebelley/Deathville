@@ -1,3 +1,4 @@
+using Deathville.Util;
 using Godot;
 
 namespace Deathville.Component
@@ -40,9 +41,9 @@ namespace Deathville.Component
             GetNode<DamageReceiverComponent>(_damageReceiverComponentPath).Connect(nameof(DamageReceiverComponent.DamageReceived), this, nameof(OnDamageReceived));
         }
 
-        private void OnDamageReceived(float damage)
+        private void OnDamageReceived(ImpactData impactData)
         {
-            CurrentHealth -= _damageOverride > 0f ? _damageOverride : damage;
+            CurrentHealth -= _damageOverride > 0f ? _damageOverride : impactData.Damage;
         }
     }
 }

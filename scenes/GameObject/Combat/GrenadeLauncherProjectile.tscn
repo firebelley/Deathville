@@ -23,6 +23,8 @@ tracks/0/keys = {
 
 [node name="GrenadeLauncherProjectile" index="0" instance=ExtResource( 1 )]
 _deathScene = ExtResource( 3 )
+_deathIsExplosion = true
+_explosionCameraShake = 1.5
 
 [node name="Light2D" type="Light2D" parent="TimeScaleRigidBodyComponent" index="2"]
 texture = ExtResource( 2 )

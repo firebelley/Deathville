@@ -13,6 +13,8 @@ namespace Deathville.Singleton
         public delegate void PlayerHealthChanged(float currentHealth);
         [Signal]
         public delegate void PlayerWeaponEquipped(Weapon weapon);
+        [Signal]
+        public delegate void CameraShaken(float magnitude);
 
         public static GameEventDispatcher Instance { get; private set; }
 
@@ -39,6 +41,11 @@ namespace Deathville.Singleton
         public static void DispatchPlayerWeaponEquipped(Weapon weapon)
         {
             Instance.EmitSignal(nameof(PlayerWeaponEquipped), weapon);
+        }
+
+        public static void DispatchCameraShaken(float magnitude)
+        {
+            Instance.EmitSignal(nameof(CameraShaken), magnitude);
         }
     }
 }

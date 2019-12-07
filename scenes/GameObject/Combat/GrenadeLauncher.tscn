@@ -12,6 +12,7 @@ _heatDecayDelay = 1.0
 [node name="ProjectileSpawnerComponent" parent="." index="0"]
 _scene = ExtResource( 3 )
 _range = 10000.0
+_force = 500.0
 
 [node name="Sprite" parent="." index="1"]
 texture = ExtResource( 2 )

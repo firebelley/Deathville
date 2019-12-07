@@ -7,6 +7,7 @@ namespace Deathville.Component
     {
         [Export]
         private float _detonationDelay = 3f;
+        private float _detonationTimer;
 
         private Projectile _owner;
 
@@ -18,10 +19,16 @@ namespace Deathville.Component
                 _owner.Connect(nameof(Projectile.Died), this, nameof(OnProjectileDied));
                 _owner.Connect(nameof(Projectile.FactionChanged), this, nameof(OnFactionChanged));
             }
-            var timer = GetNode<Timer>("DetonationTimer");
-            timer.WaitTime = _detonationDelay;
-            timer.Start();
-            timer.Connect("timeout", this, nameof(OnTimerTimeout));
+        }
+
+        public override void _PhysicsProcess(float delta)
+        {
+            _detonationTimer += delta / (_owner.IsPlayer ? Engine.TimeScale : 1f);
+            if (_detonationTimer >= _detonationDelay)
+            {
+                _detonationDelay = float.MaxValue;
+                _owner.SpawnEffect();
+            }
         }
 
         private void OnProjectileDied()
@@ -45,11 +52,6 @@ namespace Deathville.Component
             {
                 CollisionMask = 1 << 19;
             }
-        }
-
-        private void OnTimerTimeout()
-        {
-            _owner?.SpawnEffect();
         }
     }
 }

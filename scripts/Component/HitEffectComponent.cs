@@ -1,3 +1,4 @@
+using Deathville.Util;
 using Godot;
 
 namespace Deathville.Component
@@ -42,7 +43,7 @@ namespace Deathville.Component
             _tween.PlaybackSpeed = 1f / Engine.TimeScale;
         }
 
-        private void OnDamageReceived(float damage)
+        private void OnDamageReceived(ImpactData impactData)
         {
             PlayHitShadeTween();
         }
