@@ -33,7 +33,7 @@ size_flags_vertical = 8
 
 [node name="WeaponSwapUI" parent="Control/MarginContainer" instance=ExtResource( 3 )]
 margin_left = 264.0
-margin_top = 319.0
+margin_top = 320.0
 margin_right = 376.0
 margin_bottom = 352.0
 size_flags_horizontal = 4

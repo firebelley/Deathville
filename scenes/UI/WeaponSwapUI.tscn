@@ -4,8 +4,9 @@
 [ext_resource path="res://scripts/UI/WeaponSwapUI.cs" type="Script" id=2]
 
 [node name="WeaponSwapUI" type="HBoxContainer"]
-margin_right = 40.0
+margin_right = 112.0
 margin_bottom = 40.0
+mouse_filter = 2
 custom_constants/separation = 16
 script = ExtResource( 2 )
 __meta__ = {
@@ -13,9 +14,16 @@ __meta__ = {
 }
 
 [node name="WeaponUI" parent="." instance=ExtResource( 1 )]
+margin_top = 8.0
 margin_bottom = 40.0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+_isLeft = true
 
 [node name="WeaponUI2" parent="." instance=ExtResource( 1 )]
 margin_left = 64.0
+margin_top = 8.0
 margin_right = 112.0
 margin_bottom = 40.0
+size_flags_horizontal = 8
+size_flags_vertical = 8

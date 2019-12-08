@@ -4,7 +4,7 @@ using Godot;
 
 namespace Deathville.UI
 {
-    public class WeaponSwapUI : HBoxContainer
+    public class WeaponSwapUI : Control
     {
         private WeaponUI[] _weaponUIs = new WeaponUI[2];
 
@@ -19,6 +19,7 @@ namespace Deathville.UI
             }
 
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.PlayerWeaponEquipped), this, nameof(OnPlayerWeaponEquipped));
+            GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.PlayerWeaponSwapped), this, nameof(OnPlayerWeaponSwapped));
         }
 
         private void OnPlayerWeaponEquipped(Weapon weapon)
@@ -32,6 +33,21 @@ namespace Deathville.UI
                     break;
                 }
             }
+        }
+
+        private void OnPlayerWeaponSwapped(Weapon weapon)
+        {
+            // foreach (var ui in _weaponUIs)
+            // {
+            //     if (ui.CurrentWeapon == weapon)
+            //     {
+            //         ui.PlaySwapAnimation();
+            //     }
+            //     else
+            //     {
+            //         ui.PlayStowAnimation();
+            //     }
+            // }
         }
     }
 }
