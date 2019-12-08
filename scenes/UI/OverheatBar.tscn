@@ -4,7 +4,6 @@
 [ext_resource path="res://scripts/UI/OverheatBar.cs" type="Script" id=2]
 [ext_resource path="res://assets/art/ui/crosshair-overheat.png" type="Texture" id=3]
 
-
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 1, 1, 1, 1 )
 border_width_left = 2
@@ -47,6 +46,7 @@ __meta__ = {
 }
 
 [node name="TextureProgress" type="TextureProgress" parent="."]
+visible = false
 margin_left = -8.0
 margin_top = -8.0
 margin_right = 8.0

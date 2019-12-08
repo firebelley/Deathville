@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scenes/UI/WeaponUI.tscn" type="PackedScene" id=1]
+
+[node name="WeaponSwapUI" type="HBoxContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+custom_constants/separation = 16
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WeaponUI" parent="." instance=ExtResource( 1 )]
+margin_bottom = 40.0
+
+[node name="WeaponUI2" parent="." instance=ExtResource( 1 )]
+margin_left = 64.0
+margin_right = 112.0
+margin_bottom = 40.0

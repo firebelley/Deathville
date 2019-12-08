@@ -2,7 +2,7 @@
 
 [ext_resource path="res://resources/DefaultTheme.tres" type="Theme" id=1]
 [ext_resource path="res://scenes/UI/PlayerHealth.tscn" type="PackedScene" id=2]
-[ext_resource path="res://scenes/UI/OverheatBar.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/UI/WeaponSwapUI.tscn" type="PackedScene" id=3]
 
 [node name="PlayerUI" type="CanvasLayer"]
 
@@ -31,10 +31,10 @@ margin_bottom = 352.0
 size_flags_horizontal = 0
 size_flags_vertical = 8
 
-[node name="OverheatBar" parent="Control/MarginContainer" instance=ExtResource( 3 )]
-margin_left = 308.0
-margin_top = 347.0
-margin_right = 332.0
+[node name="WeaponSwapUI" parent="Control/MarginContainer" instance=ExtResource( 3 )]
+margin_left = 264.0
+margin_top = 319.0
+margin_right = 376.0
 margin_bottom = 352.0
 size_flags_horizontal = 4
 size_flags_vertical = 8

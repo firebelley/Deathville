@@ -11,9 +11,9 @@ namespace Deathville.GameObject
     public class Player : KinematicBody2D
     {
         [Signal]
-        public delegate void AttackStart();
+        public delegate void AttackStart(int socket);
         [Signal]
-        public delegate void AttackEnd();
+        public delegate void AttackEnd(int socket);
 
         public const string GROUP = "player";
 
@@ -72,6 +72,8 @@ namespace Deathville.GameObject
 
             var weaponSocket = this.GetFirstNodeOfType<WeaponSocketComponent>();
             weaponSocket.EquipWeapon((GD.Load("res://scenes/GameObject/Combat/GrenadeLauncher.tscn") as PackedScene).Instance() as Weapon);
+            weaponSocket = GetNode<WeaponSocketComponent>("WeaponSocketComponent2");
+            weaponSocket.EquipWeapon((GD.Load("res://scenes/GameObject/Combat/PlayerWeapon.tscn") as PackedScene).Instance() as Weapon);
 
             _flipTween.Connect("tween_all_completed", this, nameof(OnFlipTweenCompleted));
             _healthComponent?.Connect(nameof(HealthComponent.HealthChanged), this, nameof(OnHealthChanged));
@@ -94,13 +96,14 @@ namespace Deathville.GameObject
         {
             if (evt.IsAction(INPUT_ATTACK))
             {
+                var socket = (evt as InputEventMouseButton).ButtonIndex == (int) ButtonList.Left ? 0 : 1;
                 if (evt.IsActionPressed(INPUT_ATTACK))
                 {
-                    EmitSignal(nameof(AttackStart));
+                    EmitSignal(nameof(AttackStart), socket);
                 }
                 else
                 {
-                    EmitSignal(nameof(AttackEnd));
+                    EmitSignal(nameof(AttackEnd), socket);
                 }
                 GetTree().SetInputAsHandled();
             }

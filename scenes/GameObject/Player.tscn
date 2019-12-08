@@ -105,7 +105,8 @@ _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
 _damageOverride = 1.0
 
 [node name="PlayerAimComponent" parent="." instance=ExtResource( 13 )]
-_weaponSocketComponentPath = NodePath("../WeaponSocketComponent")
+_weaponSocket1Path = NodePath("../WeaponSocketComponent")
+_weaponSocket2Path = NodePath("../WeaponSocketComponent2")
 _playerHandsPath = NodePath("../Hands")
 
 [node name="DamageReceiverComponent" parent="." instance=ExtResource( 17 )]
@@ -119,7 +120,7 @@ shape = SubResource( 1 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 2 )
 animation = "idle"
-frame = 1
+frame = 2
 playing = true
 offset = Vector2( 0, -15 )
 
@@ -130,6 +131,10 @@ texture = ExtResource( 1 )
 offset = Vector2( 1, 5 )
 
 [node name="WeaponSocketComponent" parent="." instance=ExtResource( 18 )]
+position = Vector2( -2, -20 )
+_isPlayer = true
+
+[node name="WeaponSocketComponent2" parent="." instance=ExtResource( 18 )]
 position = Vector2( -2, -20 )
 _isPlayer = true
 
