@@ -1,6 +1,6 @@
 using Deathville.GameObject.Combat;
-using Deathville.Singleton;
 using Godot;
+using GodotApiTools.Extension;
 
 namespace Deathville.UI
 {
@@ -17,6 +17,7 @@ namespace Deathville.UI
         private ProgressBar _progressBar;
         private TextureProgress _textureProgressBar;
         private StyleBoxFlat _styleBoxFlat;
+        private Weapon _currentWeapon;
 
         public override void _Ready()
         {
@@ -27,8 +28,6 @@ namespace Deathville.UI
 
             _textureProgressBar.Visible = _progressType == 1;
             _progressBar.Visible = _progressType == 0;
-
-            GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.PlayerWeaponEquipped), this, nameof(OnPlayerWeaponEquipped));
         }
 
         public override void _Process(float delta)
@@ -46,6 +45,23 @@ namespace Deathville.UI
             UpdateTint();
         }
 
+        public void ConnectWeapon(Weapon weapon)
+        {
+            DisconnectCurrentWeapon();
+            weapon.Connect(nameof(Weapon.HeatChanged), this, nameof(OnWeaponHeatChanged));
+            _targetValue = weapon.CurrentHeat;
+            _currentWeapon = weapon;
+        }
+
+        private void DisconnectCurrentWeapon()
+        {
+            if (IsInstanceValid(_currentWeapon))
+            {
+                this.DisconnectAllSignals(_currentWeapon);
+            }
+            _targetValue = 0f;
+        }
+
         private void UpdateTint()
         {
             var color = _defaultColor.LinearInterpolate(_overheatColor, _targetValue);
@@ -57,11 +73,6 @@ namespace Deathville.UI
             {
                 _textureProgressBar.Modulate = color;
             }
-        }
-
-        private void OnPlayerWeaponEquipped(Weapon weapon)
-        {
-            weapon.Connect(nameof(Weapon.HeatChanged), this, nameof(OnWeaponHeatChanged));
         }
 
         private void OnWeaponHeatChanged(Weapon weapon)

@@ -5,6 +5,7 @@
 [ext_resource path="res://assets/art/ui/crosshair-overheat.png" type="Texture" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
+resource_local_to_scene = true
 bg_color = Color( 1, 1, 1, 1 )
 border_width_left = 2
 border_width_top = 2
@@ -29,7 +30,7 @@ script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-_overheatColor = Color( 1, 0.337255, 0.184314, 1 )
+_overheatColor = Color( 0.839216, 0.172549, 0.172549, 1 )
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 anchor_right = 1.0
