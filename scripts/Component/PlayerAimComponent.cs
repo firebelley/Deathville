@@ -15,7 +15,6 @@ namespace Deathville.Component
         private NodePath _playerHandsPath;
 
         private bool _isAttacking;
-        private bool _initialSwap;
         private int _currentSocket;
 
         private Hands _playerHands;
@@ -71,9 +70,8 @@ namespace Deathville.Component
             _weaponSocketComponents[_currentSocket].Weapon?.AttemptFire(GetGlobalMousePosition());
             UpdateVisible();
 
-            if (!_initialSwap || prevSocket != _currentSocket)
+            if (prevSocket != _currentSocket)
             {
-                _initialSwap = true;
                 GameEventDispatcher.DispatchPlayerWeaponSwapped(_weaponSocketComponents[_currentSocket].Weapon);
             }
         }

@@ -17,6 +17,8 @@ namespace Deathville.UI
             {
                 ui.Hide();
             }
+            _weaponUIs[0].PlaySwapAnimation();
+            _weaponUIs[1].PlayStowAnimation();
 
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.PlayerWeaponEquipped), this, nameof(OnPlayerWeaponEquipped));
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.PlayerWeaponSwapped), this, nameof(OnPlayerWeaponSwapped));
@@ -37,17 +39,17 @@ namespace Deathville.UI
 
         private void OnPlayerWeaponSwapped(Weapon weapon)
         {
-            // foreach (var ui in _weaponUIs)
-            // {
-            //     if (ui.CurrentWeapon == weapon)
-            //     {
-            //         ui.PlaySwapAnimation();
-            //     }
-            //     else
-            //     {
-            //         ui.PlayStowAnimation();
-            //     }
-            // }
+            foreach (var ui in _weaponUIs)
+            {
+                if (ui.CurrentWeapon == weapon)
+                {
+                    ui.PlaySwapAnimation();
+                }
+                else
+                {
+                    ui.PlayStowAnimation();
+                }
+            }
         }
     }
 }

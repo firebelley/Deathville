@@ -5,6 +5,10 @@ namespace Deathville.UI
 {
     public class WeaponUI : VBoxContainer
     {
+
+        private const string ANIM_GROW = "grow";
+        private const string ANIM_SHRINK = "shrink";
+
         public Weapon CurrentWeapon
         {
             get
@@ -36,6 +40,11 @@ namespace Deathville.UI
             UpdatePivotOffset();
         }
 
+        public override void _Process(float delta)
+        {
+            _animationPlayer.PlaybackSpeed = 1 / Engine.TimeScale;
+        }
+
         public void ConnectWeapon(Weapon weapon)
         {
             _currentWeapon = null;
@@ -47,16 +56,12 @@ namespace Deathville.UI
 
         public void PlaySwapAnimation()
         {
-            // if (_animationPlayer.IsPlaying())
-            // {
-            //     _animationPlayer.Seek(10f, true);
-            // }
-            _animationPlayer.Play("shrink", -1f, 1f, false);
+            _animationPlayer.Play(ANIM_GROW, -1f, 1f);
         }
 
         public void PlayStowAnimation()
         {
-            _animationPlayer.Play("shrink", -1f, 1f, true);
+            _animationPlayer.Play(ANIM_SHRINK, -1f, 1f);
         }
 
         private void UpdatePivotOffset()
