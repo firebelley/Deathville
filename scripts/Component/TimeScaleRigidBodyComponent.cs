@@ -6,28 +6,24 @@ namespace Deathville.Component
     {
         private float _prevTimeScale = 1f;
 
+        private bool _ignoreTimeScale;
+
         public override void _IntegrateForces(Physics2DDirectBodyState state)
         {
-            //2nd case
-            var downscaledVel = state.LinearVelocity * _prevTimeScale;
+            if (!_ignoreTimeScale) return;
 
-            // 1st case
+            var downscaledVel = state.LinearVelocity * _prevTimeScale;
             LinearVelocity = downscaledVel / Engine.TimeScale;
 
-            var downscaledAngular = state.AngularVelocity * _prevTimeScale;
-            AngularVelocity = downscaledAngular / Engine.TimeScale;
-
-            var downscaledGravity = state.TotalGravity * _prevTimeScale;
-            var upscaledGravity = downscaledGravity / Engine.TimeScale;
-
-            LinearVelocity += upscaledGravity * (state.Step / Engine.TimeScale);
+            var gravityDiff = (state.TotalGravity / Engine.TimeScale) - state.TotalGravity;
+            LinearVelocity += gravityDiff * (state.Step / Engine.TimeScale);
 
             _prevTimeScale = Engine.TimeScale;
         }
 
         public void IgnoreTimescale()
         {
-            CustomIntegrator = true;
+            _ignoreTimeScale = true;
         }
     }
 }

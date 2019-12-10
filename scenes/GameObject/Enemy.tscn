@@ -96,20 +96,20 @@ _velocityComponentPath = NodePath("../VelocityComponent")
 [node name="EntityDeleterComponent" parent="." instance=ExtResource( 24 )]
 
 [node name="DamageReceiverComponent" parent="." instance=ExtResource( 12 )]
+position = Vector2( 0, -11 )
 collision_layer = 262144
 collision_mask = 0
 _sendEnemyStruckEvent = true
 _hitEffect = ExtResource( 10 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceiverComponent"]
-position = Vector2( 0, -11 )
 shape = SubResource( 2 )
 
 [node name="EntityAnimationComponent" parent="." instance=ExtResource( 16 )]
 position = Vector2( 0, -15 )
 frames = SubResource( 3 )
 animation = "run"
-frame = 1
+frame = 2
 playing = true
 
 [node name="WeaponSocketComponent" parent="." instance=ExtResource( 13 )]

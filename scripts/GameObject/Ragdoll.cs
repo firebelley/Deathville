@@ -30,8 +30,8 @@ namespace Deathville.GameObject
             _bodyRigidBody = GetNodeOrNull<RigidBody2D>(_bodyRigidBodyPath ?? string.Empty);
             _headRigidBody = GetNodeOrNull<RigidBody2D>(_headRigidBodyPath ?? string.Empty);
 
-            _headRigidBody.AngularVelocity = Main.RNG.RandfRange(0, 10f);
-            _bodyRigidBody.AngularVelocity = Main.RNG.RandfRange(0, 10f);
+            _headRigidBody.AngularVelocity = Main.RNG.RandfRange(-10f, 10f);
+            _bodyRigidBody.AngularVelocity = Main.RNG.RandfRange(-10f, 10f);
 
             GetNode<Timer>("Timer").Connect("timeout", this, nameof(OnTimerTimeout));
         }

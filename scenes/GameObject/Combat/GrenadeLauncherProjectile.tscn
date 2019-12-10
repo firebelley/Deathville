@@ -26,6 +26,9 @@ _deathScene = ExtResource( 3 )
 _deathIsExplosion = true
 _explosionCameraShake = 1.5
 
+[node name="TimeScaleRigidBodyComponent" parent="." index="0"]
+gravity_scale = 2.0
+
 [node name="Light2D" type="Light2D" parent="TimeScaleRigidBodyComponent" index="2"]
 texture = ExtResource( 2 )
 texture_scale = 3.0

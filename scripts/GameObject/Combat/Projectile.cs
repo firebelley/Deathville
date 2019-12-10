@@ -23,7 +23,7 @@ namespace Deathville.GameObject.Combat
         public float Speed;
         public float Range;
         public float Force;
-        public float Damage = 1f;
+        public float Damage;
         public bool IsPlayer { get; private set; }
 
         protected Vector2 _direction;

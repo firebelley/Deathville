@@ -105,7 +105,8 @@ namespace Deathville.Component
         public void MoveWithSnap()
         {
             ClampVelocity();
-            _velocity = _owner.MoveAndSlideWithSnap(_velocity / GetTimeScale(), Vector2.Down, Vector2.Up) * GetTimeScale();
+            Vector2? up = _velocity.y < 0f ? (Vector2?) null : Vector2.Up;
+            _velocity = _owner.MoveAndSlideWithSnap(_velocity / GetTimeScale(), Vector2.Down, up) * GetTimeScale();
         }
 
         public void Move()
