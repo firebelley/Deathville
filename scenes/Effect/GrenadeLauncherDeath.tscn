@@ -4,35 +4,34 @@
 [ext_resource path="res://assets/art/effect/light32.png" type="Texture" id=2]
 
 [sub_resource type="Gradient" id=1]
-offsets = PoolRealArray( 0, 0.619217, 0.758007, 0.871886 )
-colors = PoolColorArray( 1, 1, 1, 0.588235, 1, 0.776471, 0.415686, 0.588235, 1, 0.223529, 0.0431373, 0.588235, 0, 0, 0, 1 )
+offsets = PoolRealArray( 0, 0.690391, 0.871886 )
+colors = PoolColorArray( 1, 1, 1, 0.588235, 1, 0.223529, 0.0431373, 0.588235, 0, 0, 0, 1 )
 
 [sub_resource type="GradientTexture" id=2]
 gradient = SubResource( 1 )
 
 [sub_resource type="Curve" id=3]
-_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.0527988, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.48675, 0 ), 0.0, 0.0, 0, 0 ]
 
 [sub_resource type="CurveTexture" id=4]
 curve = SubResource( 3 )
 
 [sub_resource type="ParticlesMaterial" id=5]
-emission_shape = 1
-emission_sphere_radius = 15.0
 flag_disable_z = true
 direction = Vector3( 0, -1, 0 )
-spread = 90.0
-gravity = Vector3( 0, -5, 0 )
-initial_velocity = 10.0
-initial_velocity_random = 1.0
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 200.0
+initial_velocity_random = 0.2
 angular_velocity = 10.0
 angular_velocity_random = 1.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
+damping = 150.0
+damping_random = 0.2
 angle = 90.0
 angle_random = 1.0
-scale = 4.0
-scale_random = 1.0
+scale = 2.0
 scale_curve = SubResource( 4 )
 color_ramp = SubResource( 2 )
 hue_variation = 0.03
@@ -40,7 +39,6 @@ hue_variation_random = 0.47
 
 [sub_resource type="Animation" id=6]
 resource_name = "default"
-length = 2.0
 tracks/0/type = "method"
 tracks/0/path = NodePath(".")
 tracks/0/interp = 1
@@ -48,7 +46,7 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 2 ),
+"times": PoolRealArray( 1 ),
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
@@ -74,7 +72,7 @@ tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0, 0.4, 1.1 ),
+"times": PoolRealArray( 0, 0.2, 0.4 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ 2.0, 2.0, 0.0 ]
@@ -85,6 +83,7 @@ tracks/2/keys = {
 [node name="Particles2D" type="Particles2D" parent="."]
 emitting = false
 amount = 20
+lifetime = 0.5
 one_shot = true
 explosiveness = 0.9
 process_material = SubResource( 5 )
@@ -93,7 +92,7 @@ texture = ExtResource( 1 )
 [node name="Light2D" type="Light2D" parent="."]
 texture = ExtResource( 2 )
 texture_scale = 3.0
-energy = 0.0
+energy = 2.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "default"

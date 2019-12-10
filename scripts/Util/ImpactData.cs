@@ -10,12 +10,14 @@ namespace Deathville.Util
         public float Force { get; private set; }
         public Vector2 SourcePosition { get; private set; }
         public Vector2 Direction { get; private set; }
+        public Vector2? ImpactPosition { get; private set; }
 
         public static ImpactData FromRaycastProjectile(Projectile projectile, RaycastResult raycastResult)
         {
             var data = FromProjectile(projectile);
             data.Direction = (raycastResult.ToPosition - raycastResult.FromPosition).Normalized();
             data.SourcePosition = raycastResult.Position;
+            data.ImpactPosition = raycastResult.Position;
             return data;
         }
 

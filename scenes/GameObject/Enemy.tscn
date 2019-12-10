@@ -73,6 +73,7 @@ _weaponSocketComponentPath = NodePath("../WeaponSocketComponent")
 _shaderMaterial = SubResource( 1 )
 _shadedNodePath = NodePath("../EntityAnimationComponent")
 _damageReceiverComponentPath = NodePath("../DamageReceiverComponent")
+_hitEffect = ExtResource( 10 )
 
 [node name="HealthComponent" parent="." instance=ExtResource( 9 )]
 _maxHealth = 3.0
@@ -100,7 +101,6 @@ position = Vector2( 0, -11 )
 collision_layer = 262144
 collision_mask = 0
 _sendEnemyStruckEvent = true
-_hitEffect = ExtResource( 10 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceiverComponent"]
 shape = SubResource( 2 )

@@ -1,3 +1,4 @@
+using Deathville.Environment;
 using Deathville.Util;
 using Godot;
 
@@ -11,9 +12,12 @@ namespace Deathville.Component
         private NodePath _shadedNodePath;
         [Export]
         private NodePath _damageReceiverComponentPath;
+        [Export]
+        private PackedScene _hitEffect;
 
         private Node2D _shadedNode;
         private Tween _tween;
+        private DamageReceiverComponent _damageReceiverComponent;
 
         public override void _Ready()
         {
@@ -24,7 +28,8 @@ namespace Deathville.Component
             }
 
             _tween = GetNode<Tween>("Tween");
-            GetNodeOrNull<DamageReceiverComponent>(_damageReceiverComponentPath ?? string.Empty)?.Connect(nameof(DamageReceiverComponent.DamageReceived), this, nameof(OnDamageReceived));
+            _damageReceiverComponent = GetNodeOrNull<DamageReceiverComponent>(_damageReceiverComponentPath ?? string.Empty);
+            _damageReceiverComponent?.Connect(nameof(DamageReceiverComponent.DamageReceived), this, nameof(OnDamageReceived));
         }
 
         private void PlayHitShadeTween()
@@ -45,6 +50,18 @@ namespace Deathville.Component
 
         private void OnDamageReceived(ImpactData impactData)
         {
+            if (_hitEffect != null)
+            {
+                var effect = _hitEffect.Instance() as Node2D;
+                Zone.Current.EffectsLayer.AddChild(effect);
+                effect.Rotation = impactData.Direction.Angle();
+
+                Vector2? spawnPos = impactData.ImpactPosition ?? _damageReceiverComponent?.GlobalPosition;
+                if (spawnPos != null)
+                {
+                    effect.GlobalPosition = (Vector2) spawnPos;
+                }
+            }
             PlayHitShadeTween();
         }
     }
