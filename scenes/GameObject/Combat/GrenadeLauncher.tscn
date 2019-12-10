@@ -6,7 +6,7 @@
 
 [node name="GrenadeLauncher" instance=ExtResource( 1 )]
 _projectilesPerSecond = 2.0
-_heatPerShot = 0.3
+_heatPerShot = 0.15
 _heatDecayDelay = 1.0
 
 [node name="ProjectileSpawnerComponent" parent="." index="0"]

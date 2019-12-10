@@ -4,7 +4,6 @@
 [ext_resource path="res://assets/art/weapons/player-machine-gun.png" type="Texture" id=2]
 [ext_resource path="res://scenes/Component/ProjectileSpawnerComponent.tscn" type="PackedScene" id=3]
 
-
 [sub_resource type="Animation" id=1]
 resource_name = "fire"
 length = 0.25
@@ -49,6 +48,7 @@ tracks/2/keys = {
 [node name="Weapon" type="Node2D"]
 script = ExtResource( 1 )
 _projectileSpawnerComponentPath = NodePath("ProjectileSpawnerComponent")
+_heatDecayDelay = 0.5
 
 [node name="ProjectileSpawnerComponent" parent="." instance=ExtResource( 3 )]
 position = Vector2( 20, 1 )
