@@ -55,7 +55,7 @@ namespace Deathville.GameObject.Combat
             GlobalPosition = raycastResult != null ? raycastResult.Position : spawnPos;
             _direction = (toPos - chamberPos).Normalized();
             _timescaleBody.LinearVelocity = _direction * Speed;
-            _timescaleBody.AngularVelocity = Main.RNG.RandfRange(-60f, 60f);
+            _timescaleBody.AngularVelocity = GetAngleMod(_direction) * 60f;
         }
 
         public override Node2D SpawnEffect(RaycastResult raycastResult = null)
@@ -64,6 +64,19 @@ namespace Deathville.GameObject.Combat
             death.GlobalPosition = _timescaleBody.GlobalPosition;
             Die();
             return death;
+        }
+
+        private float GetAngleMod(Vector2 direction)
+        {
+            var mod = Mathf.Abs(direction.x);
+            if (_direction.y > 0f)
+            {
+                return mod * 1f;
+            }
+            else
+            {
+                return mod * -1f;
+            }
         }
     }
 }
