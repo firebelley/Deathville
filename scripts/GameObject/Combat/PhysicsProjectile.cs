@@ -26,7 +26,7 @@ namespace Deathville.GameObject.Combat
                 }
                 else
                 {
-                    var raycastResult = GetWorld2d().DirectSpaceState.Raycast(_prevPosition, GlobalPosition, null, _timescaleBody.CollisionMask, true, true);
+                    var raycastResult = GetWorld2d().DirectSpaceState.Raycast(_prevPosition, _timescaleBody.GlobalPosition, null, _timescaleBody.CollisionMask, true, true);
                     if (raycastResult?.Collider is DamageReceiverComponent)
                     {
                         SpawnEffect();

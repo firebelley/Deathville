@@ -11,6 +11,9 @@ namespace Deathville
         private const float MAX_OFFSET = 5f;
         private const float AIM_OFFSET = .1f;
 
+        [Export]
+        private Color _clearColor;
+
         private Vector2 _targetPos;
         private OpenSimplexNoise _noise;
         private float _currentSampleX;
@@ -23,6 +26,8 @@ namespace Deathville
             _noise.Seed = (int) Main.RNG.Randi();
             _noise.Octaves = 4;
             _noise.Period = .2f;
+
+            VisualServer.SetDefaultClearColor(_clearColor);
 
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.WeaponFired), this, nameof(OnWeaponFired));
             GameEventDispatcher.Instance.Connect(nameof(GameEventDispatcher.EnemyStruck), this, nameof(OnEnemyStruck));

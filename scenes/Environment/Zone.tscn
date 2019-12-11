@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://resources/DefaultTileset.tres" type="TileSet" id=1]
 [ext_resource path="res://scenes/GameObject/Player.tscn" type="PackedScene" id=2]
@@ -10,6 +10,34 @@
 [ext_resource path="res://scenes/UI/Cursor.tscn" type="PackedScene" id=8]
 [ext_resource path="res://scenes/Environment/LevelGenerator.tscn" type="PackedScene" id=9]
 [ext_resource path="res://scenes/UI/PlayerUI.tscn" type="PackedScene" id=10]
+[ext_resource path="res://scenes/Environment/Fog.tscn" type="PackedScene" id=11]
+
+[sub_resource type="OpenSimplexNoise" id=1]
+resource_local_to_scene = true
+seed = 720
+period = 256.0
+persistence = 1.0
+lacunarity = 1.6
+
+[sub_resource type="NoiseTexture" id=2]
+width = 640
+height = 360
+seamless = true
+noise = SubResource( 1 )
+
+[sub_resource type="OpenSimplexNoise" id=3]
+resource_local_to_scene = true
+seed = 1050
+period = 256.0
+persistence = 1.0
+lacunarity = 1.6
+
+[sub_resource type="NoiseTexture" id=4]
+resource_local_to_scene = true
+width = 640
+height = 360
+seamless = true
+noise = SubResource( 3 )
 
 [node name="Zone" type="Node2D"]
 script = ExtResource( 3 )
@@ -33,6 +61,7 @@ __meta__ = {
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
 script = ExtResource( 6 )
+_clearColor = Color( 0.0588235, 0.0588235, 0.0588235, 1 )
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = ExtResource( 1 )
@@ -59,6 +88,7 @@ __meta__ = {
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
 motion_scale = Vector2( 0.05, 0.05 )
+motion_offset = Vector2( -100, 100 )
 motion_mirroring = Vector2( 640, 320 )
 __meta__ = {
 "_edit_lock_": true
@@ -68,10 +98,13 @@ __meta__ = {
 modulate = Color( 0.647059, 0.647059, 0.647059, 1 )
 texture = ExtResource( 7 )
 centered = false
-offset = Vector2( 320, 160 )
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="Fog" parent="ParallaxBackground" instance=ExtResource( 11 )]
+texture = SubResource( 2 )
+centered = false
 
 [node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
 motion_scale = Vector2( 0.1, 0.1 )
@@ -86,3 +119,8 @@ centered = false
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="Fog2" parent="ParallaxBackground" instance=ExtResource( 11 )]
+modulate = Color( 1, 1, 1, 0.294118 )
+texture = SubResource( 4 )
+centered = false

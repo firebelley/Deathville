@@ -1,0 +1,54 @@
+[gd_scene load_steps=7 format=2]
+
+[sub_resource type="Shader" id=3]
+code = "shader_type canvas_item;
+
+uniform vec4 _uBaseColor: hint_color;
+uniform sampler2D _uGradientNoise;
+
+void fragment() {
+	vec2 offset = vec2(0, 1) * TIME * .077f;
+	vec2 offset2 = vec2(1, 0) * TIME * .053f;
+	vec4 texColor1 = texture(TEXTURE, UV + offset);
+	vec4 texColor2 = texture(TEXTURE, UV + offset2);
+	float gradientNoise = texture(_uGradientNoise, UV).r;
+	COLOR.rgba = _uBaseColor * (texColor1.r * texColor2.r) * 2.0;
+	COLOR.rgba += (_uBaseColor * gradientNoise * .1);
+}"
+
+[sub_resource type="OpenSimplexNoise" id=6]
+resource_local_to_scene = true
+seed = 1210
+period = 0.1
+persistence = 1.0
+lacunarity = 0.1
+
+[sub_resource type="NoiseTexture" id=5]
+flags = 3
+width = 640
+height = 360
+seamless = true
+noise = SubResource( 6 )
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
+shader_param/_uBaseColor = Color( 0.341176, 0.427451, 0.384314, 1 )
+shader_param/_uGradientNoise = SubResource( 5 )
+
+[sub_resource type="OpenSimplexNoise" id=1]
+resource_local_to_scene = true
+seed = 720
+period = 256.0
+persistence = 1.0
+lacunarity = 1.6
+
+[sub_resource type="NoiseTexture" id=7]
+resource_local_to_scene = true
+width = 640
+height = 360
+seamless = true
+noise = SubResource( 1 )
+
+[node name="Fog" type="Sprite"]
+material = SubResource( 4 )
+texture = SubResource( 7 )
