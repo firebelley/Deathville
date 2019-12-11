@@ -48,6 +48,7 @@ namespace Deathville.Component
 
         private float _realAcceleration;
         private float _realDeceleration;
+        private float _accelerationRecovery = 1f;
 
         public override void _Ready()
         {
@@ -57,8 +58,8 @@ namespace Deathville.Component
 
         public override void _Process(float delta)
         {
-            _realAcceleration = Mathf.Lerp(_realAcceleration, _acceleration, 1f * delta);
-            _realDeceleration = Mathf.Lerp(_realDeceleration, _deceleration, 1f * delta);
+            _realAcceleration = Mathf.Lerp(_realAcceleration, _acceleration, _accelerationRecovery * delta);
+            _realDeceleration = Mathf.Lerp(_realDeceleration, _deceleration, _accelerationRecovery * delta);
         }
 
         public void Accelerate(Vector2 dir)
@@ -78,9 +79,15 @@ namespace Deathville.Component
             _velocity.x = x * Mathf.Sign(_velocity.x);
         }
 
-        public void ApplyForce(Vector2 dir, float force)
+        public void ApplyForce(Vector2 dir, float force, bool damp = false, float recovery = 1f)
         {
             _velocity += dir * force;
+
+            if (damp)
+            {
+                _realAcceleration = 0f;
+                _accelerationRecovery = recovery;
+            }
         }
 
         public void ApplyKnockback(Vector2 dir, float knockBackForce)
@@ -90,6 +97,7 @@ namespace Deathville.Component
             _velocity.y += vel.y;
             _realAcceleration = 0f;
             _realDeceleration = 0f;
+            _accelerationRecovery = 1f;
         }
 
         public void Jump(float speed)

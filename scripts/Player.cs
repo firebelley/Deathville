@@ -37,6 +37,7 @@ namespace Deathville.GameObject
         private const float DEFAULT_TIME_SCALE = 1f;
         private const float DASH_TIME = .2f;
         private const float SLIDE_TIME = .5f;
+        private const float WALL_SLIDE_SPEED = 75f;
         private const int MAX_JUMPS = 2;
         private const int MAX_DASHES = 1;
 
@@ -253,7 +254,9 @@ namespace Deathville.GameObject
         {
             if (_moveStateMachine.IsStateNew())
             {
-                _velocityComponent.MaxYSpeed = 100f;
+                _velocityComponent.MaxYSpeed = WALL_SLIDE_SPEED;
+                _jumpCount = 0;
+                _dashCount = 0;
             }
             var moveVec = GetMovementVector();
             if (moveVec.x != 0f)
@@ -267,6 +270,16 @@ namespace Deathville.GameObject
             _velocityComponent.ApplyGravity();
             _velocityComponent.Move();
 
+            if (moveVec.y < 0)
+            {
+                Jump();
+                if (GetSlideCount() > 0)
+                {
+                    var dir = GetSlideCollision(0).Normal;
+                    _velocityComponent.ApplyForce(dir, 250f, true, 40f);
+                }
+            }
+
             if (IsOnFloor())
             {
                 _moveStateMachine.ChangeState(MoveStateGrounded);
@@ -274,6 +287,7 @@ namespace Deathville.GameObject
             else if (!IsOnWall())
             {
                 _moveStateMachine.ChangeState(MoveStateAirborne);
+                _coyoteTime = INITIAL_COYOTE_TIME;
             }
 
             UpdateAnimations();
