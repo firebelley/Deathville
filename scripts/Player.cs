@@ -62,6 +62,8 @@ namespace Deathville.GameObject
             _moveStateMachine.AddState(MoveState.AIRBORNE, MoveStateAirborne);
             _moveStateMachine.AddState(MoveState.DASH, MoveStateDash);
             _moveStateMachine.AddState(MoveState.SLIDE, MoveStateSlide);
+            _moveStateMachine.AddState(MoveState.WALL, MoveStateWall);
+            _moveStateMachine.AddLeaveState(MoveState.WALL, LeaveMoveStateWall);
             _moveStateMachine.SetInitialState(MoveState.GROUNDED);
             _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
             _velocityComponent = this.GetFirstNodeOfType<VelocityComponent>();
@@ -185,6 +187,10 @@ namespace Deathville.GameObject
             {
                 _moveStateMachine.ChangeState(MoveStateGrounded);
             }
+            else if (IsOnWall() && moveVec.x != 0f)
+            {
+                _moveStateMachine.ChangeState(MoveStateWall);
+            }
 
             UpdateAnimations();
         }
@@ -241,6 +247,41 @@ namespace Deathville.GameObject
             {
                 _moveStateMachine.ChangeState(MoveStateGrounded);
             }
+        }
+
+        private void MoveStateWall()
+        {
+            if (_moveStateMachine.IsStateNew())
+            {
+                _velocityComponent.MaxYSpeed = 100f;
+            }
+            var moveVec = GetMovementVector();
+            if (moveVec.x != 0f)
+            {
+                _velocityComponent.Accelerate(moveVec);
+            }
+            else
+            {
+                _velocityComponent.Decelerate();
+            }
+            _velocityComponent.ApplyGravity();
+            _velocityComponent.Move();
+
+            if (IsOnFloor())
+            {
+                _moveStateMachine.ChangeState(MoveStateGrounded);
+            }
+            else if (!IsOnWall())
+            {
+                _moveStateMachine.ChangeState(MoveStateAirborne);
+            }
+
+            UpdateAnimations();
+        }
+
+        private void LeaveMoveStateWall()
+        {
+            _velocityComponent.MaxYSpeed = 0f;
         }
 
         private void UpdateAnimations()

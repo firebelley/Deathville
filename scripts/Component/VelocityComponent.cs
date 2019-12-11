@@ -41,6 +41,7 @@ namespace Deathville.Component
         }
 
         public float SpeedPadding;
+        public float MaxYSpeed;
 
         private Vector2 _velocity;
         private KinematicBody2D _owner;
@@ -125,6 +126,10 @@ namespace Deathville.Component
             var abs = Math.Abs(_velocity.x);
             var x = Mathf.Clamp(abs, 0f, _maxSpeed + SpeedPadding);
             _velocity.x = x * Mathf.Sign(_velocity.x);
+            if (MaxYSpeed > 0f)
+            {
+                _velocity.y = Mathf.Clamp(_velocity.y, float.MinValue, MaxYSpeed);
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ namespace Deathville.Enum
         GROUNDED,
         AIRBORNE,
         DASH,
-        SLIDE
+        SLIDE,
+        WALL
     }
 }
