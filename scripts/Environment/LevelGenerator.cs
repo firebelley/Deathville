@@ -272,10 +272,16 @@ namespace Deathville.Environment
         {
             var scaled = tilePos * VOXEL_SIZE;
             Zone.Current.TileMap.SetCellv(scaled, 0);
-            Zone.Current.TileMap.SetCellv(scaled + Vector2.Right, 0);
-            Zone.Current.TileMap.SetCellv(scaled + Vector2.Down, 0);
-            Zone.Current.TileMap.SetCellv(scaled + Vector2.Down + Vector2.Right, 0);
             Zone.Current.TileMap.UpdateBitmaskArea(scaled);
+
+            Zone.Current.TileMap.SetCellv(scaled + Vector2.Right, 0);
+            Zone.Current.TileMap.UpdateBitmaskArea(scaled + Vector2.Right);
+
+            Zone.Current.TileMap.SetCellv(scaled + Vector2.Down, 0);
+            Zone.Current.TileMap.UpdateBitmaskArea(scaled + Vector2.Down);
+
+            Zone.Current.TileMap.SetCellv(scaled + Vector2.Down + Vector2.Right, 0);
+            Zone.Current.TileMap.UpdateBitmaskArea(scaled + Vector2.Down + Vector2.Right);
         }
     }
 }
