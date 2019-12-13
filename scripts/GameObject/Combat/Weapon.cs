@@ -1,5 +1,6 @@
 using Deathville.Component;
 using Godot;
+using GodotApiTools.Extension;
 
 namespace Deathville.GameObject.Combat
 {
@@ -17,8 +18,6 @@ namespace Deathville.GameObject.Combat
         [Signal]
         public delegate void Cooled(Weapon weapon);
 
-        [Export]
-        private NodePath _projectileSpawnerComponentPath;
         [Export]
         private float _projectilesPerSecond = 10f;
 
@@ -65,10 +64,13 @@ namespace Deathville.GameObject.Combat
         private Position2D _chamberPosition;
 
         private ProjectileSpawnerComponent _projectileSpawnerComponent;
+        private ChooseStreamPlayerComponent _chooseStreamPlayerComponent;
 
         public override void _Ready()
         {
-            _projectileSpawnerComponent = GetNodeOrNull<ProjectileSpawnerComponent>(_projectileSpawnerComponentPath ?? string.Empty);
+            _projectileSpawnerComponent = this.GetFirstNodeOfType<ProjectileSpawnerComponent>();
+            _chooseStreamPlayerComponent = this.GetFirstNodeOfType<ChooseStreamPlayerComponent>();
+
             _chamberPosition = GetNode<Position2D>("ChamberPosition");
             _sprite = GetNode<Sprite>("Sprite");
             _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
@@ -161,6 +163,9 @@ namespace Deathville.GameObject.Combat
                     _decayTracker = OVERHEAT_DECAY_DELAY;
                 }
             }
+
+            _chooseStreamPlayerComponent.PlayAudio();
+
             EmitSignal(nameof(Fired));
             if (_overheated)
             {
