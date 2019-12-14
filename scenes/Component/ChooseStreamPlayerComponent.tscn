@@ -2,6 +2,6 @@
 
 [ext_resource path="res://scripts/Component/ChooseStreamPlayerComponent.cs" type="Script" id=1]
 
-[node name="ChooseStreamPlayerComponent" type="AudioStreamPlayer"]
+[node name="ChooseStreamPlayerComponent" type="AudioStreamPlayer2D"]
 bus = "sfx"
 script = ExtResource( 1 )

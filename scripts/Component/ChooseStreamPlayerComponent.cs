@@ -1,83 +1,77 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using Godot.Collections;
 using GodotApiTools.Extension;
 
 namespace Deathville.Component
 {
-    public class ChooseStreamPlayerComponent : AudioStreamPlayer
+    public class ChooseStreamPlayerComponent : AudioStreamPlayer2D
     {
         [Export]
         private bool _randomOrder = true;
         [Export]
         private float _pitchDifference;
         [Export]
-        private Array<AudioStream> _streams;
-        [Export]
-        private AudioStream _alwaysPlayStream;
+        private NodePath _alwaysPlayPath;
 
         private Queue<int> _streamIndices = new Queue<int>();
+        private AudioStreamPlayer2D _alwaysPlay;
 
         public override void _Ready()
         {
-            if (_streams != null)
+            if (_alwaysPlayPath != null)
             {
-                foreach (var stream in _streams)
+                _alwaysPlay = GetNode<AudioStreamPlayer2D>(_alwaysPlayPath);
+            }
+            foreach (var child in GetChildren())
+            {
+                if (child is AudioStreamPlayer2D player)
                 {
-                    var player = new AudioStreamPlayer();
-                    AddChild(player);
-                    player.Stream = stream;
                     player.Bus = Bus;
-                }
-                if (_alwaysPlayStream != null)
-                {
-                    var player = new AudioStreamPlayer();
-                    AddChild(player);
-                    player.Stream = _alwaysPlayStream;
-                    player.Bus = Bus;
+                    player.VolumeDb = VolumeDb;
+                    player.Attenuation = Attenuation;
+                    player.MaxDistance = MaxDistance;
                 }
             }
         }
 
         public void PlayAudio()
         {
-            if (!HasStreams()) return;
-
             if (_streamIndices.Count == 0)
             {
                 PopulateStreamIndices();
             }
 
-            var idx = _streamIndices.Dequeue();
-            GetChild<AudioStreamPlayer>(idx).PlayWithPitchRange(1f - _pitchDifference, 1f + _pitchDifference);
-
-            if (_alwaysPlayStream != null)
+            if (_streamIndices.Count == 0)
             {
-                GetChild<AudioStreamPlayer>(_streams.Count).PlayWithPitchRange(1f - _pitchDifference, 1f + _pitchDifference);
+                return;
+            }
+
+            var idx = _streamIndices.Dequeue();
+            GetChild<AudioStreamPlayer2D>(idx).PlayWithPitchRange(1f - _pitchDifference, 1f + _pitchDifference);
+
+            if (_alwaysPlay != null)
+            {
+                _alwaysPlay.PlayWithPitchRange(1f - _pitchDifference, 1f + _pitchDifference);
             }
         }
 
         private void PopulateStreamIndices()
         {
             _streamIndices.Clear();
-            if (HasStreams())
+            if (GetChildCount() > 0)
             {
-                var indices = Enumerable.Range(0, _streams.Count);
+                var indices = Enumerable.Range(0, GetChildCount());
                 if (_randomOrder)
                 {
                     indices = indices.OrderBy(x => Main.RNG.Randf());
                 }
                 foreach (var index in indices)
                 {
+                    if (_alwaysPlay.GetIndex() == index) continue;
                     _streamIndices.Enqueue(index);
                 }
             }
-        }
-
-        private bool HasStreams()
-        {
-            return _streams != null && _streams.Count > 0;
         }
     }
 }

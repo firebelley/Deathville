@@ -86,13 +86,12 @@ namespace Deathville.GameObject
         {
             _moveStateMachine.Update();
 
-            var scaleLerpTo = _moveStateMachine.GetCurrentState() != MoveState.GROUNDED ? TIME_SCALE : DEFAULT_TIME_SCALE;
-            Engine.TimeScale = Mathf.Lerp(Engine.TimeScale, scaleLerpTo, 15f * delta / Engine.TimeScale);
-
             if (_moveStateMachine.GetCurrentState() != MoveState.DASH && _moveStateMachine.GetCurrentState() != MoveState.SLIDE)
             {
                 _velocityComponent.SpeedPadding = Mathf.Lerp(_velocityComponent.SpeedPadding, 0f, 5f * delta / Engine.TimeScale);
             }
+
+            CallDeferred(nameof(UpdateTimeScale));
         }
 
         public override void _UnhandledInput(InputEvent evt)
@@ -386,6 +385,12 @@ namespace Deathville.GameObject
             _animatedSprite.Visible = false;
             _flipSprite.Visible = true;
             _flipTween.Start();
+        }
+
+        private void UpdateTimeScale()
+        {
+            var scaleLerpTo = _moveStateMachine.GetCurrentState() != MoveState.GROUNDED ? TIME_SCALE : DEFAULT_TIME_SCALE;
+            Engine.TimeScale = Mathf.Lerp(Engine.TimeScale, scaleLerpTo, 15f * GetProcessDeltaTime() / Engine.TimeScale);
         }
 
         private void OnFlipTweenCompleted()
