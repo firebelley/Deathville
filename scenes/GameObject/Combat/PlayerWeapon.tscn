@@ -18,7 +18,6 @@ _heatPerShot = 0.05
 _heatDecayPerSecond = 1.0
 
 [node name="ChooseStreamPlayerComponent" parent="." index="0"]
-_pitchDifference = 0.1
 _alwaysPlayPath = NodePath("AudioStreamPlayer2D")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="ChooseStreamPlayerComponent" index="0"]

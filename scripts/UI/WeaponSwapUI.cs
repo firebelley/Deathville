@@ -1,17 +1,20 @@
 using Deathville.GameObject.Combat;
 using Deathville.Singleton;
 using Godot;
+using GodotApiTools.Extension;
 
 namespace Deathville.UI
 {
     public class WeaponSwapUI : Control
     {
         private WeaponUI[] _weaponUIs = new WeaponUI[2];
+        private AudioStreamPlayer _swapSound;
 
         public override void _Ready()
         {
             _weaponUIs[0] = GetNode<WeaponUI>("WeaponUI");
             _weaponUIs[1] = GetNode<WeaponUI>("WeaponUI2");
+            _swapSound = GetNode<AudioStreamPlayer>("SwapSound");
 
             foreach (var ui in _weaponUIs)
             {
@@ -50,6 +53,7 @@ namespace Deathville.UI
                     ui.PlayStowAnimation();
                 }
             }
+            _swapSound.PlayWithPitchRange(.9f, 1.1f);
         }
     }
 }

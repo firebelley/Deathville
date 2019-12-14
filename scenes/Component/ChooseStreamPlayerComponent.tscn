@@ -3,5 +3,7 @@
 [ext_resource path="res://scripts/Component/ChooseStreamPlayerComponent.cs" type="Script" id=1]
 
 [node name="ChooseStreamPlayerComponent" type="AudioStreamPlayer2D"]
+volume_db = -10.0
+max_distance = 800.0
 bus = "sfx"
 script = ExtResource( 1 )

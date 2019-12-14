@@ -10,7 +10,7 @@ namespace Deathville.Component
         [Export]
         private bool _randomOrder = true;
         [Export]
-        private float _pitchDifference;
+        private float _pitchDifference = .1f;
         [Export]
         private NodePath _alwaysPlayPath;
 

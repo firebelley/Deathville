@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scenes/UI/WeaponUI.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/UI/WeaponSwapUI.cs" type="Script" id=2]
+[ext_resource path="res://assets/sound/gun_revolver_pistol_cylinder_close_01.wav" type="AudioStream" id=3]
 
 [node name="WeaponSwapUI" type="HBoxContainer"]
 margin_right = 112.0
@@ -16,6 +17,7 @@ __meta__ = {
 [node name="WeaponUI" parent="." instance=ExtResource( 1 )]
 margin_top = 8.0
 margin_bottom = 40.0
+rect_scale = Vector2( 1, 1 )
 size_flags_horizontal = 8
 size_flags_vertical = 8
 _isLeft = true
@@ -25,5 +27,11 @@ margin_left = 64.0
 margin_top = 8.0
 margin_right = 112.0
 margin_bottom = 40.0
+rect_scale = Vector2( 1, 1 )
 size_flags_horizontal = 8
 size_flags_vertical = 8
+
+[node name="SwapSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+volume_db = -10.0
+bus = "sfx"
