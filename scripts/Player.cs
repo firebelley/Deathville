@@ -253,10 +253,11 @@ namespace Deathville.GameObject
         {
             if (_moveStateMachine.IsStateNew())
             {
-                _velocityComponent.MaxYSpeed = WALL_SLIDE_SPEED;
                 _jumpCount = 0;
                 _dashCount = 0;
             }
+
+            _velocityComponent.MaxYSpeed = Mathf.Lerp(_velocityComponent.Velocity.y, WALL_SLIDE_SPEED, 10f * GetProcessDeltaTime() / Engine.TimeScale);
             var moveVec = GetMovementVector();
             if (moveVec.x != 0f)
             {

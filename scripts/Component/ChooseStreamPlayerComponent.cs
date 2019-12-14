@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Deathville.Util;
 using Godot;
 using GodotApiTools.Extension;
 
@@ -13,6 +14,8 @@ namespace Deathville.Component
         private float _pitchDifference = .1f;
         [Export]
         private NodePath _alwaysPlayPath;
+        [Export]
+        private NodePath _damageReceiverComponentPath;
 
         private Queue<int> _streamIndices = new Queue<int>();
         private AudioStreamPlayer2D _alwaysPlay;
@@ -22,6 +25,10 @@ namespace Deathville.Component
             if (_alwaysPlayPath != null)
             {
                 _alwaysPlay = GetNode<AudioStreamPlayer2D>(_alwaysPlayPath);
+            }
+            if (_damageReceiverComponentPath != null)
+            {
+                GetNode<DamageReceiverComponent>(_damageReceiverComponentPath).Connect(nameof(DamageReceiverComponent.DamageReceived), this, nameof(OnDamageReceived));
             }
             foreach (var child in GetChildren())
             {
@@ -68,10 +75,15 @@ namespace Deathville.Component
                 }
                 foreach (var index in indices)
                 {
-                    if (_alwaysPlay.GetIndex() == index) continue;
+                    if (_alwaysPlay?.GetIndex() == index) continue;
                     _streamIndices.Enqueue(index);
                 }
             }
+        }
+
+        private void OnDamageReceived(ImpactData impactData)
+        {
+            PlayAudio();
         }
     }
 }

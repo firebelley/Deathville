@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/bullet_impact_dirt_02.wav-313847eff7621575ad34ff24dbd25491.sample"
+
+[deps]
+
+source_file="res://assets/sound/bullet_impact_dirt_02.wav"
+dest_files=[ "res://.import/bullet_impact_dirt_02.wav-313847eff7621575ad34ff24dbd25491.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
