@@ -47,6 +47,7 @@ namespace Deathville.GameObject
         private AnimationPlayer _animationPlayer;
         private VelocityComponent _velocityComponent;
         private HealthComponent _healthComponent;
+        private Particles2D _walkParticles;
 
         private float _coyoteTime;
         private float _dashTime;
@@ -65,6 +66,7 @@ namespace Deathville.GameObject
             _moveStateMachine.AddState(MoveState.SLIDE, MoveStateSlide);
             _moveStateMachine.AddState(MoveState.WALL, MoveStateWall);
             _moveStateMachine.AddLeaveState(MoveState.WALL, LeaveMoveStateWall);
+            _moveStateMachine.AddLeaveState(MoveState.GROUNDED, LeaveMoveStateGrounded);
             _moveStateMachine.SetInitialState(MoveState.GROUNDED);
             _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
             _velocityComponent = this.GetFirstNodeOfType<VelocityComponent>();
@@ -72,6 +74,7 @@ namespace Deathville.GameObject
             _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
             _flipSprite = GetNode<Sprite>("FlipSprite");
             _flipTween = GetNode<Tween>("FlipTween");
+            _walkParticles = GetNode<Particles2D>("WalkParticles");
 
             var weaponSocket = this.GetFirstNodeOfType<WeaponSocketComponent>();
             weaponSocket.EquipWeapon((GD.Load("res://scenes/GameObject/Combat/GrenadeLauncher.tscn") as PackedScene).Instance() as Weapon);
@@ -129,6 +132,8 @@ namespace Deathville.GameObject
                 _velocityComponent.Decelerate();
             }
 
+            _walkParticles.Emitting = moveVec.x != 0f;
+
             _velocityComponent.MoveWithSnap();
 
             if (Input.IsActionJustPressed(INPUT_DASH))
@@ -146,6 +151,11 @@ namespace Deathville.GameObject
                 _moveStateMachine.ChangeState(MoveStateAirborne);
             }
             UpdateAnimations();
+        }
+
+        private void LeaveMoveStateGrounded()
+        {
+            _walkParticles.Emitting = false;
         }
 
         private void MoveStateAirborne()
