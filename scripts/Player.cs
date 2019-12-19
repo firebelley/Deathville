@@ -48,6 +48,7 @@ namespace Deathville.GameObject
         private VelocityComponent _velocityComponent;
         private HealthComponent _healthComponent;
         private Particles2D _walkParticles;
+        private Particles2D _dashParticles;
 
         private float _coyoteTime;
         private float _dashTime;
@@ -68,6 +69,7 @@ namespace Deathville.GameObject
             _moveStateMachine.AddLeaveState(MoveState.WALL, LeaveMoveStateWall);
             _moveStateMachine.AddLeaveState(MoveState.GROUNDED, LeaveMoveStateGrounded);
             _moveStateMachine.AddLeaveState(MoveState.AIRBORNE, LeaveMoveStateAirborne);
+            _moveStateMachine.AddLeaveState(MoveState.DASH, LeaveMoveStateDash);
             _moveStateMachine.SetInitialState(MoveState.GROUNDED);
             _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
             _velocityComponent = this.GetFirstNodeOfType<VelocityComponent>();
@@ -76,6 +78,7 @@ namespace Deathville.GameObject
             _flipSprite = GetNode<Sprite>("FlipSprite");
             _flipTween = GetNode<Tween>("FlipTween");
             _walkParticles = GetNode<Particles2D>("WalkParticles");
+            _dashParticles = GetNode<Particles2D>("DashParticles");
 
             var weaponSocket = this.GetFirstNodeOfType<WeaponSocketComponent>();
             weaponSocket.EquipWeapon((GD.Load("res://scenes/GameObject/Combat/GrenadeLauncher.tscn") as PackedScene).Instance() as Weapon);
@@ -96,6 +99,7 @@ namespace Deathville.GameObject
             }
 
             _walkParticles.SpeedScale = 1f / Engine.TimeScale;
+            _dashParticles.SpeedScale = 1f / Engine.TimeScale;
 
             CallDeferred(nameof(UpdateTimeScale));
         }
@@ -221,6 +225,7 @@ namespace Deathville.GameObject
                 _velocityComponent.SpeedPadding = 250f;
                 _velocityComponent.YVelocity = 0f;
                 _velocityComponent.ApplyForce(ShouldGoLeft() ? Vector2.Left : Vector2.Right, 250f);
+                _dashParticles.Emitting = true;
             }
 
             _dashTime += GetProcessDeltaTime() / Engine.TimeScale;
@@ -238,6 +243,11 @@ namespace Deathville.GameObject
             }
 
             UpdateAnimations();
+        }
+
+        private void LeaveMoveStateDash()
+        {
+            _dashParticles.Emitting = false;
         }
 
         private void MoveStateSlide()
