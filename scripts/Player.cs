@@ -67,6 +67,7 @@ namespace Deathville.GameObject
             _moveStateMachine.AddState(MoveState.WALL, MoveStateWall);
             _moveStateMachine.AddLeaveState(MoveState.WALL, LeaveMoveStateWall);
             _moveStateMachine.AddLeaveState(MoveState.GROUNDED, LeaveMoveStateGrounded);
+            _moveStateMachine.AddLeaveState(MoveState.AIRBORNE, LeaveMoveStateAirborne);
             _moveStateMachine.SetInitialState(MoveState.GROUNDED);
             _animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
             _velocityComponent = this.GetFirstNodeOfType<VelocityComponent>();
@@ -93,6 +94,8 @@ namespace Deathville.GameObject
             {
                 _velocityComponent.SpeedPadding = Mathf.Lerp(_velocityComponent.SpeedPadding, 0f, 5f * delta / Engine.TimeScale);
             }
+
+            _walkParticles.SpeedScale = 1f / Engine.TimeScale;
 
             CallDeferred(nameof(UpdateTimeScale));
         }
@@ -203,6 +206,11 @@ namespace Deathville.GameObject
             }
 
             UpdateAnimations();
+        }
+
+        private void LeaveMoveStateAirborne()
+        {
+            EndFlip();
         }
 
         private void MoveStateDash()
@@ -396,6 +404,11 @@ namespace Deathville.GameObject
             _animatedSprite.Visible = false;
             _flipSprite.Visible = true;
             _flipTween.Start();
+        }
+
+        private void EndFlip()
+        {
+            _flipTween.Seek(10f);
         }
 
         private void UpdateTimeScale()

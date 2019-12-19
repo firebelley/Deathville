@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://assets/art/entities/player9.png" type="Texture" id=1]
 [ext_resource path="res://assets/art/entities/player10.png" type="Texture" id=2]
@@ -50,33 +50,38 @@ animations = [ {
 [sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 4, 10 )
 
-[sub_resource type="Curve" id=6]
+[sub_resource type="Gradient" id=8]
+colors = PoolColorArray( 0.121569, 0.121569, 0.121569, 1, 0.121569, 0.121569, 0.121569, 0 )
+
+[sub_resource type="GradientTexture" id=9]
+gradient = SubResource( 8 )
+
+[sub_resource type="Curve" id=4]
 _data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.124896, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
 
-[sub_resource type="CurveTexture" id=7]
-curve = SubResource( 6 )
+[sub_resource type="CurveTexture" id=5]
+curve = SubResource( 4 )
 
-[sub_resource type="ParticlesMaterial" id=4]
+[sub_resource type="ParticlesMaterial" id=6]
 emission_shape = 1
 emission_sphere_radius = 1.0
 flag_disable_z = true
 direction = Vector3( 0, -1, 0 )
-spread = 0.0
-gravity = Vector3( 0, -10, 0 )
-initial_velocity = 5.0
-initial_velocity_random = 1.0
-angular_velocity = 50.0
+spread = 90.0
+gravity = Vector3( 0, 40, 0 )
+initial_velocity = 40.0
+initial_velocity_random = 0.5
+angular_velocity = 180.0
 angular_velocity_random = 1.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 angle = 90.0
 angle_random = 1.0
-scale = 1.5
 scale_random = 0.5
-scale_curve = SubResource( 7 )
-color = Color( 1, 1, 1, 0.392157 )
+scale_curve = SubResource( 5 )
+color_ramp = SubResource( 9 )
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=7]
 length = 0.33
 tracks/0/type = "value"
 tracks/0/path = NodePath("AnimatedSprite:visible")
@@ -146,7 +151,7 @@ shape = SubResource( 1 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 2 )
 animation = "idle"
-frame = 2
+frame = 3
 playing = true
 offset = Vector2( 0, -15 )
 
@@ -180,15 +185,15 @@ shape = SubResource( 3 )
 
 [node name="WalkParticles" type="Particles2D" parent="."]
 emitting = false
-amount = 20
-lifetime = 1.5
+amount = 10
+lifetime = 0.5
 explosiveness = 0.2
 randomness = 1.0
 local_coords = false
-process_material = SubResource( 4 )
+process_material = SubResource( 6 )
 texture = ExtResource( 20 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/flip = SubResource( 5 )
+anims/flip = SubResource( 7 )
 
 [node name="FlipTween" type="Tween" parent="."]
