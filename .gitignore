@@ -61,3 +61,4 @@ tools/ContentBuilder/content/linux_itch
 tools/ContentBuilder/content/osx_itch
 tools/ContentBuilder/builder/logs
 tools/ContentBuilder/output
+mono/
