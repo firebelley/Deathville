@@ -1,10 +1,14 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scripts/Environment/Spawner.cs" type="Script" id=1]
 [ext_resource path="res://scenes/GameObject/Enemy.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/Component/EntityDeleterComponent.tscn" type="PackedScene" id=3]
 
 [node name="Spawner" type="Node2D"]
 script = ExtResource( 1 )
 _scene = ExtResource( 2 )
+
+[node name="EntityDeleterComponent" parent="." instance=ExtResource( 3 )]
+rect = Rect2( -150, -150, 300, 300 )
 
 [node name="Timer" type="Timer" parent="."]

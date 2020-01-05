@@ -11,7 +11,7 @@ namespace Deathville.Environment
         [Export]
         private PackedScene _scene;
         [Export]
-        private float _spawnDelay = 1f;
+        private float _spawnDelay = .2f;
         [Export]
         private int _maxSpawned = 3;
 

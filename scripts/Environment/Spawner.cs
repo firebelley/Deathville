@@ -9,13 +9,13 @@ namespace Deathville.Environment
         private const float SPAWN_RADIUS = 400f;
 
         [Export]
-        private int _maxSpawned = 8;
+        private int _maxSpawned = 5;
         [Export]
         private float _spawnDelay = .1f;
         [Export]
         private PackedScene _scene;
 
-        private List<Node2D> _spawned = new List<Node2D>();
+        private int _spawned = 0;
 
         public override void _Ready()
         {
@@ -25,26 +25,19 @@ namespace Deathville.Environment
             timer.Connect("timeout", this, nameof(OnTimerTimeout));
         }
 
-        private void RemoveInvalid()
-        {
-            _spawned = _spawned.Where(x => IsInstanceValid(x)).ToList();
-        }
-
         private void Spawn()
         {
             var scene = _scene.Instance() as Node2D;
             Zone.Current.EntitiesLayer.AddChild(scene);
             scene.GlobalPosition = GlobalPosition;
-            _spawned.Add(scene);
+            _spawned++;
         }
 
         private void OnTimerTimeout()
         {
             if (_scene == null) return;
 
-            RemoveInvalid();
-
-            if (_spawned.Count < _maxSpawned)
+            if (_spawned < _maxSpawned)
             {
                 Spawn();
             }
