@@ -1,13 +1,64 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scripts/Environment/Spawner.cs" type="Script" id=1]
 [ext_resource path="res://scenes/GameObject/Enemy.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/Component/EntityDeleterComponent.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/art/environment/hut.png" type="Texture" id=4]
 
+[sub_resource type="Animation" id=1]
+resource_name = "default"
+length = 0.4
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.16, 0.26, 0.34, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 1.1, 1.2 ), Vector2( 0.8, 0.7 ), Vector2( 0.9, 0.9 ), Vector2( 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.00999999, 0.34 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "idle"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 0.95, 0.85 ), Vector2( 1, 1 ) ]
+}
+
 [node name="Spawner" type="Node2D"]
 script = ExtResource( 1 )
 _scene = ExtResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "default"
+anims/default = SubResource( 1 )
+anims/idle = SubResource( 2 )
+next/default = "idle"
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 4 )

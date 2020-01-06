@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Godot;
 
 namespace Deathville.Environment
@@ -11,18 +9,22 @@ namespace Deathville.Environment
         [Export]
         private int _maxSpawned = 5;
         [Export]
-        private float _spawnDelay = .1f;
+        private float _spawnDelay = .3f;
         [Export]
         private PackedScene _scene;
 
+        private AnimationPlayer _animationPlayer;
+        private Timer _timer;
         private int _spawned = 0;
 
         public override void _Ready()
         {
-            var timer = GetNode<Timer>("Timer");
-            timer.WaitTime = _spawnDelay;
-            timer.Start();
-            timer.Connect("timeout", this, nameof(OnTimerTimeout));
+            _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
+            _animationPlayer.Connect("animation_changed", this, nameof(OnAnimationChanged));
+
+            _timer = GetNode<Timer>("Timer");
+            _timer.WaitTime = _spawnDelay;
+            _timer.Connect("timeout", this, nameof(OnTimerTimeout));
         }
 
         private void Spawn()
@@ -40,6 +42,14 @@ namespace Deathville.Environment
             if (_spawned < _maxSpawned)
             {
                 Spawn();
+            }
+        }
+
+        private void OnAnimationChanged(string oldName, string newName)
+        {
+            if (oldName == "default")
+            {
+                _timer.Start();
             }
         }
     }
