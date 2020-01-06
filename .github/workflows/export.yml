@@ -13,9 +13,9 @@ jobs:
     - name: Export
       uses: firebelley/godot-export@dev
       with:
-        godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/3.2/beta4/mono/Godot_v3.2-beta4_mono_linux_headless_64.zip
-        godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/3.2/beta4/mono/Godot_v3.2-beta4_mono_export_templates.tpz
-        godot_template_version: 3.2.beta4.mono
+        godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/3.2/beta5/mono/Godot_v3.2-beta5_mono_linux_headless_64.zip
+        godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/3.2/beta5/mono/Godot_v3.2-beta5_mono_export_templates.tpz
+        godot_template_version: 3.2.beta5.mono
         relative_project_path: .
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -3,5 +3,5 @@
 [ext_resource path="res://scripts/Component/EntityDeleterComponent.cs" type="Script" id=1]
 
 [node name="EntityDeleterComponent" type="VisibilityNotifier2D"]
-rect = Rect2( -300, -300, 600, 600 )
+rect = Rect2( -150, -150, 300, 300 )
 script = ExtResource( 1 )

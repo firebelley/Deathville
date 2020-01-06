@@ -34,6 +34,19 @@ namespace Deathville.Environment
         }
         private Node2D _entitiesLayer;
 
+        public Node2D BackgroundLayer
+        {
+            get
+            {
+                if (!(IsInstanceValid(_backgroundLayer)))
+                {
+                    _backgroundLayer = GetNode<Node2D>("Background");
+                }
+                return _backgroundLayer;
+            }
+        }
+        private Node2D _backgroundLayer;
+
         public TileMap TileMap
         {
             get

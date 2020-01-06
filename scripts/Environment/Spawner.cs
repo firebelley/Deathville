@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using Deathville.GameObject;
 using Godot;
-using GodotApiTools.Extension;
 
 namespace Deathville.Environment
 {
@@ -11,73 +7,49 @@ namespace Deathville.Environment
         private const float SPAWN_RADIUS = 400f;
 
         [Export]
-        private int _maxSpawned = 25;
+        private int _maxSpawned = 5;
         [Export]
-        private float _spawnDelay = .1f;
+        private float _spawnDelay = .3f;
         [Export]
         private PackedScene _scene;
 
-        private List<Node2D> _spawned = new List<Node2D>();
+        private AnimationPlayer _animationPlayer;
+        private Timer _timer;
+        private int _spawned = 0;
 
         public override void _Ready()
         {
-            if (Engine.EditorHint) return;
+            _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
+            _animationPlayer.Connect("animation_changed", this, nameof(OnAnimationChanged));
 
-            var timer = GetNode<Timer>("Timer");
-            timer.WaitTime = _spawnDelay;
-            timer.Start();
-            timer.Connect("timeout", this, nameof(OnTimerTimeout));
-        }
-
-        private void RemoveInvalid()
-        {
-            var prevSize = _spawned.Count;
-            _spawned = _spawned.Where(x => IsInstanceValid(x)).ToList();
-            var diff = prevSize - _spawned.Count;
+            _timer = GetNode<Timer>("Timer");
+            _timer.WaitTime = _spawnDelay;
+            _timer.Connect("timeout", this, nameof(OnTimerTimeout));
         }
 
         private void Spawn()
         {
-            var spawnPos = GetSpawnPosition();
-
-            if (spawnPos.DistanceSquaredTo(GlobalPosition) < 320f * 320f)
-            {
-                return;
-            }
-
             var scene = _scene.Instance() as Node2D;
-
             Zone.Current.EntitiesLayer.AddChild(scene);
-            scene.GlobalPosition = spawnPos;
-            _spawned.Add(scene);
-        }
-
-        private Vector2 GetSpawnPosition()
-        {
-            var dir = Vector2.Right.Rotated(Main.RNG.RandfRange(0f, 2f * Mathf.Pi));
-            dir *= SPAWN_RADIUS;
-            return Zone.Current.Pathfinder.GetClosestGlobalPoint(GlobalPosition + dir);
+            scene.GlobalPosition = GlobalPosition;
+            _spawned++;
         }
 
         private void OnTimerTimeout()
         {
             if (_scene == null) return;
 
-            var player = GetTree().GetFirstNodeInGroup<Player>(Player.GROUP);
-            if (player != null)
-            {
-                GlobalPosition = player.GlobalPosition;
-            }
-            else
-            {
-                return;
-            }
-
-            RemoveInvalid();
-
-            if (_spawned.Count < _maxSpawned)
+            if (_spawned < _maxSpawned)
             {
                 Spawn();
+            }
+        }
+
+        private void OnAnimationChanged(string oldName, string newName)
+        {
+            if (oldName == "default")
+            {
+                _timer.Start();
             }
         }
     }
